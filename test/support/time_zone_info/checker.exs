@@ -67,7 +67,7 @@ defmodule TimeZoneInfo.Checker do
 
   defp message({:valid, _}, _, _), do: {:valid, ""}
 
-  defp join(results, flag \\ :ok, acc \\ [])
+  defp join(results, flag \\ :valid, acc \\ [])
 
   defp join([], flag, acc), do: {flag, acc |> Enum.reverse() |> Enum.join("\n")}
 
