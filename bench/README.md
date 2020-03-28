@@ -19,7 +19,7 @@ each of them calls the function
 `TimeZoneDatabase.time_zone_periods_from_wall_datetime/2`.
 
 The inputs for every benchmark run:
-- **:ok:** 333 `(datetime, time_zone)` arguments that are resulting in a
+- **ok:** 333 `(datetime, time_zone)` arguments that are resulting in a
   `:ok` return value.
 - **gap:** 333 `(datetime, time_zone)` arguments that are resulting in a
   `:gap` return tuple.
