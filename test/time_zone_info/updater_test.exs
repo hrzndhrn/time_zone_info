@@ -20,7 +20,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     # The next two lines can be costly, because some tests are working with the
     # full data set from the IANA time zone database.
     PersistentTerm.delete!()
-    ErlangTermStorage.delete!()
+    if function_exported?(ErlangTermStorage, :delete!, 0), do: ErlangTermStorage.delete!()
 
     # The commented out lines show the default value of the configuration entry.
     put_env(
