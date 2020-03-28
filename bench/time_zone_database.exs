@@ -47,7 +47,7 @@ defmodule Bench.TimeZoneDatabase do
       `:gap` return tuple.
     - **ambiguous:** 333 `(datetime, time_zone)` arguments that are resulting in
       a `:ambiguous` return tuple.
-    - **ok_gap_ambiguous: ** **ok**, **gap**, and **ambiguous** together.
+    - **ok_gap_ambiguous:** **ok**, **gap**, and **ambiguous** together.
     - **last_year:** 1000 `(datetime, time_zone)` arguments with random time zone
       and a date time from now to one year in the past. The data is calculated
       once for all test candidates.
