@@ -1,0 +1,126 @@
+defmodule TimeZoneInfo.MixProject do
+  use Mix.Project
+
+  def project do
+    [
+      app: :time_zone_info,
+      version: "0.1.0",
+      elixir: "~> 1.8",
+      description: description(),
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      aliases: aliases(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: preferred_cli_env(),
+      dialyzer: dialyzer(),
+      source_url: "https://github.com/hrzndhrn/time_zone_info",
+      docs: docs(),
+      package: package()
+    ]
+  end
+
+  def description do
+    "Time zone support for Elixir by using the IANA Time Zone Database."
+  end
+
+  def application do
+    [
+      extra_applications: [:logger],
+      mod: {TimeZoneInfo.Application, []},
+      env: env()
+    ]
+  end
+
+  defp env do
+    [
+      files: ~w(africa antarctica asia australasia etcetera europe northamerica southamerica),
+      lookahead: 5,
+      data_store: :detect,
+      update: :disabled,
+      downloader: [
+        module: TimeZoneInfo.Downloader.Mint,
+        uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
+        format: :iana,
+        headers: [
+          {"Content-Type", "application/tar+gzip"},
+          {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
+        ]
+      ],
+      data_persistence: TimeZoneInfo.DataPersistence.Priv,
+      priv: [path: "data.etf"]
+    ]
+  end
+
+  defp preferred_cli_env do
+    [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      extras: [
+        "README.md",
+        "docs/config.md"
+      ]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      ignore_warnings: ".dialyzer_ignore.exs",
+      plt_add_apps: [:mint, :nimble_parsec],
+      plt_file: {:no_warn, "test/support/plts/dialyzer.plt"},
+      flags: [:unmatched_returns]
+    ]
+  end
+
+  defp aliases do
+    [
+      bench: ["run bench/run.exs"],
+      "bench.gen.data": ["run bench/scripts/gen_data.exs"],
+      "tzi.update": ["run scripts/update.exs"],
+      test: ["test --no-start"]
+    ]
+  end
+
+  defp deps do
+    [
+      {:benchee, "~> 1.0", only: :dev},
+      {:benchee_markdown, "~> 0.1", only: :dev},
+      {:castore, "~> 0.1", optional: true},
+      {:cowboy, "~> 2.7", only: :test},
+      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.10", only: :test, runtime: false},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+      {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
+      {:mint, "~> 1.0", optional: true},
+      {:mox, "~> 0.5", only: :test},
+      {:nimble_parsec, "~> 0.5", runtime: false},
+      {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
+      {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
+      {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Marcus Kruse"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/hrzndhrn/xema"},
+      files: [
+        "lib",
+        "priv",
+        "mix.exs",
+        "README*",
+        "LICENSE*",
+        "docs/config.md"
+      ]
+    ]
+  end
+end

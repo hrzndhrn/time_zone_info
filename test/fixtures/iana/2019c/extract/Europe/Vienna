@@ -1,0 +1,43 @@
+Rule	EU	1977	1980	-	Apr	Sun>=1	 1:00u	1:00	S
+Rule	EU	1977	only	-	Sep	lastSun	 1:00u	0	-
+Rule	EU	1978	only	-	Oct	 1	 1:00u	0	-
+Rule	EU	1979	1995	-	Sep	lastSun	 1:00u	0	-
+Rule	EU	1981	max	-	Mar	lastSun	 1:00u	1:00	S
+Rule	EU	1996	max	-	Oct	lastSun	 1:00u	0	-
+
+Rule	C-Eur	1916	only	-	Apr	30	23:00	1:00	S
+Rule	C-Eur	1916	only	-	Oct	 1	 1:00	0	-
+Rule	C-Eur	1917	1918	-	Apr	Mon>=15	 2:00s	1:00	S
+Rule	C-Eur	1917	1918	-	Sep	Mon>=15	 2:00s	0	-
+Rule	C-Eur	1940	only	-	Apr	 1	 2:00s	1:00	S
+Rule	C-Eur	1942	only	-	Nov	 2	 2:00s	0	-
+Rule	C-Eur	1943	only	-	Mar	29	 2:00s	1:00	S
+Rule	C-Eur	1943	only	-	Oct	 4	 2:00s	0	-
+Rule	C-Eur	1944	1945	-	Apr	Mon>=1	 2:00s	1:00	S
+Rule	C-Eur	1944	only	-	Oct	 2	 2:00s	0	-
+Rule	C-Eur	1945	only	-	Sep	16	 2:00s	0	-
+Rule	C-Eur	1977	1980	-	Apr	Sun>=1	 2:00s	1:00	S
+Rule	C-Eur	1977	only	-	Sep	lastSun	 2:00s	0	-
+Rule	C-Eur	1978	only	-	Oct	 1	 2:00s	0	-
+Rule	C-Eur	1979	1995	-	Sep	lastSun	 2:00s	0	-
+Rule	C-Eur	1981	max	-	Mar	lastSun	 2:00s	1:00	S
+Rule	C-Eur	1996	max	-	Oct	lastSun	 2:00s	0	-
+
+Rule	Austria	1920	only	-	Apr	 5	2:00s	1:00	S
+Rule	Austria	1920	only	-	Sep	13	2:00s	0	-
+Rule	Austria	1946	only	-	Apr	14	2:00s	1:00	S
+Rule	Austria	1946	only	-	Oct	 7	2:00s	0	-
+Rule	Austria	1947	1948	-	Oct	Sun>=1	2:00s	0	-
+Rule	Austria	1947	only	-	Apr	 6	2:00s	1:00	S
+Rule	Austria	1948	only	-	Apr	18	2:00s	1:00	S
+Rule	Austria	1980	only	-	Apr	 6	0:00	1:00	S
+Rule	Austria	1980	only	-	Sep	28	0:00	0	-
+
+Zone	Europe/Vienna	1:05:21 -	LMT	1893 Apr
+			1:00	C-Eur	CE%sT	1920
+			1:00	Austria	CE%sT	1940 Apr  1  2:00s
+			1:00	C-Eur	CE%sT	1945 Apr  2  2:00s
+			1:00	1:00	CEST	1945 Apr 12  2:00s
+			1:00	-	CET	1946
+			1:00	Austria	CE%sT	1981
+			1:00	EU	CE%sT

@@ -1,0 +1,33 @@
+defmodule TimeZoneInfo.Listener.Logger do
+  @moduledoc """
+  A listener to log `TimeZoneInfo` events.
+  """
+
+  @behaviour TimeZoneInfo.Listener
+
+  require Logger
+
+  @impl true
+  @doc """
+  Listen on update events.
+  """
+  def on_update(:initial) do
+    Logger.info("TimeZoneInfo: Initializing data.")
+  end
+
+  def on_update(:check) do
+    Logger.info("TimeZoneInfo: Checking for update.")
+  end
+
+  def on_update(:download) do
+    Logger.info("TimeZoneInfo: Downloading data.")
+  end
+
+  def on_update(:update) do
+    Logger.info("TimeZoneInfo: Updating data.")
+  end
+
+  def on_update(:up_to_date) do
+    Logger.info("TimeZoneInfo: No update available.")
+  end
+end
