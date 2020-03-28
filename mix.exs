@@ -112,7 +112,7 @@ defmodule TimeZoneInfo.MixProject do
     [
       maintainers: ["Marcus Kruse"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/hrzndhrn/xema"},
+      links: %{"GitHub" => "https://github.com/hrzndhrn/time_zone_info"},
       files: [
         "lib",
         "priv",
