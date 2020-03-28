@@ -248,7 +248,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
   end
 
-  if function_exported?(PersistentTerm, :delete!, 0) do
+  if function_exported?(PersistentTerm, :put, 1) do
     describe "update/0 (PersistentTerm)" do
       setup do
         update_env(data_store: PersistentTerm)
