@@ -248,26 +248,28 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
   end
 
-  describe "update/0 (PersistentTerm)" do
-    setup do
-      update_env(data_store: PersistentTerm)
-    end
+  if function_exported?(PersistentTerm, :delete!, 0) do
+    describe "update/0 (PersistentTerm)" do
+      setup do
+        update_env(data_store: PersistentTerm)
+      end
 
-    test "tries to update old file and new config" do
-      update_env(files: ~w(europe))
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
-      checksum = checksum(@path)
+      test "tries to update old file and new config" do
+        update_env(files: ~w(europe))
+        touch_data(@path, now(sub: 2 * @seconds_per_day))
+        checksum = checksum(@path)
 
-      assert_log(
-        fn ->
-          assert DataStore.empty?()
-          assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-          refute DataStore.empty?()
-          assert checksum(@path) != checksum
-        end,
-        [:initial, :check, :download, :update]
-      )
+        assert_log(
+          fn ->
+            assert DataStore.empty?()
+            assert {:next, timestamp} = Updater.update()
+            assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+            refute DataStore.empty?()
+            assert checksum(@path) != checksum
+          end,
+          [:initial, :check, :download, :update]
+        )
+      end
     end
   end
 
