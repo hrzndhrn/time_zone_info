@@ -24,7 +24,7 @@ script:
   - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix format --check-formatted ;fi
   - mix credo --strict
   - mix test
-  - mix dialyzer --halt-exit-status
+  - mix dialyzer
 
 sudo: required
 
