@@ -8,8 +8,6 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   @behaviour Calendar.TimeZoneDatabase
 
-  @compile {:inline, gap: 4, info: 1, to_wall: 1, to_wall: 2}
-
   @seconds_per_day 24 * 60 * 60
   @microseconds_per_second 1_000_000
   @parts_per_day @seconds_per_day * @microseconds_per_second
@@ -123,22 +121,39 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     calculate_periods(utc_offset, rule_name, format, at_wall, at_wall_datetime)
   end
 
-  defp to_periods({zone_state_a, zone_state_b}, at_wall, _at_wall_datetime) do
-    at_wall_b = to_wall(zone_state_b)
-    at_wall_ba = to_wall(zone_state_b, zone_state_a)
+  defp to_periods(
+         {
+           {_at_a, {utc_offset_a, std_offset_a, zone_abbr_a}},
+           {at_b, {utc_offset_b, std_offset_b, zone_abbr_b}}
+         },
+         at_wall,
+         _at_wall_datetime
+       ) do
+    at_wall_b = at_b + utc_offset_b + std_offset_b
+    at_wall_ba = at_b + utc_offset_a + std_offset_a
 
     cond do
       at_wall_b <= at_wall && at_wall < at_wall_ba ->
-        {:ambiguous, info(zone_state_a), info(zone_state_b)}
+        {
+          :ambiguous,
+          %{utc_offset: utc_offset_a, std_offset: std_offset_a, zone_abbr: zone_abbr_a},
+          %{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b}
+        }
 
       at_wall_ba <= at_wall && at_wall < at_wall_b ->
-        gap(zone_state_a, at_wall_ba, zone_state_b, at_wall_b)
+        {
+          :gap,
+          {%{utc_offset: utc_offset_a, std_offset: std_offset_a, zone_abbr: zone_abbr_a},
+           NaiveDateTimeUtil.from_gregorian_seconds(at_wall_ba)},
+          {%{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b},
+           NaiveDateTimeUtil.from_gregorian_seconds(at_wall_b)}
+        }
 
       at_wall < at_wall_b ->
-        {:ok, info(zone_state_a)}
+        {:ok, %{utc_offset: utc_offset_a, std_offset: std_offset_a, zone_abbr: zone_abbr_a}}
 
       true ->
-        {:ok, info(zone_state_b)}
+        {:ok, %{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b}}
     end
   end
 
@@ -151,34 +166,62 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     calculate_periods(utc_offset, rule_name, format, at_wall, at_wall_datetime)
   end
 
-  defp to_periods({zone_state_a, zone_state_b, zone_state_c}, at_wall, _at_wall_datetime) do
-    at_wall_a = to_wall(zone_state_a)
-    at_wall_ba = to_wall(zone_state_b, zone_state_a)
-    at_wall_b = to_wall(zone_state_b)
-    at_wall_cb = to_wall(zone_state_c, zone_state_b)
-    at_wall_c = to_wall(zone_state_c)
+  defp to_periods(
+         {
+           {at_a, {utc_offset_a, std_offset_a, zone_abbr_a}},
+           {at_b, {utc_offset_b, std_offset_b, zone_abbr_b}},
+           {at_c, {utc_offset_c, std_offset_c, zone_abbr_c}}
+         },
+         at_wall,
+         _at_wall_datetime
+       ) do
+    at_wall_a = at_a + utc_offset_a + std_offset_a
+    at_wall_ba = at_b + utc_offset_a + std_offset_a
+    at_wall_b = at_b + utc_offset_b + std_offset_b
+    at_wall_cb = at_c + utc_offset_b + std_offset_b
+    at_wall_c = at_c + utc_offset_c + std_offset_c
 
     cond do
       at_wall >= at_wall_c && at_wall < at_wall_cb ->
-        {:ambiguous, info(zone_state_b), info(zone_state_c)}
+        {
+          :ambiguous,
+          %{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b},
+          %{utc_offset: utc_offset_c, std_offset: std_offset_c, zone_abbr: zone_abbr_c}
+        }
 
       at_wall >= at_wall_c ->
-        {:ok, info(zone_state_c)}
+        {:ok, %{utc_offset: utc_offset_c, std_offset: std_offset_c, zone_abbr: zone_abbr_c}}
 
       at_wall >= at_wall_cb ->
-        gap(zone_state_b, at_wall_cb, zone_state_c, at_wall_c)
+        {
+          :gap,
+          {%{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b},
+           NaiveDateTimeUtil.from_gregorian_seconds(at_wall_cb)},
+          {%{utc_offset: utc_offset_c, std_offset: std_offset_c, zone_abbr: zone_abbr_c},
+           NaiveDateTimeUtil.from_gregorian_seconds(at_wall_c)}
+        }
 
       at_wall >= at_wall_b && at_wall < at_wall_ba ->
-        {:ambiguous, info(zone_state_a), info(zone_state_b)}
+        {
+          :ambiguous,
+          %{utc_offset: utc_offset_a, std_offset: std_offset_a, zone_abbr: zone_abbr_a},
+          %{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b}
+        }
 
       at_wall >= at_wall_b ->
-        {:ok, info(zone_state_b)}
+        {:ok, %{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b}}
 
       at_wall >= at_wall_ba ->
-        gap(zone_state_a, at_wall_ba, zone_state_b, at_wall_b)
+        {
+          :gap,
+          {%{utc_offset: utc_offset_a, std_offset: std_offset_a, zone_abbr: zone_abbr_a},
+           NaiveDateTimeUtil.from_gregorian_seconds(at_wall_ba)},
+          {%{utc_offset: utc_offset_b, std_offset: std_offset_b, zone_abbr: zone_abbr_b},
+           NaiveDateTimeUtil.from_gregorian_seconds(at_wall_b)}
+        }
 
       at_wall >= at_wall_a ->
-        {:ok, info(zone_state_a)}
+        {:ok, %{utc_offset: utc_offset_a, std_offset: std_offset_a, zone_abbr: zone_abbr_a}}
     end
   end
 
@@ -223,21 +266,6 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
       {date_time, {std_offset, letters}}
     end)
   end
-
-  defp gap(zone_state_a, at_a, zone_state_b, at_b) do
-    limit_a = NaiveDateTimeUtil.from_gregorian_seconds(at_a)
-    limit_b = NaiveDateTimeUtil.from_gregorian_seconds(at_b)
-    {:gap, {info(zone_state_a), limit_a}, {info(zone_state_b), limit_b}}
-  end
-
-  defp to_wall({at, {utc_offset, std_offset, _}}),
-    do: at + utc_offset + std_offset
-
-  defp to_wall({at, {_, _, _}}, {_, {utc_offset, std_offset, _}}),
-    do: at + utc_offset + std_offset
-
-  defp info({_, {utc_offset, std_offset, zone_abbr}}),
-    do: %{utc_offset: utc_offset, std_offset: std_offset, zone_abbr: zone_abbr}
 
   defp iso_days_to_gregorian_seconds({days, {parts_in_day, @parts_per_day}}) do
     div(days * @parts_per_day + parts_in_day, @microseconds_per_second)
