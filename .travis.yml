@@ -23,7 +23,7 @@ before_script:
 script:
   - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix format --check-formatted ;fi
   - mix credo --strict
-  - mix test
+  - mix coveralls.travis
   - mix dialyzer --halt-exit-status
 
 sudo: required
@@ -33,5 +33,3 @@ dist: trusty
 cache:
   directories:
     - deps
-    - test/support/plts
-
