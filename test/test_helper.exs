@@ -24,9 +24,7 @@ Application.ensure_all_started(:mox)
 config =
   if System.get_env("CI") do
     [
-      # max_runs: 10_000,
-      # set to 1 for the first travis run
-      max_runs: 1,
+      max_runs: 10_000,
       timeout: 60_000,
       checker: []
     ]
