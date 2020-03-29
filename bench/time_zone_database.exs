@@ -120,10 +120,12 @@ defmodule Bench.TimeZoneDatabase do
     files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
 
     time_zone_info_data =
-      with {:ok, data} <- IanaParser.parse(path, files) do
-        Transformer.transform(data, "2019c", lookahead: 5)
-      else
-        {:error, _} -> raise "Can not parse '#{path}'!"
+      case IanaParser.parse(path, files) do
+        {:ok, data} ->
+          Transformer.transform(data, "2019c", lookahead: 5)
+
+        {:error, _} ->
+          raise "Can not parse '#{path}'!"
       end
 
     DataStore.PersistentTerm.put(time_zone_info_data)
