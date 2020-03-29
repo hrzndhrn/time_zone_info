@@ -8,7 +8,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   @behaviour Calendar.TimeZoneDatabase
 
-  @compile {:inline, gap: 4, info: 1, to_wall: 1, to_wall: 2}
+  @compile {:inline, gap: 4, convert: 1, to_wall: 1, to_wall: 2}
 
   @seconds_per_day 24 * 60 * 60
   @microseconds_per_second 1_000_000
@@ -129,16 +129,16 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
     cond do
       at_wall_b <= at_wall && at_wall < at_wall_ba ->
-        {:ambiguous, info(zone_state_a), info(zone_state_b)}
+        {:ambiguous, convert(zone_state_a), convert(zone_state_b)}
 
       at_wall_ba <= at_wall && at_wall < at_wall_b ->
         gap(zone_state_a, at_wall_ba, zone_state_b, at_wall_b)
 
       at_wall < at_wall_b ->
-        {:ok, info(zone_state_a)}
+        {:ok, convert(zone_state_a)}
 
       true ->
-        {:ok, info(zone_state_b)}
+        {:ok, convert(zone_state_b)}
     end
   end
 
@@ -160,25 +160,25 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
     cond do
       at_wall >= at_wall_c && at_wall < at_wall_cb ->
-        {:ambiguous, info(zone_state_b), info(zone_state_c)}
+        {:ambiguous, convert(zone_state_b), convert(zone_state_c)}
 
       at_wall >= at_wall_c ->
-        {:ok, info(zone_state_c)}
+        {:ok, convert(zone_state_c)}
 
       at_wall >= at_wall_cb ->
         gap(zone_state_b, at_wall_cb, zone_state_c, at_wall_c)
 
       at_wall >= at_wall_b && at_wall < at_wall_ba ->
-        {:ambiguous, info(zone_state_a), info(zone_state_b)}
+        {:ambiguous, convert(zone_state_a), convert(zone_state_b)}
 
       at_wall >= at_wall_b ->
-        {:ok, info(zone_state_b)}
+        {:ok, convert(zone_state_b)}
 
       at_wall >= at_wall_ba ->
         gap(zone_state_a, at_wall_ba, zone_state_b, at_wall_b)
 
       at_wall >= at_wall_a ->
-        {:ok, info(zone_state_a)}
+        {:ok, convert(zone_state_a)}
     end
   end
 
@@ -227,7 +227,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   defp gap(zone_state_a, at_a, zone_state_b, at_b) do
     limit_a = NaiveDateTimeUtil.from_gregorian_seconds(at_a)
     limit_b = NaiveDateTimeUtil.from_gregorian_seconds(at_b)
-    {:gap, {info(zone_state_a), limit_a}, {info(zone_state_b), limit_b}}
+    {:gap, {convert(zone_state_a), limit_a}, {convert(zone_state_b), limit_b}}
   end
 
   defp to_wall({at, {utc_offset, std_offset, _}}),
@@ -236,7 +236,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   defp to_wall({at, {_, _, _}}, {_, {utc_offset, std_offset, _}}),
     do: at + utc_offset + std_offset
 
-  defp info({_, {utc_offset, std_offset, zone_abbr}}),
+  defp convert({_, {utc_offset, std_offset, zone_abbr}}),
     do: %{utc_offset: utc_offset, std_offset: std_offset, zone_abbr: zone_abbr}
 
   defp iso_days_to_gregorian_seconds({days, {parts_in_day, @parts_per_day}}) do
