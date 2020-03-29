@@ -108,7 +108,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
 
     desc = "Calculate period from rules"
 
-    @tag :only
     prove desc,
           time_zone_period_from_utc_iso_days(
             ~N[2034-03-26 01:00:00],
