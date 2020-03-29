@@ -27,6 +27,12 @@ defmodule TimeZoneInfo.IanaParserTest do
 
       assert Parser.parse(data) == {:ok, @empty}
     end
+
+    test "multiple lines with \\r\\n" do
+      data = "# comment 1 \r\n\r\n# comment 2"
+
+      assert Parser.parse(data) == {:ok, @empty}
+    end
   end
 
   describe "parse invalid input" do

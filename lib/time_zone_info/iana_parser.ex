@@ -59,7 +59,7 @@ defmodule TimeZoneInfo.IanaParser do
 
   empty_line =
     whitespace()
-    |> string("\n")
+    |> choice([string("\n"), string("\r\n")])
     |> ignore()
 
   comment =
