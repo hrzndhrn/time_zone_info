@@ -53,7 +53,7 @@ defmodule TimeZoneInfo.IanaParser.Helper do
   end
 
   defp do_word do
-    [{:not, ?\t}, {:not, ?\n}, {:not, ?#}, {:not, ?\s}]
+    [{:not, ?\t}, {:not, ?\n}, {:not, ?#}, {:not, ?\s}, {:not, ?\r}]
     |> utf8_char
     |> repeat()
     |> reduce({:reduce_word, []})
@@ -317,12 +317,15 @@ defmodule TimeZoneInfo.IanaParser.Helper do
   end
 
   def close(combinator) do
-    concat(combinator, "\n" |> string() |> optional() |> ignore())
+    concat(
+      combinator,
+      [string("\n"), string("\r\n")] |> choice() |> optional() |> ignore()
+    )
   end
 
   def close(combinator, tag) do
     combinator
-    |> concat("\n" |> string() |> optional() |> ignore())
+    |> concat([string("\n"), string("\r\n")] |> choice() |> optional() |> ignore())
     |> reduce({:reduce_close, []})
     |> unwrap_and_tag(tag)
   end
