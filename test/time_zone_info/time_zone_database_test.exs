@@ -754,7 +754,14 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     prove time_zone_periods_from_wall_datetime(
             ~N[1994-09-24 22:00:00],
             "Asia/Aqtau"
-          ) == {:ok, %{utc_offset: 3208, std_offset: 0, zone_abbr: "LMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 18000,
+              zone_abbr: "+06"
+            }
+          }
   end
 
   describe "time_zone_periods_from_wall_datetime/2 in the transition month:" do

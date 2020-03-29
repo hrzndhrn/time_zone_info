@@ -167,7 +167,6 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
-    @tag :only
     test "updates data for europe and etcetera" do
       update_env(files: ~w(europe etcetera))
       touch_data(@path, now(sub: 2 * @seconds_per_day))
