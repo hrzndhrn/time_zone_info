@@ -158,6 +158,13 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     at_wall_cb = to_wall(zone_state_c, zone_state_b)
     at_wall_c = to_wall(zone_state_c)
 
+    IO.inspect(zone_state_a)
+    IO.inspect(zone_state_b)
+    IO.inspect(zone_state_c)
+    NaiveDateTimeUtil.from_gregorian_seconds(at_wall_a) |> IO.inspect
+    NaiveDateTimeUtil.from_gregorian_seconds(at_wall_b) |> IO.inspect
+    NaiveDateTimeUtil.from_gregorian_seconds(at_wall_c) |> IO.inspect
+
     cond do
       at_wall >= at_wall_c && at_wall < at_wall_cb ->
         {:ambiguous, convert(zone_state_b), convert(zone_state_c)}

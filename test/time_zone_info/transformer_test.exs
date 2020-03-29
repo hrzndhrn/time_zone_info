@@ -32,6 +32,11 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("America/Sao_Paulo")
     end
 
+    @tag :only
+    test "returns transformed data for time zone Asia/Aqtau" do
+      assert_time_zone("Asia/Aqtau")
+    end
+
     test "returns transformed data for time zone Asia/Tbilisi" do
       assert_time_zone("Asia/Tbilisi")
     end
@@ -325,6 +330,21 @@ defmodule TimeZoneInfo.TransformerTest do
         {~N[1931-10-03 14:00:00], {-10800, 3600, "-02"}},
         {~N[1914-01-01 03:06:28], {-10800, 0, "-03"}},
         {~N[0000-01-01 00:00:00], {-11188, 0, "LMT"}}
+      ]
+    ])
+  end
+
+  defp assert_time_zone(time_zones, "Asia/Aqtau" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        #   1995-03-25 22:00:00Z +05:00:00 daylight +05
+        {~N[1995-03-25 22:00:00], {14400, 3600, "+05"}},
+        #   1994-09-24 21:00:00Z +04:00:00 standard +04
+        {~N[1994-09-24 21:00:00], {14400, 0, "+04"}},
+        #   1994-03-26 21:00:00Z +06:00:00 daylight +06
+        {~N[1994-03-26 21:00:00], {18000, 3600, "+06"}},
+        #   1993-09-25 21:00:00Z +05:00:00 standard +05
+        {~N[1993-09-25 21:00:00], {18000, 0, "+05"}}
       ]
     ])
   end
@@ -808,6 +828,7 @@ defmodule TimeZoneInfo.TransformerTest do
     time_zones
     |> get_in([:time_zones, time_zone])
     |> to_naive()
+    |> IO.inspect(limit: :infinity)
     |> assert_sequences(expected)
   end
 

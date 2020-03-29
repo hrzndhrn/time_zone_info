@@ -108,7 +108,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
 
     desc = "Calculate period from rules"
 
-    @tag :only
     prove desc,
           time_zone_period_from_utc_iso_days(
             ~N[2034-03-26 01:00:00],
@@ -149,6 +148,18 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             ~N[1991-03-30 20:59:59],
             "Asia/Yekaterinburg"
           ) == {:ok, %{std_offset: 0, utc_offset: 18000, zone_abbr: "+05"}}
+
+    prove time_zone_period_from_utc_iso_days(
+            ~N[1994-09-24 22:00:00],
+            "Asia/Aqtau"
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 14400,
+              zone_abbr: "+04"
+            }
+          }
   end
 
   describe "time_zone_period_from_utc_iso_days/2 per decade/century:" do
@@ -734,6 +745,15 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[-1111-03-31 03:00:00],
             "Europe/Berlin"
+          ) == {:ok, %{utc_offset: 3208, std_offset: 0, zone_abbr: "LMT"}}
+
+    # ==========================================================================
+    # Issue: https://github.com/hrzndhrn/time_zone_info/issues/4
+
+    @tag :only
+    prove time_zone_periods_from_wall_datetime(
+            ~N[1994-09-24 22:00:00],
+            "Asia/Aqtau"
           ) == {:ok, %{utc_offset: 3208, std_offset: 0, zone_abbr: "LMT"}}
   end
 
