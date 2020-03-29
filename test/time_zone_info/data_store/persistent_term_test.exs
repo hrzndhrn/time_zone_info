@@ -1,12 +1,10 @@
 defmodule TimeZoneInfo.DataStore.PersistentTermTest do
-  if function_exported?(PersistentTerm, :put, 1) do
+  if function_exported?(:persistent_term, :get, 0) do
     use TimeZoneInfo.TimeZoneDatabaseCase,
       data_store: TimeZoneInfo.DataStore.PersistentTerm
 
-    alias TimeZoneInfo.DataStore.PersistentTerm
-
     test "get_transitions/1" do
-      assert {:ok, zone_states} = PersistentTerm.get_transitions("Pacific/Auckland")
+      assert {:ok, zone_states} = TimeZoneInfo.DataStore.get_transitions("Pacific/Auckland")
 
       assert Enum.take(zone_states, 3) ==
                [
@@ -17,7 +15,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
     end
 
     test "get_rules/1" do
-      assert {:ok, rules} = PersistentTerm.get_rules("NZ")
+      assert {:ok, rules} = TimeZoneInfo.DataStore.get_rules("NZ")
 
       assert rules == [
                {{4, [day: 1, op: :ge, day_of_week: 7], 2, 0, 0}, :standard, 0, "S"},

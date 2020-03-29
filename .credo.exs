@@ -36,6 +36,7 @@
           ~r"/_build/",
           ~r"/deps/",
           ~r"/node_modules/",
+          "test/time_zone_info/data_store/persistent_term_test.exs",
           "test/support/time_zone_info/time_zone_database_checker.exs",
           "test/support/time_zone_info/checker.exs",
           "bench/scripts/gen_data.exs"
