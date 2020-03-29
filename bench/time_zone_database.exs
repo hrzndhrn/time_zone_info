@@ -122,6 +122,8 @@ defmodule Bench.TimeZoneDatabase do
     time_zone_info_data =
       with {:ok, data} <- IanaParser.parse(path, files) do
         Transformer.transform(data, "2019c", lookahead: 5)
+      else
+        {:error, _} -> raise "Can not parse '#{path}'!"
       end
 
     DataStore.PersistentTerm.put(time_zone_info_data)
