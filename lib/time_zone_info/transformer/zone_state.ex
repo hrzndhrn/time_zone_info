@@ -98,7 +98,12 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     until = NaiveDateTimeUtil.to_utc(until, time_standard, utc_offset)
     transitions = Rule.transitions(rules, since, until, utc_offset, last_utc_offset, format)
 
-    until = NaiveDateTime.add(until, Transition.get_std_offset(transitions) * -1)
+    until =
+      case time_standard do
+        :standard -> until
+        _ -> NaiveDateTime.add(until, Transition.get_std_offset(transitions) * -1)
+      end
+
     transitions = Transition.transform(transitions)
 
     {transitions, until}

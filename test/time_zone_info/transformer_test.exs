@@ -32,6 +32,10 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("America/Sao_Paulo")
     end
 
+    test "returns transformed data for time zone Asia/Aqtau" do
+      assert_time_zone("Asia/Aqtau")
+    end
+
     test "returns transformed data for time zone Asia/Tbilisi" do
       assert_time_zone("Asia/Tbilisi")
     end
@@ -325,6 +329,39 @@ defmodule TimeZoneInfo.TransformerTest do
         {~N[1931-10-03 14:00:00], {-10800, 3600, "-02"}},
         {~N[1914-01-01 03:06:28], {-10800, 0, "-03"}},
         {~N[0000-01-01 00:00:00], {-11188, 0, "LMT"}}
+      ]
+    ])
+  end
+
+  defp assert_time_zone(time_zones, "Asia/Aqtau" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        #   2004-10-30 22:00:00Z +05:00:00 standard +05
+        {~N[2004-10-30 22:00:00], {18000, 0, "+05"}},
+        #   2004-03-27 22:00:00Z +05:00:00 daylight +05
+        {~N[2004-03-27 22:00:00], {14400, 3600, "+05"}},
+        #   2003-10-25 22:00:00Z +04:00:00 standard +04
+        {~N[2003-10-25 22:00:00], {14400, 0, "+04"}}
+      ],
+      [
+        #   1997-10-25 22:00:00Z +04:00:00 standard +04
+        {~N[1997-10-25 22:00:00], {14400, 0, "+04"}},
+        #   1997-03-29 22:00:00Z +05:00:00 daylight +05
+        {~N[1997-03-29 22:00:00], {14400, 3600, "+05"}},
+        #   1996-10-26 22:00:00Z +04:00:00 standard +04
+        {~N[1996-10-26 22:00:00], {14400, 0, "+04"}},
+        #   1996-03-30 22:00:00Z +05:00:00 daylight +05
+        {~N[1996-03-30 22:00:00], {14400, 3600, "+05"}},
+        #   1995-09-23 22:00:00Z +04:00:00 standard +04
+        {~N[1995-09-23 22:00:00], {14400, 0, "+04"}},
+        #   1995-03-25 22:00:00Z +05:00:00 daylight +05
+        {~N[1995-03-25 22:00:00], {14400, 3600, "+05"}},
+        #   1994-09-24 21:00:00Z +04:00:00 standard +04
+        {~N[1994-09-24 21:00:00], {14400, 0, "+04"}},
+        #   1994-03-26 21:00:00Z +06:00:00 daylight +06
+        {~N[1994-03-26 21:00:00], {18000, 3600, "+06"}},
+        #   1993-09-25 21:00:00Z +05:00:00 standard +05
+        {~N[1993-09-25 21:00:00], {18000, 0, "+05"}}
       ]
     ])
   end
@@ -647,9 +684,13 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "Europe/London" = tz) do
     assert_time_zone(time_zones, tz, [
       [
+        #   1916-10-01 02:00:00Z +00:00:00 standard GMT
         {~N[1916-10-01 02:00:00], {0, 0, "GMT"}},
+        #   1916-05-21 02:00:00Z +01:00:00 daylight BST
         {~N[1916-05-21 02:00:00], {0, 3600, "BST"}},
+        #   1847-12-01 00:01:15Z +00:00:00 standard GMT
         {~N[1847-12-01 00:01:15], {0, 0, "GMT"}},
+        #   Initially:           -00:01:15 standard LMT
         {~N[0000-01-01 00:00:00], {-75, 0, "LMT"}}
       ]
     ])
