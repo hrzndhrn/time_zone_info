@@ -1,21 +1,25 @@
 defmodule TimeZoneInfo.TransformerTest do
   use ExUnit.Case, async: true
 
-  alias TimeZoneInfo.IanaParser
-  alias TimeZoneInfo.Transformer
+  require Logger
+
+  alias TimeZoneInfo.{IanaParser, NaiveDateTimeUtil, Transformer}
 
   setup_all do
     path = "test/fixtures/iana/2019c"
     files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
 
-    %{data: path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)}
+    # %{data: path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)}
+    %{data: :a}
   end
 
   describe "transform/1 extract" do
+    @tag :alg
     test "returns transformed data for time zone Africa/Algiers" do
       assert_time_zone("Africa/Algiers")
     end
 
+    @tag :can
     test "returns transformed data for time zone America/Cancun" do
       assert_time_zone("America/Cancun")
     end
@@ -24,8 +28,33 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("America/Dawson")
     end
 
+    @tag :god
+    test "returns transformed data for time zone America/Godthab" do
+      assert_time_zone("America/Godthab")
+    end
+
     test "returns transformed data for time zone America/Indiana/Knox" do
       assert_time_zone("America/Indiana/Knox")
+    end
+
+    @tag :tel
+    test "returns transformed data for time zone America/Indiana/Tell_City" do
+      assert_time_zone("America/Indiana/Tell_City")
+    end
+
+    @tag :win
+    test "returns transformed data for time zone America/Indiana/Winamac" do
+      assert_time_zone("America/Indiana/Winamac")
+    end
+
+    @tag :jun
+    test "returns transformed data for time zone America/Juneau" do
+      assert_time_zone("America/Juneau")
+    end
+
+    @tag :mon
+    test "returns transformed data for time zone America/Montevideo" do
+      assert_time_zone("America/Montevideo")
     end
 
     test "returns transformed data for time zone America/Sao_Paulo" do
@@ -36,6 +65,7 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("Asia/Aqtau")
     end
 
+    @tag :tbi
     test "returns transformed data for time zone Asia/Tbilisi" do
       assert_time_zone("Asia/Tbilisi")
     end
@@ -44,8 +74,13 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("Asia/Shanghai")
     end
 
+    @tag :yek
     test "returns transformed data for time zone Asia/Yekaterinburg" do
       assert_time_zone("Asia/Yekaterinburg")
+    end
+
+    test "returns transformed data for time zone Europe/Belgrade" do
+      assert_time_zone("Europe/Belgrade")
     end
 
     test "returns transformed data for time zone Europe/Dublin" do
@@ -89,60 +124,44 @@ defmodule TimeZoneInfo.TransformerTest do
              ]
     end
 
-    test "returns transformed data for time zone Africa/Algiers", %{data: data} do
-      assert_time_zone(data, "Africa/Algiers")
-    end
+    @tag :skip
+    @tag :tzv
+    test "against tzvalidate", %{data: data} do
+      read_tzvalidate()
+      |> Enum.each(fn {time_zone, transitions} ->
+        transitions = Enum.reverse(transitions)
 
-    test "returns transformed data for time zone Africa/Nairobi", %{data: data} do
-      assert_time_zone(data, "Africa/Nairobi")
-    end
+        origs =
+          case get_time_zone(data, time_zone) do
+            {:ok, origs} -> origs
+            :error -> flunk("#{time_zone} not found")
+          end
 
-    test "returns transformed data for time zone America/Cancun", %{data: data} do
-      assert_time_zone(data, "America/Cancun")
-    end
+        IO.inspect("--- #{time_zone} ---")
 
-    test "returns transformed data for time zone America/Caracas", %{data: data} do
-      assert_time_zone(data, "America/Caracas")
-    end
+        origs
+        |> Enum.reverse()
+        |> Enum.zip(transitions)
+        |> Enum.each(fn
+          {{at, {utc_offset, std_offset, zone_abbr}} = orig, tzd}
+          when is_integer(std_offset) ->
+            # IO.inspect("----")
+            # IO.inspect(orig, label: :orig)
+            # IO.inspect(tzd, label: :tzd)
+            tzi = {at, utc_offset + std_offset, std_offset != 0, zone_abbr}
 
-    test "returns transformed data for time zone America/Los_Angeles", %{data: data} do
-      assert_time_zone(data, "America/Los_Angeles")
-    end
+            # IO.inspect([tzi: tzi, tzd: tzd], label: :compare)
 
-    test "returns transformed data for time zone America/Port_of_Spain", %{data: data} do
-      assert_time_zone(data, "America/Port_of_Spain")
-    end
+            assert tzi == tzd, """
+            #{time_zone} #{NaiveDateTimeUtil.from_gregorian_seconds(at)}:
+            orig:       #{inspect(orig)}
+            tzvalidate: #{inspect(tzd)}
+            """
 
-    test "returns transformed data for time zone Asia/Shanghai", %{data: data} do
-      assert_time_zone(data, "Asia/Shanghai")
-    end
-
-    test "returns transformed data for time zone Asia/Taipei", %{data: data} do
-      assert_time_zone(data, "Asia/Taipei")
-    end
-
-    test "returns transformed data for time zone Australia/Adelaide", %{data: data} do
-      assert_time_zone(data, "Australia/Adelaide")
-    end
-
-    test "returns transformed data for time zone Europe/Berlin", %{data: data} do
-      assert_time_zone(data, "Europe/Berlin")
-    end
-
-    test "returns transformed data for time zone Europe/Istanbul", %{data: data} do
-      assert_time_zone(data, "Europe/Istanbul")
-    end
-
-    test "returns transformed data for time zone Europe/Luxembourg", %{data: data} do
-      assert_time_zone(data, "Europe/Luxembourg")
-    end
-
-    test "returns transformed data for time zone Europe/Vienna", %{data: data} do
-      assert_time_zone(data, "Europe/Vienna")
-    end
-
-    test "returns transformed data for time zone Pacific/Auckland", %{data: data} do
-      assert_time_zone(data, "Pacific/Auckland")
+          _ ->
+            :ok
+        end)
+      end)
     end
   end
 
@@ -200,19 +219,33 @@ defmodule TimeZoneInfo.TransformerTest do
         {~N[2013-04-07 08:00:00], {-21600, 3600, "CDT"}}
       ],
       [
+        #   2000-10-29 07:00:00Z -06:00:00 standard CST
         {~N[2000-10-29 07:00:00], {-21600, 0, "CST"}},
+        #   2000-04-02 08:00:00Z -05:00:00 daylight CDT
         {~N[2000-04-02 08:00:00], {-21600, 3600, "CDT"}},
+        #   1999-10-31 07:00:00Z -06:00:00 standard CST
         {~N[1999-10-31 07:00:00], {-21600, 0, "CST"}},
+        #   1999-04-04 08:00:00Z -05:00:00 daylight CDT
         {~N[1999-04-04 08:00:00], {-21600, 3600, "CDT"}},
+        #   1998-10-25 07:00:00Z -06:00:00 standard CST
         {~N[1998-10-25 07:00:00], {-21600, 0, "CST"}},
+        #   1998-08-02 06:00:00Z -05:00:00 daylight CDT
         {~N[1998-08-02 06:00:00], {-21600, 3600, "CDT"}},
+        #   1998-04-05 07:00:00Z -04:00:00 daylight EDT
         {~N[1998-04-05 07:00:00], {-18000, 3600, "EDT"}},
+        #   1997-10-26 06:00:00Z -05:00:00 standard EST
         {~N[1997-10-26 06:00:00], {-18000, 0, "EST"}},
+        #   1997-04-06 07:00:00Z -04:00:00 daylight EDT
         {~N[1997-04-06 07:00:00], {-18000, 3600, "EDT"}},
+        #   1996-10-27 06:00:00Z -05:00:00 standard EST
         {~N[1996-10-27 06:00:00], {-18000, 0, "EST"}},
+        #   1996-04-07 07:00:00Z -04:00:00 daylight EDT
         {~N[1996-04-07 07:00:00], {-18000, 3600, "EDT"}},
+        #   1981-12-23 06:00:00Z -05:00:00 standard EST
         {~N[1981-12-23 06:00:00], {-18000, 0, "EST"}},
+        #   1922-01-01 06:00:00Z -06:00:00 standard CST
         {~N[1922-01-01 06:00:00], {-21600, 0, "CST"}},
+        #   Initially:           -05:47:04 standard LMT
         {~N[0000-01-01 00:00:00], {-20824, 0, "LMT"}}
       ]
     ])
@@ -274,12 +307,77 @@ defmodule TimeZoneInfo.TransformerTest do
     ])
   end
 
+  defp assert_time_zone(time_zones, "America/Godthab" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        #   1982-09-26 01:00:00Z -03:00:00 standard -03
+        {~N[1982-09-26 01:00:00], {-10800, 0, "-03"}},
+        #   1982-03-28 01:00:00Z -02:00:00 daylight -02
+        {~N[1982-03-28 01:00:00], {-10800, 3600, "-02"}},
+        #   1981-09-27 01:00:00Z -03:00:00 standard -03
+        {~N[1981-09-27 01:00:00], {-10800, 0, "-03"}},
+        #   1981-03-29 01:00:00Z -02:00:00 daylight -02
+        {~N[1981-03-29 01:00:00], {-10800, 3600, "-02"}},
+        #   1980-09-28 01:00:00Z -03:00:00 standard -03
+        {~N[1980-09-28 01:00:00], {-10800, 0, "-03"}},
+        #   1980-04-06 05:00:00Z -02:00:00 daylight -02
+        {~N[1980-04-06 05:00:00], {-10800, 3600, "-02"}}
+      ],
+      [
+        #   1916-07-28 03:26:56Z -03:00:00 standard -03
+        {~N[1916-07-28 03:26:56], {-10800, 0, "-03"}},
+        #   Initially:           -03:26:56 standard LMT
+        {~N[0000-01-01 00:00:00], {-12416, 0, "LMT"}}
+      ]
+    ])
+  end
+
   defp assert_time_zone(time_zones, "America/Indiana/Knox" = tz) do
     assert_time_zone(time_zones, tz, [
       [
         {~N[1918-03-31 08:00:00], {-21600, 3600, "CDT"}},
         {~N[1883-11-18 18:00:00], {-21600, 0, "CST"}},
         {~N[0000-01-01 00:00:00], {-20790, 0, "LMT"}}
+      ]
+    ])
+  end
+
+  defp assert_time_zone(time_zones, "America/Indiana/Tell_City" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        {~N[1968-04-28 08:00:00], {-21600, 3600, "CDT"}},
+        {~N[1967-10-29 07:00:00], {-21600, 0, "CST"}},
+        {~N[1964-04-26 08:00:00], {-18000, 0, "EST"}}
+      ],
+      [
+        {~N[1918-03-31 08:00:00], {-21600, 3600, "CDT"}},
+        {~N[1883-11-18 18:00:00], {-21600, 0, "CST"}},
+        {~N[0000-01-01 00:00:00], {-20823, 0, "LMT"}}
+      ]
+    ])
+  end
+
+  defp assert_time_zone(time_zones, "America/Indiana/Winamac" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        #   2008-11-02 06:00:00Z -05:00:00 standard EST
+        {~N[2008-11-02 06:00:00], {-18000, 0, "EST"}},
+        #   2008-03-09 07:00:00Z -04:00:00 daylight EDT
+        {~N[2008-03-09 07:00:00], {-18000, 3600, "EDT"}},
+        #   2007-11-04 06:00:00Z -05:00:00 standard EST
+        {~N[2007-11-04 06:00:00], {-18000, 0, "EST"}},
+        #   2007-03-11 08:00:00Z -04:00:00 daylight EDT
+        {~N[2007-03-11 08:00:00], {-18000, 3600, "EDT"}},
+        #   2006-10-29 07:00:00Z -06:00:00 standard CST
+        {~N[2006-10-29 07:00:00], {-21600, 0, "CST"}},
+        #   2006-04-02 07:00:00Z -05:00:00 daylight CDT
+        {~N[2006-04-02 07:00:00], {-21600, 3600, "CDT"}},
+        #   1970-10-25 06:00:00Z -05:00:00 standard EST
+        {~N[1970-10-25 06:00:00], {-18000, 0, "EST"}},
+        #   1970-04-26 07:00:00Z -04:00:00 daylight EDT
+        {~N[1970-04-26 07:00:00], {-18000, 3600, "EDT"}},
+        #   1969-10-26 06:00:00Z -05:00:00 standard EST
+        {~N[1969-10-26 06:00:00], {-18000, 0, "EST"}}
       ]
     ])
   end
@@ -302,6 +400,58 @@ defmodule TimeZoneInfo.TransformerTest do
     assert_time_zone(time_zones, tz, [
       {~N[1912-03-02 04:06:04], {-14400, 0, "AST"}},
       {~N[0000-01-01 00:00:00], {-14764, 0, "LMT"}}
+    ])
+  end
+
+  defp assert_time_zone(time_zones, "America/Juneau" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        #   1984-10-28 10:00:00Z -09:00:00 standard AKST
+        {~N[1984-10-28 10:00:00], {-32400, 0, "AKST"}},
+        #   1984-04-29 11:00:00Z -08:00:00 daylight AKDT
+        {~N[1984-04-29 11:00:00], {-32400, 3600, "AKDT"}},
+        #   1983-11-30 09:00:00Z -09:00:00 standard AKST
+        {~N[1983-11-30 09:00:00], {-32400, 0, "AKST"}},
+        #   1983-10-30 09:00:00Z -09:00:00 standard YST
+        {~N[1983-10-30 09:00:00], {-32400, 0, "YST"}},
+        #   1983-04-24 10:00:00Z -07:00:00 daylight PDT
+        {~N[1983-04-24 10:00:00], {-28800, 3600, "PDT"}},
+        #   1982-10-31 09:00:00Z -08:00:00 standard PST
+        {~N[1982-10-31 09:00:00], {-28800, 0, "PST"}},
+        #   1982-04-25 10:00:00Z -07:00:00 daylight PDT
+        {~N[1982-04-25 10:00:00], {-28800, 3600, "PDT"}}
+      ]
+    ])
+  end
+
+  defp assert_time_zone(time_zones, "America/Montevideo" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        #   1959-05-24 03:00:00Z -02:30:00 daylight -0230
+        {~N[1959-05-24 03:00:00], {-10800, 1800, "-0230"}},
+        #   1943-03-14 02:30:00Z -03:00:00 standard -03
+        {~N[1943-03-14 02:30:00], {-10800, 0, "-03"}},
+        #   1942-12-14 03:00:00Z -02:30:00 daylight -0230
+        {~N[1942-12-14 03:00:00], {-10800, 1800, "-0230"}},
+        #   1941-08-01 03:30:00Z -03:00:00 daylight -03
+        {~N[1941-08-01 03:30:00], {-12600, 1800, "-03"}},
+        #   1941-03-30 03:00:00Z -03:30:00 standard -0330
+        {~N[1941-03-30 03:00:00], {-12600, 0, "-0330"}}
+      ],
+      [
+        #   1924-10-01 03:30:00Z -03:00:00 daylight -03
+        {~N[1924-10-01 03:30:00], {-12600, 1800, "-03"}},
+        #   1924-04-01 03:00:00Z -03:30:00 standard -0330
+        {~N[1924-04-01 03:00:00], {-12600, 0, "-0330"}},
+        #   1923-10-01 04:00:00Z -03:00:00 daylight -03
+        {~N[1923-10-01 04:00:00], {-12600, 1800, "-03"}},
+        #   1920-05-01 03:44:51Z -04:00:00 standard -04
+        {~N[1920-05-01 03:44:51], {-14400, 0, "-04"}},
+        #   1908-06-10 03:44:51Z -03:44:51 standard MMT
+        {~N[1908-06-10 03:44:51], {-13491, 0, "MMT"}},
+        #   Initially:           -03:44:51 standard LMT
+        {~N[0000-01-01 00:00:00], {-13491, 0, "LMT"}}
+      ]
     ])
   end
 
@@ -390,7 +540,14 @@ defmodule TimeZoneInfo.TransformerTest do
         {~N[1997-10-25 19:00:00], {14400, 0, "+04"}},
         #   1996-03-30 20:00:00Z +05:00:00 daylight +05
         {~N[1996-03-30 20:00:00], {14400, 3600, "+05"}},
-        {~N[1995-09-23 19:00:00], {14400, 0, "+04"}}
+        #   1995-09-23 19:00:00Z +04:00:00 standard +04
+        {~N[1995-09-23 19:00:00], {14400, 0, "+04"}},
+        #   1995-03-25 20:00:00Z +05:00:00 daylight +05
+        {~N[1995-03-25 20:00:00], {14400, 3600, "+05"}},
+        #   1994-09-24 20:00:00Z +04:00:00 standard +04
+        {~N[1994-09-24 20:00:00], {14400, 0, "+04"}},
+        #   1994-03-26 21:00:00Z +04:00:00 daylight +04
+        {~N[1994-03-26 21:00:00], {10800, 3600, "+04"}}
       ],
       [
         {~N[1981-09-30 19:00:00], {14400, 0, "+04"}},
@@ -580,6 +737,25 @@ defmodule TimeZoneInfo.TransformerTest do
     ])
   end
 
+  defp assert_time_zone(time_zones, "Europe/Belgrade" = tz) do
+    assert_time_zone(time_zones, tz, [
+      [
+        #   1943-10-04 01:00:00Z +01:00:00 standard CET
+        {~N[1943-10-04 01:00:00], {3600, 0, "CET"}},
+        #   1943-03-29 01:00:00Z +02:00:00 daylight CEST
+        {~N[1943-03-29 01:00:00], {3600, 3600, "CEST"}},
+        #   1942-11-02 01:00:00Z +01:00:00 standard CET
+        {~N[1942-11-02 01:00:00], {3600, 0, "CET"}},
+        #   1941-04-18 22:00:00Z +02:00:00 daylight CEST
+        {~N[1941-04-18 22:00:00], {3600, 3600, "CEST"}},
+        #   1883-12-31 22:38:00Z +01:00:00 standard CET
+        {~N[1883-12-31 22:38:00], {3600, 0, "CET"}},
+        #   Initially:           +01:22:00 standard LMT
+        {~N[0000-01-01 00:00:00], {4920, 0, "LMT"}}
+      ]
+    ])
+  end
+
   defp assert_time_zone(time_zones, "Europe/Dublin" = tz) do
     assert_time_zone(time_zones, tz, [
       [
@@ -683,6 +859,34 @@ defmodule TimeZoneInfo.TransformerTest do
 
   defp assert_time_zone(time_zones, "Europe/London" = tz) do
     assert_time_zone(time_zones, tz, [
+      [
+        #   1997-10-26 01:00:00Z +00:00:00 standard GMT
+        {~N[1997-10-26 01:00:00], {0, 0, "GMT"}},
+        #   1997-03-30 01:00:00Z +01:00:00 daylight BST
+        {~N[1997-03-30 01:00:00], {0, 3600, "BST"}},
+        #   1996-10-27 01:00:00Z +00:00:00 standard GMT
+        {~N[1996-10-27 01:00:00], {0, 0, "GMT"}},
+        #   1996-03-31 01:00:00Z +01:00:00 daylight BST
+        {~N[1996-03-31 01:00:00], {0, 3600, "BST"}},
+        #   1995-10-22 01:00:00Z +00:00:00 standard GMT
+        {~N[1995-10-22 01:00:00], {0, 0, "GMT"}},
+        #   1995-03-26 01:00:00Z +01:00:00 daylight BST
+        {~N[1995-03-26 01:00:00], {0, 3600, "BST"}}
+      ],
+      [
+        #   1973-03-18 02:00:00Z +01:00:00 daylight BST
+        {~N[1973-03-18 02:00:00], {0, 3600, "BST"}},
+        #   1972-10-29 02:00:00Z +00:00:00 standard GMT
+        {~N[1972-10-29 02:00:00], {0, 0, "GMT"}},
+        #   1972-03-19 02:00:00Z +01:00:00 daylight BST
+        {~N[1972-03-19 02:00:00], {0, 3600, "BST"}},
+        #   1971-10-31 02:00:00Z +00:00:00 standard GMT
+        {~N[1971-10-31 02:00:00], {0, 0, "GMT"}},
+        #   1968-10-26 23:00:00Z +01:00:00 standard BST
+        {~N[1968-10-26 23:00:00], {3600, 0, "BST"}},
+        #   1968-02-18 02:00:00Z +01:00:00 daylight BST
+        {~N[1968-02-18 02:00:00], {0, 3600, "BST"}}
+      ],
       [
         #   1916-10-01 02:00:00Z +00:00:00 standard GMT
         {~N[1916-10-01 02:00:00], {0, 0, "GMT"}},
@@ -849,6 +1053,7 @@ defmodule TimeZoneInfo.TransformerTest do
     time_zones
     |> get_in([:time_zones, time_zone])
     |> to_naive()
+    |> IO.inspect(limit: :infinity, label: :test)
     |> assert_sequences(expected)
   end
 
@@ -872,5 +1077,95 @@ defmodule TimeZoneInfo.TransformerTest do
     amount = length(elements)
 
     assert Enum.slice(data, index, amount) == elements
+  end
+
+  defp read_tzvalidate do
+    content =
+      File.read!("test/fixtures/iana/2019c/tzvalidate.txt")
+      |> String.split("\n")
+
+    content |> length |> IO.inspect()
+    Enum.take(content, 10) |> IO.inspect()
+
+    Enum.reduce(content, {%{}, nil}, fn
+      "", {map, _} ->
+        {map, nil}
+
+      time_zone, {map, nil} ->
+        {Map.put(map, time_zone, []), time_zone}
+
+      line, {map, time_zone} ->
+        lines = Map.get(map, time_zone)
+        {Map.put(map, time_zone, [line | lines]), time_zone}
+    end)
+    |> elem(0)
+    |> Enum.into(%{}, fn {time_zone, transitions} ->
+      transitions =
+        Enum.map(transitions, fn transition ->
+          transition = String.split(transition)
+
+          transition =
+            case length(transition) do
+              4 ->
+                {
+                  0,
+                  time_to_seconds(Enum.at(transition, 1)),
+                  Enum.at(transition, 2) == "daylight",
+                  Enum.at(transition, 3)
+                }
+
+              5 ->
+                datetime =
+                  transition
+                  |> Enum.take(2)
+                  |> Enum.join(" ")
+                  |> NaiveDateTime.from_iso8601!()
+                  |> NaiveDateTimeUtil.to_gregorian_seconds()
+
+                {
+                  datetime,
+                  time_to_seconds(Enum.at(transition, 2)),
+                  Enum.at(transition, 3) == "daylight",
+                  Enum.at(transition, 4)
+                }
+            end
+        end)
+
+      {time_zone, transitions}
+    end)
+    |> IO.inspect(label: :tzvalidate)
+  end
+
+  defp time_to_seconds("+" <> time), do: time_to_seconds(time)
+
+  defp time_to_seconds("-" <> time), do: time_to_seconds(time) * -1
+
+  defp time_to_seconds(time) do
+    [hours, minutes, seconds] =
+      time
+      |> String.split(":")
+      |> Enum.map(&String.to_integer/1)
+
+    hours * 3600 + minutes * 60 + seconds
+  end
+
+  defp get_time_zone(data, time_zone, link \\ false) do
+    data
+    |> Map.fetch!(:time_zones)
+    |> Map.fetch(time_zone)
+    |> case do
+      {:ok, _} = transitions ->
+        transitions
+
+      :error ->
+        case link do
+          true ->
+            :error
+
+          false ->
+            link = get_in(data, [:links, time_zone])
+            get_time_zone(data, link, true)
+        end
+    end
   end
 end

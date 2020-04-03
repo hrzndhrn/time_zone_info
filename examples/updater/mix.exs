@@ -26,6 +26,7 @@ defmodule Updater.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:castore, "~> 0.1"},
       {:mint, "~> 1.0"},
+      # {:time_zone_info, "~> 0.1"}
       {:time_zone_info, path: "../.."}
     ]
   end

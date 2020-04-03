@@ -3,18 +3,33 @@ defmodule TimeZoneInfo.TimeZoneDatabaseChecker do
     quote do
       import TimeZoneInfo.NaiveDateTimeUtil, only: [to_iso_days: 1]
 
+      @module unquote(opts[:module])
       alias unquote(opts[:module]).TimeZoneDatabase
+      alias TimeZoneInfo.NaiveDateTimeUtil
 
-      def periods_from_wall(datetime, time_zone, expected),
-        do: do_check(:time_zone_periods_from_wall_datetime, [datetime, time_zone], expected)
+      def periods_from_wall(datetime, time_zone, expected) do
+        case check?(@module, datetime, time_zone) do
+          true ->
+            do_check(:time_zone_periods_from_wall_datetime, [datetime, time_zone], expected)
 
-      def period_from_utc(datetime, time_zone, expected),
-        do:
-          do_check(
-            :time_zone_period_from_utc_iso_days,
-            [to_iso_days(datetime), time_zone],
-            expected
-          )
+          false ->
+            {:valid, expected}
+        end
+      end
+
+      def period_from_utc(datetime, time_zone, expected) do
+        case check?(@module, datetime, time_zone) do
+          true ->
+            do_check(
+              :time_zone_period_from_utc_iso_days,
+              [to_iso_days(datetime), time_zone],
+              expected
+            )
+
+          false ->
+            {:valid, expected}
+        end
+      end
 
       defp do_check(fun, args, expected) do
         try do
@@ -43,6 +58,12 @@ defmodule TimeZoneInfo.TimeZoneDatabaseChecker do
       end
 
       defp strip(data), do: data
+
+      defp check?(Tz, datetime, _time_zone) do
+        NaiveDateTimeUtil.before?(datetime, NaiveDateTime.utc_now())
+      end
+
+      defp check?(_, _datetime, _time_zone), do: true
     end
   end
 end

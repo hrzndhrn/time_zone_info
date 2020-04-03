@@ -49,17 +49,49 @@ defmodule TimeZoneInfo.Transformer.Transition do
 
   @doc """
   Adds a transition to transitions if the first transition does not have the
-  same datetime.
+  same datetime or the same info.
   """
   @spec add_new(t(), [t()]) :: [t()]
+  def add_new(transition, []), do: [transition]
   def add_new({at, _}, [{at, _} | _] = transitions), do: transitions
 
-  def add_new({at, _} = transition, [{at_a, {_, std_offset_a, _, _}} | _] = transitions) do
-    case at == NaiveDateTime.add(at_a, std_offset_a * -1) do
-      true -> transitions
-      false -> [transition | transitions]
+  def add_new({_, info}, [{_, info} | _] = transitions), do: transitions
+
+  # def add_new(transition, transitions), do: [transition|transitions]
+
+  # TODO: flip args
+  # def add_new({at, _} = transition,
+  # [{at_a, {_, std_offset_a, _, _}} | _] = transitions) do
+  # case at == NaiveDateTime.add(at_a, std_offset_a * -1) do
+  def add_new(transition, [head | rest] = transitions) do
+    IO.inspect({transition, head}, label: :add_new)
+
+    case add_new_check(transition, head) do
+      true ->
+        IO.inspect(true, label: :add_new)
+        [do_add_new(transition, head) | transitions]
+
+      false ->
+        IO.inspect(false, label: :add_new)
+        [transition|transitions]
     end
   end
 
-  def add_new(transition, transitions), do: [transition | transitions]
+  defp add_new_check(
+    {at_a, {_, std_offset_a,_,_}},
+    {at_b, {_, std_offset_b,_,_}}
+  ) do
+    at_a == NaiveDateTime.add(at_b, std_offset_a * -1)
+  end
+
+  defp do_add_new({at, _}, {_, info}), do: {at, info}
+
+
+  def update(transitions, nil), do: transitions
+
+  def update([{at, info} | tail], offset) do
+    IO.inspect([at: at, offset: offset], label: :update)
+    datetime = NaiveDateTime.add(at, offset * -1)
+    [{datetime, info} | tail]
+  end
 end

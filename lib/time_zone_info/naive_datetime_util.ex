@@ -130,13 +130,17 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
   end
 
   @doc """
-  Returns a naive dattime at the end of the year for the given `year`.
+  Returns a naive datetime at the end of the year for the given `year` or
+  `datetime`.
   """
   @spec end_of_year(Calendar.year()) :: NaiveDateTime.t()
   def end_of_year(year) when is_integer(year) do
     with {:ok, datetime} <- NaiveDateTime.new(year, 12, 31, 23, 59, 59),
          do: datetime
   end
+
+  @spec end_of_year(NaiveDateTime.t()) :: NaiveDateTime.t()
+  def end_of_year(datetime), do: end_of_year(datetime.year)
 
   @doc """
   Returns true if `naive_datetime1` is before `naive_datetime2`.

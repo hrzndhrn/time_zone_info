@@ -14,6 +14,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Africa/Freetown"
           ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
 
+    @tag :only
     prove "for zone_state.format choice",
           time_zone_period_from_utc_iso_days(
             ~N[2012-09-01 12:00:00],
@@ -160,6 +161,11 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
               zone_abbr: "+04"
             }
           }
+
+    prove time_zone_period_from_utc_iso_days(
+            ~N[1996-02-07 22:15:45],
+            "Europe/London"
+          ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
   end
 
   describe "time_zone_period_from_utc_iso_days/2 per decade/century:" do
@@ -750,7 +756,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     # ==========================================================================
     # Issue: https://github.com/hrzndhrn/time_zone_info/issues/4
 
-    @tag :only
     prove time_zone_periods_from_wall_datetime(
             ~N[1994-09-24 22:00:00],
             "Asia/Aqtau"
@@ -762,6 +767,23 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
               zone_abbr: "+06"
             }
           }
+
+    # ==========================================================================
+
+    prove time_zone_periods_from_wall_datetime(
+            ~N[2006-04-13 06:58:29],
+            "America/Indiana/Winamac"
+          ) == {:ok, %{std_offset: 3600, utc_offset: -21600, zone_abbr: "CDT"}}
+
+    prove time_zone_periods_from_wall_datetime(
+            ~N[1942-06-22 09:10:49],
+            "America/Montevideo"
+          ) == {:ok, %{std_offset: 1800, utc_offset: -12600, zone_abbr: "-03"}}
+
+    @tag :only
+    prove time_zone_periods_from_wall_datetime(
+          ~N[1980-06-29 20:55:51], "America/Godthab"
+          ) == {:ok, %{std_offset: 0, utc_offset: -10800, zone_abbr: "-03"}}
   end
 
   describe "time_zone_periods_from_wall_datetime/2 in the transition month:" do

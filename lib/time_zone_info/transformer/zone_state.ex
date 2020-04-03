@@ -14,9 +14,11 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
         ]
   def transform(zone_states, data, opts) do
     zone_states
+    |> IO.inspect(label: :zone_states)
     |> do_transform(data, opts)
-    |> delete_duplicates()
+    |> IO.inspect(label: :before_del, limit: :infinity)
     |> to_gregorian_seconds()
+    |> delete_duplicates()
     |> add_max_rules(zone_states, data)
   end
 
@@ -33,6 +35,23 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   end
 
   defp do_transform_zone_state(zone_state, data, since, last_zone_state, opts) do
+    IO.inspect("---------------------------------------")
+    IO.inspect(zone_state, label: :zone_state)
+    IO.inspect({since, until(zone_state[:until], opts)})
+
+    last =
+      case last_zone_state do
+        nil ->
+          nil
+
+        last ->
+          [
+            utc_offset: last_zone_state[:utc_offset],
+            rules: last_zone_state[:rules],
+            new_rules: zone_state[:rules] != last_zone_state[:rules]
+          ]
+      end
+
     transitions(
       rules(data, zone_state[:rules]),
       since,
@@ -40,19 +59,46 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
       zone_state[:utc_offset],
       zone_state[:time_standard],
       zone_state[:format],
-      last_zone_state[:utc_offset]
+      last
     )
   end
 
   defp delete_duplicates(transitions) do
     transitions
     |> Enum.reverse()
-    |> Enum.reduce({[], nil}, fn
-      {_, info}, {_, info} = acc -> acc
-      {_, info} = transition, {list, _} -> {[transition | list], info}
-    end)
-    |> Kernel.elem(0)
+    |> delete_duplicates([], nil)
+
+    # |> Enum.reduce({[], nil}, fn
+    #  {_, info}, {_, info} = acc -> acc
+    #  {_, info} = transition, {list, _} -> {[transition | list], info}
+    # end)
+    # |> Kernel.elem(0)
   end
+
+  defp delete_duplicates([], transitions, _), do: transitions
+
+  defp delete_duplicates([transition | transitions], [], nil) do
+    delete_duplicates(transitions, [transition], transition)
+  end
+
+  defp delete_duplicates([{_, info} = transition | transitions], acc, {_, info}) do
+    delete_duplicates(transitions, acc, transition)
+  end
+
+  defp delete_duplicates([{_,info} = transition | transitions], acc, {at,_} = last) do
+    case to_wall(transition) == to_wall(last) do
+      true ->
+        IO.inspect({transition, last}, label: :delete_duplicates_del)
+        new = {at, info}
+        acc = Enum.drop(acc, 1)
+        delete_duplicates(transitions, [new | acc], new)
+
+      false ->
+        delete_duplicates(transitions, [transition | acc], transition)
+    end
+  end
+
+  defp to_wall({at, {utc_offset, std_offset, _}}), do: at + utc_offset + std_offset
 
   defp add_max_rules(transitions, zone_states, data) do
     zone_states
@@ -89,14 +135,15 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   defp transitions({:std_offset, std_offset}, since, until, utc_offset, time_standard, format, _) do
     {
-      [{since, {utc_offset, std_offset, Abbr.create(format)}}],
+      [{since, {utc_offset, std_offset, Abbr.create(format, std_offset)}}],
+      # NaiveDateTimeUtil.to_utc(until, time_standard, utc_offset, std_offset)
       NaiveDateTimeUtil.to_utc(until, time_standard, utc_offset, std_offset)
     }
   end
 
-  defp transitions(rules, since, until, utc_offset, time_standard, format, last_utc_offset) do
+  defp transitions(rules, since, until, utc_offset, time_standard, format, last) do
     until = NaiveDateTimeUtil.to_utc(until, time_standard, utc_offset)
-    transitions = Rule.transitions(rules, since, until, utc_offset, last_utc_offset, format)
+    transitions = Rule.transitions(rules, since, until, utc_offset, last, format)
 
     until =
       case time_standard do
