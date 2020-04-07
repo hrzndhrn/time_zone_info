@@ -10,7 +10,6 @@ defmodule TimeZoneInfo.TransformerTest do
     files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
 
     %{data: path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)}
-    # %{data: :a}
   end
 
   describe "transform/1 extract" do
@@ -176,20 +175,13 @@ defmodule TimeZoneInfo.TransformerTest do
             :error -> flunk("#{time_zone} not found")
           end
 
-        IO.inspect("--- #{time_zone} ---")
-
         origs
         |> Enum.reverse()
         |> Enum.zip(transitions)
         |> Enum.each(fn
           {{at, {utc_offset, std_offset, zone_abbr}} = orig, tzd}
           when is_integer(std_offset) ->
-            # IO.inspect("----")
-            # IO.inspect(orig, label: :orig)
-            # IO.inspect(tzd, label: :tzd)
             tzi = {at, utc_offset + std_offset, std_offset != 0, zone_abbr}
-
-            # IO.inspect([tzi: tzi, tzd: tzd], label: :compare)
 
             assert tzi == tzd, """
             #{time_zone} #{NaiveDateTimeUtil.from_gregorian_seconds(at)}:
@@ -577,7 +569,6 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "Antarctica/Macquarie" = tz) do
     assert_time_zone(time_zones, tz, [
       [
-
         #   1967-09-30 16:00:00Z +11:00:00 daylight AEDT
         {~N[1967-09-30 16:00:00], {36000, 3600, "AEDT"}},
         #   1948-03-25 00:00:00Z +10:00:00 standard AEST
@@ -1262,7 +1253,6 @@ defmodule TimeZoneInfo.TransformerTest do
     time_zones
     |> get_in([:time_zones, time_zone])
     |> to_naive()
-    |> IO.inspect(limit: :infinity, label: :test)
     |> assert_sequences(expected)
   end
 
@@ -1293,9 +1283,6 @@ defmodule TimeZoneInfo.TransformerTest do
       File.read!("test/fixtures/iana/2019c/tzvalidate.txt")
       |> String.split("\n")
 
-    content |> length |> IO.inspect()
-    Enum.take(content, 10) |> IO.inspect()
-
     Enum.reduce(content, {%{}, nil}, fn
       "", {map, _} ->
         {map, nil}
@@ -1313,36 +1300,34 @@ defmodule TimeZoneInfo.TransformerTest do
         Enum.map(transitions, fn transition ->
           transition = String.split(transition)
 
-          transition =
-            case length(transition) do
-              4 ->
-                {
-                  0,
-                  time_to_seconds(Enum.at(transition, 1)),
-                  Enum.at(transition, 2) == "daylight",
-                  Enum.at(transition, 3)
-                }
+          case length(transition) do
+            4 ->
+              {
+                0,
+                time_to_seconds(Enum.at(transition, 1)),
+                Enum.at(transition, 2) == "daylight",
+                Enum.at(transition, 3)
+              }
 
-              5 ->
-                datetime =
-                  transition
-                  |> Enum.take(2)
-                  |> Enum.join(" ")
-                  |> NaiveDateTime.from_iso8601!()
-                  |> NaiveDateTimeUtil.to_gregorian_seconds()
+            5 ->
+              datetime =
+                transition
+                |> Enum.take(2)
+                |> Enum.join(" ")
+                |> NaiveDateTime.from_iso8601!()
+                |> NaiveDateTimeUtil.to_gregorian_seconds()
 
-                {
-                  datetime,
-                  time_to_seconds(Enum.at(transition, 2)),
-                  Enum.at(transition, 3) == "daylight",
-                  Enum.at(transition, 4)
-                }
-            end
+              {
+                datetime,
+                time_to_seconds(Enum.at(transition, 2)),
+                Enum.at(transition, 3) == "daylight",
+                Enum.at(transition, 4)
+              }
+          end
         end)
 
       {time_zone, transitions}
     end)
-    |> IO.inspect(label: :tzvalidate)
   end
 
   defp time_to_seconds("+" <> time), do: time_to_seconds(time)
