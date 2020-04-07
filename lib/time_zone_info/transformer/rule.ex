@@ -36,10 +36,6 @@ defmodule TimeZoneInfo.Transformer.Rule do
     [{~N[-0001-01-01 00:00:00], first} | rule_set]
   end
 
-  # defp wall_to_standard(rule_set) do
-  #  Enum.reduce(rule_set, [], fn rule, acc)
-  # end
-
   defp first_standard(rule_set) do
     Enum.find(rule_set, fn
       {_, {_, 0, _}} -> true

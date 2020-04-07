@@ -14,7 +14,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Africa/Freetown"
           ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
 
-    @tag :only
     prove "for zone_state.format choice",
           time_zone_period_from_utc_iso_days(
             ~N[2012-09-01 12:00:00],
@@ -681,6 +680,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             %{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}
           }
 
+    @tag :only
     prove "before an ambiguous time span in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2040-10-28 01:59:59],
@@ -780,7 +780,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "America/Montevideo"
           ) == {:ok, %{std_offset: 1800, utc_offset: -12600, zone_abbr: "-03"}}
 
-    @tag :only
     prove time_zone_periods_from_wall_datetime(
           ~N[1980-06-29 20:55:51], "America/Godthab"
           ) == {:ok, %{std_offset: 0, utc_offset: -10800, zone_abbr: "-03"}}
