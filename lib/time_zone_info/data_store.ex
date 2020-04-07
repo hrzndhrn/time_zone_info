@@ -87,10 +87,7 @@ defmodule TimeZoneInfo.DataStore do
 
   @doc false
   @spec empty? :: boolean()
-  def empty? do
-    # https://github.com/rrrene/credo/issues/765
-    impl().empty?()
-  end
+  def empty?, do: impl().empty?()
 
   @doc false
   @spec version :: String.t() | nil
@@ -98,8 +95,5 @@ defmodule TimeZoneInfo.DataStore do
 
   @doc false
   @spec delete! :: :ok
-  def delete! do
-    # https://github.com/rrrene/credo/issues/765
-    impl().delete!()
-  end
+  def delete!, do: impl().delete!()
 end

@@ -6,6 +6,65 @@ defmodule TimeZoneInfo.Transformer.Rule do
   alias TimeZoneInfo.{IanaParser, NaiveDateTimeUtil}
   alias TimeZoneInfo.Transformer.{Abbr, Transition}
 
+  def to_rule_sets(rules, lookahead) do
+    Enum.into(rules, %{}, fn {name, rules} ->
+      {name, to_rule_set(rules, lookahead)}
+    end)
+  end
+
+  defp to_rule_set(rules, lookahead) do
+    now = NaiveDateTime.utc_now()
+
+    rule_set =
+      Enum.flat_map(rules, fn rule ->
+        from = rule[:from]
+
+        to =
+          case rule[:to] do
+            :max -> max(now.year + lookahead, from + 1)
+            :only -> rule[:from]
+            year -> year
+          end
+
+        Enum.into(from..to, [], fn year ->
+          at = NaiveDateTimeUtil.from_iana(year, rule[:in], rule[:on], rule[:at])
+          {at, {rule[:time_standard], rule[:std_offset], rule[:letters]}}
+        end)
+      end)
+      |> NaiveDateTimeUtil.sort()
+
+    {_, first} = first_standard(rule_set)
+    # to_utc([{~N[-0001-01-01 00:00:00], first} | rule_set] |> IO.inspect(label: :rs))
+    [{~N[-0001-01-01 00:00:00], first} | rule_set]
+  end
+
+  # defp wall_to_standard(rule_set) do
+  #  Enum.reduce(rule_set, [], fn rule, acc)
+  # end
+
+  defp first_standard(rule_set) do
+    Enum.find(rule_set, fn
+      {_, {_, 0, _}} -> true
+      _ -> false
+    end)
+  end
+
+  defp to_utc(rule_set), do: to_utc(rule_set, 0, [])
+
+  defp to_utc([], _, acc), do: acc
+
+  defp to_utc(
+         [{at, {time_standard, std_offset, letters}} = rule | rule_set],
+         last_std_offset,
+         acc
+       ) do
+    utc = NaiveDateTimeUtil.to_utc(at, time_standard, 0, last_std_offset)
+
+    transition = {utc, {time_standard, std_offset, letters}}
+
+    to_utc(rule_set, std_offset, [transition | acc])
+  end
+
   @doc """
   Transforms a `IanaParser.rule` to a `TimeZoneInfo.rule`. If the function gets
   a list then all rules will be transformed.
@@ -159,10 +218,13 @@ defmodule TimeZoneInfo.Transformer.Rule do
 
           false ->
             IO.inspect(last_at, label: :last_last___________)
+
             case last_at == since do
-              true -> [{since, info} | acc]
+              true ->
+                [{since, info} | acc]
+
               false ->
-            adjust(transitions, since, until, utc_offset_diff, new_rules, [{at, info} | acc])
+                adjust(transitions, since, until, utc_offset_diff, new_rules, [{at, info} | acc])
             end
         end
     end

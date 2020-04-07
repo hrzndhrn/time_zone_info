@@ -25,7 +25,7 @@ defmodule TimeZoneInfo.Transformer.Transition do
     transitions |> List.last() |> get_std_offset()
   end
 
-  def get_std_offset({_since, {_utc_offset, std_offset, _time_standard, _abbr}}), do: std_offset
+  def get_std_offset({_at, {_utc_offset, std_offset, _abbr}}), do: std_offset
 
   @doc """
   Transforms transition date-times to UTC and creates the
