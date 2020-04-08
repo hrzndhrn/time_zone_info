@@ -9,6 +9,8 @@ defmodule TimeZoneInfo.Worker do
 
   alias TimeZoneInfo.Updater.Interface, as: Updater
 
+  @timeout 3 * 60 * 1_000
+
   @doc """
   Starts a worker for `TimeZoneInfo`.
   """
@@ -24,7 +26,7 @@ defmodule TimeZoneInfo.Worker do
   of `TimeZoneInfo`. This function returns the same as `state/0`.
   """
   def update(server \\ __MODULE__, opt) when opt in [:run, :force],
-    do: GenServer.call(server, {:update, opt})
+    do: GenServer.call(server, {:update, opt}, @timeout)
 
   @doc """
   Returns the state of the worker.
