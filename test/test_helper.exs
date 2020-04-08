@@ -37,7 +37,7 @@ config =
           mod: TimeZoneInfo.TzChecker,
           info: false,
           assert: false,
-          active: true
+          active: false
         ],
         [
           mod: TimeZoneInfo.TzdataChecker,
