@@ -4,10 +4,9 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
   alias TimeZoneInfo.{
     Checker,
     DataStore,
-    IanaParser,
+    ExternalTermFormat,
     NaiveDateTimeUtil,
-    TimeZoneDatabase,
-    Transformer
+    TimeZoneDatabase
   }
 
   @default_data_store TimeZoneInfo.DataStore.Server
@@ -17,21 +16,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
     quote do
       use ExUnitProperties
 
+      import TimeZoneInfo.TestUtils
       import TimeZoneInfo.TimeZoneDatabaseCase
       import TimeZoneInfo.NaiveDateTimeUtil, only: [to_iso_days: 1]
 
       require Logger
 
       setup_all do
+        on_exit(fn ->
+          DataStore.delete!()
+          delete_env()
+        end)
+
         Application.put_env(:time_zone_info, :data_store, unquote(data_store))
 
-        path = "test/fixtures/iana/2019c"
-        files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
-
-        data =
-          with {:ok, parsed} <- IanaParser.parse(path, files) do
-            Transformer.transform(parsed, "2019c", lookahead: 1)
-          end
+        {:ok, data} =
+          "test/fixtures/data/2019c/data.etf"
+          |> File.read!()
+          |> ExternalTermFormat.decode()
 
         DataStore.put(data)
 

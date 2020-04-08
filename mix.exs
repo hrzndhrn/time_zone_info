@@ -53,6 +53,7 @@ defmodule TimeZoneInfo.MixProject do
 
   defp preferred_cli_env do
     [
+      carp: :test,
       coveralls: :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
@@ -85,7 +86,8 @@ defmodule TimeZoneInfo.MixProject do
       bench: ["run bench/run.exs"],
       "bench.gen.data": ["run bench/scripts/gen_data.exs"],
       "tzi.update": ["run scripts/update.exs"],
-      test: ["test --no-start"]
+      test: ["test --no-start"],
+      carp: ["test --no-start --max-failures 1"]
     ]
   end
 

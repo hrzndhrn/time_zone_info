@@ -13,27 +13,22 @@ defmodule TimeZoneInfo.TransformerTest do
   end
 
   describe "transform/1 extract" do
-    @tag :alg
     test "returns transformed data for time zone Africa/Algiers" do
       assert_time_zone("Africa/Algiers")
     end
 
-    @tag :ada
     test "returns transformed data for time zone America/Adak" do
       assert_time_zone("America/Adak")
     end
 
-    @tag :can
     test "returns transformed data for time zone America/Cancun" do
       assert_time_zone("America/Cancun")
     end
 
-    @tag :daw
     test "returns transformed data for time zone America/Dawson" do
       assert_time_zone("America/Dawson")
     end
 
-    @tag :god
     test "returns transformed data for time zone America/Godthab" do
       assert_time_zone("America/Godthab")
     end
@@ -42,27 +37,22 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("America/Indiana/Knox")
     end
 
-    @tag :tel
     test "returns transformed data for time zone America/Indiana/Tell_City" do
       assert_time_zone("America/Indiana/Tell_City")
     end
 
-    @tag :win
     test "returns transformed data for time zone America/Indiana/Winamac" do
       assert_time_zone("America/Indiana/Winamac")
     end
 
-    @tag :jun
     test "returns transformed data for time zone America/Juneau" do
       assert_time_zone("America/Juneau")
     end
 
-    @tag :mon
     test "returns transformed data for time zone America/Montevideo" do
       assert_time_zone("America/Montevideo")
     end
 
-    @tag :san
     test "returns transformed data for time zone America/Santiago" do
       assert_time_zone("America/Santiago")
     end
@@ -71,32 +61,26 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("America/Sao_Paulo")
     end
 
-    @tag :mac
     test "returns transformed data for time zone Antarctica/Macquarie" do
       assert_time_zone("Antarctica/Macquarie")
     end
 
-    @tag :aqt
     test "returns transformed data for time zone Asia/Aqtau" do
       assert_time_zone("Asia/Aqtau")
     end
 
-    @tag :tbi
     test "returns transformed data for time zone Asia/Tbilisi" do
       assert_time_zone("Asia/Tbilisi")
     end
 
-    @tag :teh
     test "returns transformed data for time zone Asia/Tehran" do
       assert_time_zone("Asia/Tehran")
     end
 
-    @tag :sha
     test "returns transformed data for time zone Asia/Shanghai" do
       assert_time_zone("Asia/Shanghai")
     end
 
-    @tag :yek
     test "returns transformed data for time zone Asia/Yekaterinburg" do
       assert_time_zone("Asia/Yekaterinburg")
     end
@@ -105,7 +89,6 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("Europe/Belgrade")
     end
 
-    @tag :ber
     test "returns transformed data for time zone Europe/Berlin" do
       assert_time_zone("Europe/Berlin")
     end
@@ -114,7 +97,6 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("Europe/Dublin")
     end
 
-    @tag :ist
     test "returns transformed data for time zone Europe/Istanbul" do
       assert_time_zone("Europe/Istanbul")
     end
@@ -131,12 +113,10 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("Europe/Oslo")
     end
 
-    @tag :vie
     test "returns transformed data for time zone Europe/Vienna" do
       assert_time_zone("Europe/Vienna")
     end
 
-    @tag :vil
     test "returns transformed data for time zone Europe/Vilnius" do
       assert_time_zone("Europe/Vilnius")
     end
@@ -147,22 +127,17 @@ defmodule TimeZoneInfo.TransformerTest do
   end
 
   describe "transform/1 world" do
-    # @tag :skip
-    @tag :links
     test "links", %{data: data} do
       assert Map.get(data.links, "Antarctica/McMurdo") == "Pacific/Auckland"
     end
 
-    # @tag :skip
     test "rules", %{data: data} do
       assert Map.get(data.rules, "EU") == [
-               {{10, [last_day_of_week: 7], 1, 0, 0}, :utc, 0, nil},
-               {{3, [last_day_of_week: 7], 1, 0, 0}, :utc, 3600, "S"}
+               {{10, [last_day_of_week: 7], {1, 0, 0}}, :utc, 0, nil},
+               {{3, [last_day_of_week: 7], {1, 0, 0}}, :utc, 3600, "S"}
              ]
     end
 
-    # @tag :skip
-    @tag :tzv
     test "against tzvalidate", %{data: data} do
       read_tzvalidate()
       |> Enum.sort(fn {a, _}, {b, _} -> a < b end)

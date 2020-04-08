@@ -30,8 +30,8 @@ config =
     ]
   else
     [
-      max_runs: 100_000,
-      timeout: 600_000,
+      max_runs: 10,
+      timeout: 60_000,
       checker: [
         [
           mod: TimeZoneInfo.TzChecker,
@@ -49,7 +49,7 @@ config =
           mod: TimeZoneInfo.PerlChecker,
           info: false,
           assert: false,
-          active: true
+          active: false
         ]
       ]
     ]

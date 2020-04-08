@@ -11,7 +11,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
     end)
   end
 
-  defp to_rule_set(rules, lookahead) do
+  def to_rule_set(rules, lookahead) do
     now = NaiveDateTime.utc_now()
 
     rule_set =
@@ -52,10 +52,8 @@ defmodule TimeZoneInfo.Transformer.Rule do
   def transform(rule) when is_list(rule) do
     case Keyword.keyword?(rule) do
       true ->
-        {hour, minute, second} = rule[:at]
-
         {
-          {rule[:in], rule[:on], hour, minute, second},
+          {rule[:in], rule[:on], rule[:at]},
           rule[:time_standard],
           rule[:std_offset],
           rule[:letters]

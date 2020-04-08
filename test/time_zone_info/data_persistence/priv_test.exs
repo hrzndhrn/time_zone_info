@@ -7,7 +7,7 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
   alias TimeZoneInfo.{ExternalTermFormat, IanaParser, Transformer}
 
   @path "test/data.etf"
-  @fixture "data/extract/africa/data.etf"
+  @fixture "data/2019c/extract/africa/data.etf"
 
   setup_all do
     content = File.read!("test/fixtures/iana/2019c/extract/Europe/London")

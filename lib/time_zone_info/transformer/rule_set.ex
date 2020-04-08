@@ -1,7 +1,10 @@
 defmodule TimeZoneInfo.Transformer.RuleSet do
-  alias TimeZoneInfo.Transformer.Abbr
+  @moduledoc """
+  A rule set is a set of IANA rules with one entry per rule execution.
+  """
+
   alias TimeZoneInfo.NaiveDateTimeUtil
-  alias TimeZoneInfo.Transformer.ZoneState
+  alias TimeZoneInfo.Transformer.{Abbr, ZoneState}
 
   def transitions(
         rule_set,
@@ -91,6 +94,20 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
     end
   end
 
+  def transitions(rule_set, utc_offset, format),
+    do: transitions_seq(rule_set, utc_offset, format)
+
+  defp transitions_seq(rule_set, utc_offset, format, last_std_offset \\ 0, acc \\ [])
+
+  defp transitions_seq([], _utc_offset, _format, _last_std_offset, acc), do: acc
+
+  defp transitions_seq([rule | rule_set], utc_offset, format, last_std_offset, acc) do
+    {at, {std_offset, letters}} = to_utc(rule, utc_offset, last_std_offset)
+    zone_abbr = Abbr.create(format, std_offset, letters)
+    transition = {at, {utc_offset, std_offset, zone_abbr}}
+    transitions_seq(rule_set, utc_offset, format, std_offset, [transition | acc])
+  end
+
   defp std_offset({_at, {_, std_offset, _}}), do: std_offset
 
   defp start?(since, at, std_offset) do
@@ -121,6 +138,12 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
   defp to_wall(at, zone_state, std_offset) do
     utc_offset = zone_state[:utc_offset]
     NaiveDateTime.add(at, utc_offset + std_offset)
+  end
+
+  defp to_utc({at, {time_standard, std_offset, letters}}, utc_offset, last_std_offset)
+       when is_integer(utc_offset) do
+    at = NaiveDateTimeUtil.to_utc(at, time_standard, utc_offset, last_std_offset)
+    {at, {std_offset, letters}}
   end
 
   defp to_utc({at, {time_standard, std_offset, letters}}, zone_state, last_std_offset) do

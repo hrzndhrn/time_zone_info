@@ -15,23 +15,21 @@ defmodule TimeZoneInfo.Scripts.Update do
     Logger.configure(level: :warn)
     Application.ensure_all_started(:time_zone_info)
 
-    with {:ok, format, data} <- download(),
+    info("Download: #{uri()}")
+
+    with {:ok, format, data} <- Downloader.download(),
          {:ok, data} <- transform(format, data),
-         :ok <- persist(data) do
-      info("... ready!")
+         {:ok, checksum} <- ExternalTermFormat.checksum(data),
+         :ok <- DataPersistence.put(data) do
+      info("Checksum: #{checksum}")
     else
       error -> error("Update failed! #{inspect(error)}")
     end
   end
 
-  defp download do
-    info("download: #{uri()} ...")
-    Downloader.download()
-  end
-
   defp transform(:iana, data) do
     with {:ok, {version, data}} <- extract(data, ["version" | files()]),
-         {:ok, parsed} <- parse(data) do
+         {:ok, parsed} <- IanaParser.parse(data) do
       {:ok, transform(:data, parsed, version)}
     end
   end
@@ -39,27 +37,15 @@ defmodule TimeZoneInfo.Scripts.Update do
   defp transform(:etf, data), do: ExternalTermFormat.decode(data)
 
   defp transform(:data, data, version) do
-    info("transform ...")
+    info("Version: #{version}")
     Transformer.transform(data, version)
   end
 
-  defp parse(data) do
-    info("parse ...")
-    IanaParser.parse(data)
-  end
-
   defp extract(data, files) do
-    info("extract files ...")
-
     with {:ok, files} <- FileArchive.extract(data, files) do
       {version, files} = Map.pop(files, "version")
       {:ok, {String.trim(version), join(files)}}
     end
-  end
-
-  defp persist(data) do
-    info("persist ...")
-    DataPersistence.put(data)
   end
 
   defp join(files) do

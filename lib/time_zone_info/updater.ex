@@ -100,6 +100,8 @@ defmodule TimeZoneInfo.Updater do
   end
 
   defp do_update(:force) do
+    Listener.on_update(:force)
+
     now = DateTime.utc_now() |> DateTime.to_unix()
 
     with {:ok, mode} when mode != :disabled <- fetch_env(:update),
@@ -108,7 +110,8 @@ defmodule TimeZoneInfo.Updater do
          :ok <- DataPersistence.put_last_update(now) do
       {:next, now + @seconds_per_day}
     else
-      _ -> :ok
+      {:ok, :disabled} -> :ok
+      error -> error
     end
   end
 

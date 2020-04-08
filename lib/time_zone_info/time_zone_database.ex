@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   """
 
   alias TimeZoneInfo.{DataStore, NaiveDateTimeUtil}
-  alias TimeZoneInfo.Transformer.Abbr
+  alias TimeZoneInfo.Transformer.RuleSet
 
   @behaviour Calendar.TimeZoneDatabase
 
@@ -30,7 +30,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     case DataStore.get_transitions(time_zone) do
       {:ok, zone_states} ->
         zone_states
-        |> find_zone_states(at_wall_seconds)
+        |> find_transitions(at_wall_seconds)
         |> to_periods(at_wall_seconds, at_wall_date_time)
 
       {:error, :transitions_not_found} ->
@@ -42,7 +42,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     case DataStore.get_transitions(time_zone) do
       {:ok, transitions} ->
         transitions
-        |> find_zone_state(gregorian_seconds)
+        |> find_period(gregorian_seconds)
         |> to_period(date_time)
 
       {:error, :transitions_not_found} ->
@@ -50,40 +50,39 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end
   end
 
-  defp find_zone_state(transitions, timestamp) do
-    Enum.find_value(transitions, fn {at, zone_state} ->
-      with true <- at <= timestamp, do: zone_state
+  defp find_period(transitions, timestamp) do
+    Enum.find_value(transitions, fn {at, period} ->
+      with true <- at <= timestamp, do: period
     end)
   end
 
-  defp find_zone_states(zone_states, at_wall) do
-    Enum.reduce_while(zone_states, nil, fn
-      zone_state_a, {:none, zone_state_b, zone_state_c} ->
-        {:halt, {zone_state_a, zone_state_b, zone_state_c}}
+  defp find_transitions(transitions, at_wall) do
+    Enum.reduce_while(transitions, nil, fn
+      transition_a, {:none, transition_b, transition_c} ->
+        {:halt, {transition_a, transition_b, transition_c}}
 
-      {at_utc, _} = zone_state, _ when at_utc > at_wall ->
-        {:cont, zone_state}
+      {at_utc, _} = transition, _ when at_utc > at_wall ->
+        {:cont, transition}
 
-      zone_state, nil ->
-        {:cont, {:none, zone_state, :none}}
+      transition, nil ->
+        {:cont, {:none, transition, :none}}
 
-      zone_state, last_zone_state ->
-        {:cont, {:none, zone_state, last_zone_state}}
+      transition, last_transition ->
+        {:cont, {:none, transition, last_transition}}
     end)
   end
 
-  defp to_period({_, _, {_, _}} = zone_state, {_, {_, _}} = iso_days) do
-    to_period(zone_state, NaiveDateTimeUtil.from_iso_days(iso_days))
+  defp to_period({_, _, {_, _}} = transition_rules, {_, {_, _}} = iso_days) do
+    to_period(transition_rules, NaiveDateTimeUtil.from_iso_days(iso_days))
   end
 
-  defp to_period({utc_offset, rule_name, {_, _} = format}, naive_datetime) do
+  defp to_period({utc_offset, rule_name, {_, _} = format}, %NaiveDateTime{} = naive_datetime) do
     case DataStore.get_rules(rule_name) do
       {:ok, rules} ->
         rules
-        |> transitions(utc_offset, naive_datetime.year)
-        |> NaiveDateTimeUtil.sort(:desc)
-        |> find_rule_data(naive_datetime)
-        |> to_period(utc_offset, format)
+        |> transitions(utc_offset, format, naive_datetime.year)
+        |> find_period(NaiveDateTimeUtil.to_gregorian_seconds(naive_datetime))
+        |> to_period(nil)
 
       {:error, :rules_not_found} ->
         {:error, :time_zone_not_found}
@@ -92,15 +91,6 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   defp to_period({utc_offset, std_offset, zone_abbr}, _),
     do: {:ok, %{utc_offset: utc_offset, std_offset: std_offset, zone_abbr: zone_abbr}}
-
-  defp to_period({std_offset, letters}, utc_offset, format) do
-    {:ok,
-     %{
-       utc_offset: utc_offset,
-       std_offset: std_offset,
-       zone_abbr: Abbr.create(format, std_offset, letters)
-     }}
-  end
 
   defp to_periods({:none, {_at, {utc_offset, std_offset, zone_abbr}}, :none}, _, _) do
     {:ok, %{utc_offset: utc_offset, std_offset: std_offset, zone_abbr: zone_abbr}}
@@ -115,7 +105,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp to_periods(
-         {_zone_state_a, {_, {utc_offset, rule_name, format}}},
+         {_transition, {_, {utc_offset, rule_name, format}}},
          at_wall,
          at_wall_datetime
        )
@@ -143,7 +133,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp to_periods(
-         {_zone_state_a, _zone_state_b, {_, {utc_offset, rule_name, format}}},
+         {_transition_a, _transition_b, {_, {utc_offset, rule_name, format}}},
          at_wall,
          at_wall_datetime
        )
@@ -186,14 +176,8 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     case DataStore.get_rules(rule_name) do
       {:ok, rules} ->
         rules
-        |> transitions(utc_offset, at_wall_datetime.year - 1, at_wall_datetime.year + 1)
-        |> NaiveDateTimeUtil.sort(:desc)
-        |> Enum.map(fn {at, {std_offset, letters}} ->
-          abbr = Abbr.create(format, std_offset, letters)
-          at = NaiveDateTimeUtil.to_gregorian_seconds(at)
-          {at, {utc_offset, std_offset, abbr}}
-        end)
-        |> find_zone_states(at_wall_seconds)
+        |> transitions(utc_offset, format, at_wall_datetime.year)
+        |> find_transitions(at_wall_seconds)
         |> to_periods(at_wall_seconds, at_wall_datetime)
 
       {:error, :rules_not_found} ->
@@ -201,27 +185,21 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end
   end
 
-  defp find_rule_data([{_, latest} | _] = transitions, naive_datetime) do
-    Enum.find_value(transitions, latest, fn {timestamp_date_time, rule_data} ->
-      with true <- NaiveDateTimeUtil.before_or_equal?(timestamp_date_time, naive_datetime),
-           do: rule_data
-    end)
+  defp transitions(rules, utc_offset, format, year) do
+    rules
+    |> to_rule_set(year)
+    |> RuleSet.transitions(utc_offset, format)
+    |> Enum.map(fn {at, period} -> {NaiveDateTimeUtil.to_gregorian_seconds(at), period} end)
   end
 
-  defp transitions(rules, utc_offset, from, to) do
-    from..to
-    |> Enum.flat_map(fn year -> transitions(rules, utc_offset, year) end)
-  end
-
-  defp transitions(rules, utc_offset, year) do
-    Enum.map(rules, fn {at, time_standard, std_offset, letters} ->
-      date_time =
-        year
-        |> NaiveDateTimeUtil.from_iana(at)
-        |> NaiveDateTimeUtil.to_utc(time_standard, utc_offset, std_offset)
-
-      {date_time, {std_offset, letters}}
+  defp to_rule_set(rules, year) do
+    Enum.flat_map(rules, fn {{month, day, time}, time_standard, std_offset, letters} ->
+      Enum.into((year - 1)..(year + 1), [], fn year ->
+        at = NaiveDateTimeUtil.from_iana(year, month, day, time)
+        {at, {time_standard, std_offset, letters}}
+      end)
     end)
+    |> NaiveDateTimeUtil.sort()
   end
 
   defp gap(zone_state_a, at_a, zone_state_b, at_b) do

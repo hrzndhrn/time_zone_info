@@ -40,9 +40,7 @@ defmodule TimeZoneInfo.DataStore.Server do
   end
 
   @impl true
-  def delete! do
-    GenServer.call(__MODULE__, :delete!)
-  end
+  def delete!, do: :ok
 
   @impl true
   def handle_call({:put, data}, _, _) do
@@ -91,10 +89,6 @@ defmodule TimeZoneInfo.DataStore.Server do
 
   def handle_call(:empty?, _, state) do
     {:reply, state == :empty, state}
-  end
-
-  def handle_call(:delete!, _, _state) do
-    {:reply, :ok, :empty}
   end
 
   defp get_transitions(time_zones, links, time_zone) do
