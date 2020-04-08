@@ -3,7 +3,8 @@ defmodule TimeZoneInfo.Transformer.Rule do
   This module handles and transforms the IANA rules.
   """
 
-  alias TimeZoneInfo.{IanaParser, NaiveDateTimeUtil}
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
 
   def to_rule_sets(rules, lookahead) do
     Enum.into(rules, %{}, fn {name, rules} ->
@@ -26,11 +27,11 @@ defmodule TimeZoneInfo.Transformer.Rule do
           end
 
         Enum.into(from..to, [], fn year ->
-          at = NaiveDateTimeUtil.from_iana(year, rule[:in], rule[:on], rule[:at])
+          at = NaiveDateTime.from_iana(year, rule[:in], rule[:on], rule[:at])
           {at, {rule[:time_standard], rule[:std_offset], rule[:letters]}}
         end)
       end)
-      |> NaiveDateTimeUtil.sort()
+      |> NaiveDateTime.sort()
 
     {_, first} = first_standard(rule_set)
     [{~N[-0001-01-01 00:00:00], first} | rule_set]

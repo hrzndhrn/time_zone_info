@@ -8,7 +8,14 @@ defmodule TimeZoneInfo do
   `Calendar.TimeZoneDatabase` behaviour under `TimeZoneInfo.TimeZoneDatabase`.
   """
 
-  alias TimeZoneInfo.{DataStore, IanaParser, Worker}
+  alias TimeZoneInfo.{
+    DataStore,
+    IanaParser,
+    Transformer.Abbr,
+    Worker
+  }
+
+  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
 
   @typedoc "The data structure containing all informations for `TimeZoneInfo`."
   @type data :: %{
@@ -25,7 +32,7 @@ defmodule TimeZoneInfo do
   A transition marks a point in time when one or more of the values `utc-offset`,
   `std_offset` or `zone-abbr` change.
   """
-  @type transition :: {gregorian_seconds, zone_state}
+  @type transition :: {NaiveDateTime.gregorian_seconds() | Elixir.NaiveDateTime.t(), zone_state}
 
   @typedoc "The `zone_state` is either a `timezone_period` or a `rules_ref`."
   @type zone_state :: time_zone_period | rules_ref
@@ -36,7 +43,7 @@ defmodule TimeZoneInfo do
   The reference contains `utc_offset` and `format` because these values are needed
   to apply a `rule`.
   """
-  @type rules_ref :: {Calendar.utc_offset(), rule_name(), zone_abbr_format()}
+  @type rules_ref :: {Calendar.utc_offset(), rule_name(), Abbr.format()}
 
   @typedoc """
   A period where a certain combination of UTC offset, standard offset and zone
@@ -47,21 +54,16 @@ defmodule TimeZoneInfo do
   @type time_zone_period :: {Calendar.utc_offset(), Calendar.std_offset(), Calendar.zone_abbr()}
 
   @typedoc "A rule representation."
-  @type rule ::
-          {{Calendar.month(), IanaParser.day(), Calendar.hour(), Calendar.minute(),
-            Calendar.second()}, time_standard, Calendar.std_offset(), letter()}
-
-  @typedoc "The format of a `zone_abbr`."
-  @type zone_abbr_format ::
-          {:string, String.t()}
-          | {:template, String.t()}
-          | {:choice, [String.t()]}
-
-  @typedoc "The letter in an IANA rule."
-  @type letter :: String.t()
-
-  @typedoc "The number of gregorian seconds starting with year 0"
-  @type gregorian_seconds :: non_neg_integer()
+  @type rule :: {
+          {
+            Calendar.month(),
+            IanaParser.day(),
+            {Calendar.hour(), Calendar.minute(), Calendar.second()}
+          },
+          time_standard,
+          Calendar.std_offset(),
+          Abbr.letters()
+        }
 
   @typedoc "The time standards used by IANA."
   @type time_standard :: :wall | :standard | :gmt | :utc | :zulu

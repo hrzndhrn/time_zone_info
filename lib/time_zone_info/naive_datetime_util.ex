@@ -16,6 +16,9 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
 
   @utc ~w(utc gmt zulu)a
 
+  @typedoc "The number of gregorian seconds starting with year 0"
+  @type gregorian_seconds :: non_neg_integer()
+
   @doc """
   Builds a new ISO naive datetime.
 
@@ -110,7 +113,7 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
   Computes the number of gregorian seconds starting with year 0 and ending at
   the specified date and time.
   """
-  @spec to_gregorian_seconds(NaiveDateTime.t()) :: TimeZoneInfo.gregorian_seconds()
+  @spec to_gregorian_seconds(NaiveDateTime.t()) :: gregorian_seconds()
   def to_gregorian_seconds(%NaiveDateTime{year: year}) when year < 0, do: 0
 
   def to_gregorian_seconds(datetime) do
@@ -122,7 +125,7 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
   @doc """
   Computes the date and time from the specified number of gregorian seconds.
   """
-  @spec from_gregorian_seconds(TimeZoneInfo.gregorian_seconds()) :: NaiveDateTime.t()
+  @spec from_gregorian_seconds(gregorian_seconds()) :: NaiveDateTime.t()
   def from_gregorian_seconds(seconds) when seconds >= 0 do
     seconds
     |> :calendar.gregorian_seconds_to_datetime()
@@ -226,4 +229,8 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
   defp sorter(:asc), do: fn a, b -> before?(elem(a, 0), elem(b, 0)) end
 
   defp sorter(:desc), do: fn a, b -> before?(elem(b, 0), elem(a, 0)) end
+
+  defdelegate add(datetime, seconds), to: NaiveDateTime
+
+  defdelegate utc_now, to: NaiveDateTime
 end

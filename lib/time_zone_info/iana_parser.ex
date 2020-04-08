@@ -6,12 +6,14 @@ defmodule TimeZoneInfo.IanaParser do
   Source Files](https://data.iana.org/time-zones/tz-how-to.html)
   """
 
+  alias TimeZoneInfo.Transformer.Abbr
+
   @typedoc "The raw IANA data."
   @type data :: binary()
 
   @typedoc "The parsed data."
   @type output :: %{
-          optional(:zones) => %{Calendar.time_zone() => [zone()]},
+          optional(:zones) => %{Calendar.time_zone() => [zone_state()]},
           optional(:rules) => %{TimeZoneInfo.rule_name() => [rule()]},
           optional(:links) => %{Calendar.time_zone() => Calendar.time_zone()}
         }
@@ -27,11 +29,11 @@ defmodule TimeZoneInfo.IanaParser do
           letters: String.t() | nil
         ]
 
-  @type zone ::
+  @type zone_state ::
           [
             utc_offset: Calendar.utc_offset(),
             rules: String.t() | integer() | nil,
-            format: TimeZoneInfo.zone_abbr_format(),
+            format: Abbr.format(),
             until: until(),
             time_standard: TimeZoneInfo.time_standard()
           ]

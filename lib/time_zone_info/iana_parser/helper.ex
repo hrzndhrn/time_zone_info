@@ -109,8 +109,6 @@ defmodule TimeZoneInfo.IanaParser.Helper do
     end
   end
 
-  # def on, do: on(empty())
-
   def on(combinator \\ empty(), tag \\ nil) do
     day = integer(min: 1) |> unwrap_and_tag(:day)
     last_day = string("last") |> ignore() |> choice_map(@day) |> unwrap_and_tag(:last)

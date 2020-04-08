@@ -3,15 +3,16 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   The transformer for time-zones.
   """
 
-  alias TimeZoneInfo.{IanaParser, NaiveDateTimeUtil, Transformer}
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
+  alias TimeZoneInfo.Transformer
   alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
 
   @doc """
   Transforms the `IanaPraser.zone` data in a list of `TimeZoneInfo.transition`.
   """
-  @spec transform([IanaParser.zone()], IanaParser.output(), Transformer.opts()) :: [
-          TimeZoneInfo.transition()
-        ]
+  @spec transform([IanaParser.zone_state()], IanaParser.output(), Transformer.opts()) ::
+          [TimeZoneInfo.transition()]
   def transform(zone_states, data, opts) do
     rule_sets = Rule.to_rule_sets(data[:rules], opts[:lookahead])
 
@@ -22,6 +23,10 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     |> add_max_rules(zone_states, data)
   end
 
+  @doc """
+  Returns the until datetime for the given `zone_state` and `std_offset`.
+  """
+  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: Elixir.NaiveDateTime.t()
   def until(zone_state, std_offset) do
     case zone_state[:until] do
       nil ->
@@ -29,8 +34,8 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
       until ->
         until
-        |> NaiveDateTimeUtil.from_iana()
-        |> NaiveDateTimeUtil.to_utc(
+        |> NaiveDateTime.from_iana()
+        |> NaiveDateTime.to_utc(
           zone_state[:time_standard],
           zone_state[:utc_offset],
           std_offset
@@ -136,7 +141,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   defp to_gregorian_seconds(transitions) do
     Enum.map(transitions, fn {at, period} ->
-      {NaiveDateTimeUtil.to_gregorian_seconds(at), period}
+      {NaiveDateTime.to_gregorian_seconds(at), period}
     end)
   end
 

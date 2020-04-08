@@ -3,7 +3,8 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   Implementation of the `Calendar.TimeZoneDatabase` behaviour.
   """
 
-  alias TimeZoneInfo.{DataStore, NaiveDateTimeUtil}
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
   alias TimeZoneInfo.Transformer.RuleSet
 
   @behaviour Calendar.TimeZoneDatabase
@@ -16,7 +17,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   def time_zone_periods_from_wall_datetime(naive_datetime, time_zone) do
     naive_datetime
-    |> NaiveDateTimeUtil.to_gregorian_seconds()
+    |> NaiveDateTime.to_gregorian_seconds()
     |> periods_from_wall_gregorian_seconds(time_zone, naive_datetime)
   end
 
@@ -73,15 +74,18 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp to_period({_, _, {_, _}} = transition_rules, {_, {_, _}} = iso_days) do
-    to_period(transition_rules, NaiveDateTimeUtil.from_iso_days(iso_days))
+    to_period(transition_rules, NaiveDateTime.from_iso_days(iso_days))
   end
 
-  defp to_period({utc_offset, rule_name, {_, _} = format}, %NaiveDateTime{} = naive_datetime) do
+  defp to_period(
+         {utc_offset, rule_name, {_, _} = format},
+         %Elixir.NaiveDateTime{} = naive_datetime
+       ) do
     case DataStore.get_rules(rule_name) do
       {:ok, rules} ->
         rules
         |> transitions(utc_offset, format, naive_datetime.year)
-        |> find_period(NaiveDateTimeUtil.to_gregorian_seconds(naive_datetime))
+        |> find_period(NaiveDateTime.to_gregorian_seconds(naive_datetime))
         |> to_period(nil)
 
       {:error, :rules_not_found} ->
@@ -137,7 +141,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
          at_wall,
          at_wall_datetime
        )
-       when is_binary(rule_name) do
+       when is_binary(rule_name) and is_integer(utc_offset) do
     calculate_periods(utc_offset, rule_name, format, at_wall, at_wall_datetime)
   end
 
@@ -189,22 +193,23 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     rules
     |> to_rule_set(year)
     |> RuleSet.transitions(utc_offset, format)
-    |> Enum.map(fn {at, period} -> {NaiveDateTimeUtil.to_gregorian_seconds(at), period} end)
+    |> Enum.map(fn {at, period} -> {NaiveDateTime.to_gregorian_seconds(at), period} end)
   end
 
+  @spec to_rule_set([TimeZoneInfo.rule()], Calendar.year()) :: [TimeZoneInfo.transition()]
   defp to_rule_set(rules, year) do
     Enum.flat_map(rules, fn {{month, day, time}, time_standard, std_offset, letters} ->
       Enum.into((year - 1)..(year + 1), [], fn year ->
-        at = NaiveDateTimeUtil.from_iana(year, month, day, time)
+        at = NaiveDateTime.from_iana(year, month, day, time)
         {at, {time_standard, std_offset, letters}}
       end)
     end)
-    |> NaiveDateTimeUtil.sort()
+    |> NaiveDateTime.sort()
   end
 
   defp gap(transition_a, at_a, transition_b, at_b) do
-    limit_a = NaiveDateTimeUtil.from_gregorian_seconds(at_a)
-    limit_b = NaiveDateTimeUtil.from_gregorian_seconds(at_b)
+    limit_a = NaiveDateTime.from_gregorian_seconds(at_a)
+    limit_b = NaiveDateTime.from_gregorian_seconds(at_b)
     {:gap, {convert(transition_a), limit_a}, {convert(transition_b), limit_b}}
   end
 

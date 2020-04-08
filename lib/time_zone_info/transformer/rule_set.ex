@@ -3,9 +3,32 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
   A rule set is a set of IANA rules with one entry per rule execution.
   """
 
-  alias TimeZoneInfo.NaiveDateTimeUtil
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
   alias TimeZoneInfo.Transformer.{Abbr, ZoneState}
 
+  @type rule :: {
+          Elixir.NaiveDateTime.t(),
+          {TimeZoneInfo.time_standard(), Calendar.std_offset(), Abbr.letters()}
+        }
+  @type t :: [rule()]
+
+  @doc """
+  Generates the transitions for the given `zone_state`.
+  """
+  @spec transitions(
+          t(),
+          Elixir.NaiveDateTime.t(),
+          IanaParser.zone_state(),
+          Calendar.utc_offset(),
+          Calendar.std_offset(),
+          rule() | nil,
+          [TimeZoneInfo.transition()]
+        ) :: {
+          [TimeZoneInfo.transition()],
+          Elixir.NaiveDateTime.t(),
+          Calendar.std_offset()
+        }
   def transitions(
         rule_set,
         since,
@@ -94,9 +117,21 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
     end
   end
 
+  @doc """
+  Generates transitions for the given `rule_set`.
+  """
+  @spec transitions(t(), Calendar.utc_offset(), Abbr.format()) ::
+          [TimeZoneInfo.transition()]
   def transitions(rule_set, utc_offset, format),
     do: transitions_seq(rule_set, utc_offset, format)
 
+  @spec transitions_seq(
+          t(),
+          Calendar.utc_offset(),
+          Abbr.format(),
+          Calendar.std_offset(),
+          [TimeZoneInfo.transition()]
+        ) :: [TimeZoneInfo.transition()]
   defp transitions_seq(rule_set, utc_offset, format, last_std_offset \\ 0, acc \\ [])
 
   defp transitions_seq([], _utc_offset, _format, _last_std_offset, acc), do: acc
@@ -142,20 +177,20 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
 
   defp to_utc({at, {time_standard, std_offset, letters}}, utc_offset, last_std_offset)
        when is_integer(utc_offset) do
-    at = NaiveDateTimeUtil.to_utc(at, time_standard, utc_offset, last_std_offset)
+    at = NaiveDateTime.to_utc(at, time_standard, utc_offset, last_std_offset)
     {at, {std_offset, letters}}
   end
 
   defp to_utc({at, {time_standard, std_offset, letters}}, zone_state, last_std_offset) do
     utc_offset = zone_state[:utc_offset]
-    at = NaiveDateTimeUtil.to_utc(at, time_standard, utc_offset, last_std_offset)
+    at = NaiveDateTime.to_utc(at, time_standard, utc_offset, last_std_offset)
     {at, {std_offset, letters}}
   end
 
   defp position(at, at, _), do: :start
 
   defp position(at, since, until) do
-    case {NaiveDateTimeUtil.before?(at, since), NaiveDateTimeUtil.before?(at, until)} do
+    case {NaiveDateTime.before?(at, since), NaiveDateTime.before?(at, until)} do
       {_, false} -> :after
       {true, _} -> :before
       _ -> :inside
