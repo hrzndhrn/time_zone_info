@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.2 - 2020/03/30
+## 0.2.0 - 2020/04/08
 
-- Some bug fixes.
+- Reimplementation of the `TimeZoneInfo.Transformer` to fix a bunch of bugs.
 - Update parser to handle CRs.
 
 
