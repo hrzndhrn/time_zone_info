@@ -30,4 +30,8 @@ defmodule TimeZoneInfo.Listener.Logger do
   def on_update(:up_to_date) do
     Logger.info("TimeZoneInfo: No update available.")
   end
+
+  def on_update(:force) do
+    Logger.info("TimeZoneInfo: Force update.")
+  end
 end

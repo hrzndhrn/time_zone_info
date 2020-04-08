@@ -1,0 +1,27 @@
+Rule	US	1918	1919	-	Mar	lastSun	2:00	1:00	D
+Rule	US	1918	1919	-	Oct	lastSun	2:00	0	S
+Rule	US	1942	only	-	Feb	9	2:00	1:00	W # War
+Rule	US	1945	only	-	Aug	14	23:00u	1:00	P # Peace
+Rule	US	1945	only	-	Sep	30	2:00	0	S
+Rule	US	1967	2006	-	Oct	lastSun	2:00	0	S
+Rule	US	1967	1973	-	Apr	lastSun	2:00	1:00	D
+Rule	US	1974	only	-	Jan	6	2:00	1:00	D
+Rule	US	1975	only	-	Feb	lastSun	2:00	1:00	D
+Rule	US	1976	1986	-	Apr	lastSun	2:00	1:00	D
+Rule	US	1987	2006	-	Apr	Sun>=1	2:00	1:00	D
+Rule	US	2007	max	-	Mar	Sun>=8	2:00	1:00	D
+Rule	US	2007	max	-	Nov	Sun>=1	2:00	0	S
+
+Rule Perry	1955	only	-	May	 1	0:00	1:00	D
+Rule Perry	1955	1960	-	Sep	lastSun	2:00	0	S
+Rule Perry	1956	1963	-	Apr	lastSun	2:00	1:00	D
+Rule Perry	1961	1963	-	Oct	lastSun	2:00	0	S
+
+Zone America/Indiana/Tell_City -5:47:03 - LMT	1883 Nov 18 12:12:57
+			-6:00	US	C%sT	1946
+			-6:00 Perry	C%sT	1964 Apr 26  2:00
+			-5:00	-	EST	1967 Oct 29  2:00
+			-6:00	US	C%sT	1969 Apr 27  2:00
+			-5:00	US	E%sT	1971
+			-5:00	-	EST	2006 Apr  2  2:00
+			-6:00	US	C%sT

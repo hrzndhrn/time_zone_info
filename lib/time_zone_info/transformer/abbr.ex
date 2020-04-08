@@ -1,26 +1,29 @@
 defmodule TimeZoneInfo.Transformer.Abbr do
-  @moduledoc false
+  @moduledoc """
+  This module provides some functions to create time zone abbreviations.
+  """
 
-  def create({:string, abbr}), do: abbr
+  @typedoc "The format of a `zone_abbr`."
+  @type format ::
+          {:string, String.t()}
+          | {:template, String.t()}
+          | {:choice, [String.t()]}
 
-  def create({:choice, [abbr, _]}), do: abbr
+  @typedoc "The `letters` for the zone abbr format."
+  @type letters :: String.t() | nil
 
-  def create({:string, abbr}, _), do: abbr
+  @doc """
+  Creates the zone abbr.
+  """
+  @spec create(format(), Calendar.std_offset(), letters()) :: String.t()
+  def create(format, std_offset \\ 0, letters \\ nil)
 
-  def create({:template, abbr}, rule), do: String.replace(abbr, "%s", rule[:letters] || "")
+  def create({:string, abbr}, _std_offset, _letters), do: abbr
 
-  def create({:choice, _} = choice, rule), do: do_create(choice, rule[:std_offset])
+  def create({:choice, [abbr, _]}, 0, _letters), do: abbr
 
-  def create({:string, abbr}, _, _), do: abbr
+  def create({:choice, [_, abbr]}, _std_offset, _leters), do: abbr
 
-  def create({:template, abbr}, _, letters), do: String.replace(abbr, "%s", letters || "")
-
-  def create({:choice, _} = choice, std_offset, _), do: do_create(choice, std_offset)
-
-  defp do_create({:choice, [a, b]}, std_offset) do
-    case std_offset == 0 do
-      true -> a
-      false -> b
-    end
-  end
+  def create({:template, abbr}, _std_offset, letters),
+    do: String.replace(abbr, "%s", letters || "")
 end

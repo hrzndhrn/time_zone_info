@@ -1,0 +1,23 @@
+Rule	US	1918	1919	-	Mar	lastSun	2:00	1:00	D
+Rule	US	1918	1919	-	Oct	lastSun	2:00	0	S
+Rule	US	1942	only	-	Feb	9	2:00	1:00	W # War
+Rule	US	1945	only	-	Aug	14	23:00u	1:00	P # Peace
+Rule	US	1945	only	-	Sep	30	2:00	0	S
+Rule	US	1967	2006	-	Oct	lastSun	2:00	0	S
+Rule	US	1967	1973	-	Apr	lastSun	2:00	1:00	D
+Rule	US	1974	only	-	Jan	6	2:00	1:00	D
+Rule	US	1975	only	-	Feb	lastSun	2:00	1:00	D
+Rule	US	1976	1986	-	Apr	lastSun	2:00	1:00	D
+Rule	US	1987	2006	-	Apr	Sun>=1	2:00	1:00	D
+Rule	US	2007	max	-	Mar	Sun>=8	2:00	1:00	D
+Rule	US	2007	max	-	Nov	Sun>=1	2:00	0	S
+
+Zone America/Adak	 12:13:22 -	LMT	1867 Oct 19 12:44:35
+			-11:46:38 -	LMT	1900 Aug 20 12:00
+			-11:00	-	NST	1942
+			-11:00	US	N%sT	1946
+			-11:00	-	NST	1967 Apr
+			-11:00	-	BST	1969
+			-11:00	US	B%sT	1983 Oct 30  2:00
+			-10:00	US	AH%sT	1983 Nov 30
+			-10:00	US	H%sT

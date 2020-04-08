@@ -11,20 +11,19 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorageTest do
   test "get_transitions/1" do
     assert {:ok, zone_states} = ErlangTermStorage.get_transitions("Pacific/Auckland")
 
-    assert Enum.take(zone_states, 3) ==
-             [
-               {63_799_797_600, {43200, "NZ", {:template, "NZ%sT"}}},
-               {63_784_677_600, {43200, 0, "NZST"}},
-               {63_768_348_000, {43200, 3600, "NZDT"}}
-             ]
+    assert Enum.take(zone_states, 3) == [
+             {64_241_906_400, {43200, "NZ", {:template, "NZ%sT"}}},
+             {64_226_181_600, {43200, 0, "NZST"}},
+             {64_209_852_000, {43200, 3600, "NZDT"}}
+           ]
   end
 
   test "get_rules/1" do
     assert {:ok, rules} = ErlangTermStorage.get_rules("NZ")
 
     assert rules == [
-             {{4, [day: 1, op: :ge, day_of_week: 7], 2, 0, 0}, :standard, 0, "S"},
-             {{9, [last_day_of_week: 7], 2, 0, 0}, :standard, 3600, "D"}
+             {{4, [day: 1, op: :ge, day_of_week: 7], {2, 0, 0}}, :standard, 0, "S"},
+             {{9, [last_day_of_week: 7], {2, 0, 0}}, :standard, 3600, "D"}
            ]
   end
 

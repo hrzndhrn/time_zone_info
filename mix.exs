@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.1.1",
+      version: "0.2.0",
       elixir: "~> 1.8",
       description: description(),
       start_permanent: Mix.env() == :prod,
@@ -53,6 +53,7 @@ defmodule TimeZoneInfo.MixProject do
 
   defp preferred_cli_env do
     [
+      carp: :test,
       coveralls: :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
@@ -85,7 +86,8 @@ defmodule TimeZoneInfo.MixProject do
       bench: ["run bench/run.exs"],
       "bench.gen.data": ["run bench/scripts/gen_data.exs"],
       "tzi.update": ["run scripts/update.exs"],
-      test: ["test --no-start"]
+      test: ["test --no-start"],
+      carp: ["test --no-start --max-failures 1"]
     ]
   end
 
@@ -95,7 +97,7 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
       {:cowboy, "~> 2.7", only: :test},
-      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4.0-rc.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},

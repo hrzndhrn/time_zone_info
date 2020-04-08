@@ -3,55 +3,121 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   The transformer for time-zones.
   """
 
-  alias TimeZoneInfo.{IanaParser, NaiveDateTimeUtil, Transformer}
-  alias TimeZoneInfo.Transformer.{Abbr, Rule, Transition}
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
+  alias TimeZoneInfo.Transformer
+  alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
 
   @doc """
   Transforms the `IanaPraser.zone` data in a list of `TimeZoneInfo.transition`.
   """
-  @spec transform([IanaParser.zone()], IanaParser.output(), Transformer.opts()) :: [
-          TimeZoneInfo.transition()
-        ]
+  @spec transform([IanaParser.zone_state()], IanaParser.output(), Transformer.opts()) ::
+          [TimeZoneInfo.transition()]
   def transform(zone_states, data, opts) do
+    rule_sets = Rule.to_rule_sets(data[:rules], opts[:lookahead])
+
     zone_states
-    |> do_transform(data, opts)
-    |> delete_duplicates()
+    |> transform_zone_states(rule_sets)
     |> to_gregorian_seconds()
+    |> delete_duplicates()
     |> add_max_rules(zone_states, data)
   end
 
-  defp do_transform(zone_states, data, opts) do
-    do_transform(zone_states, data, [], ~N[0000-01-01 00:00:00], nil, opts)
+  @doc """
+  Returns the until datetime for the given `zone_state` and `std_offset`.
+  """
+  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: Elixir.NaiveDateTime.t()
+  def until(zone_state, std_offset) do
+    case zone_state[:until] do
+      nil ->
+        ~N[9999-12-31 00:00:00]
+
+      until ->
+        until
+        |> NaiveDateTime.from_iana()
+        |> NaiveDateTime.to_utc(
+          zone_state[:time_standard],
+          zone_state[:utc_offset],
+          std_offset
+        )
+    end
   end
 
-  defp do_transform([], _data, acc, _since, _last_zone_state, _opts), do: List.flatten(acc)
+  defp transform_zone_states(
+         zone_states,
+         rule_sets,
+         since \\ ~N[0000-01-01 00:00:00],
+         std_offset \\ 0,
+         last_zone_state \\ nil,
+         acc \\ []
+       )
 
-  defp do_transform([zone_state | zone_states], data, acc, since, last_zone_state, opts) do
-    {result, until} = do_transform_zone_state(zone_state, data, since, last_zone_state, opts)
+  defp transform_zone_states([], _, _, _, _, acc), do: List.flatten(acc)
 
-    do_transform(zone_states, data, [result | acc], until, zone_state, opts)
+  defp transform_zone_states(
+         [zone_state | zone_states],
+         rule_sets,
+         since,
+         std_offset,
+         last_zone_state,
+         acc
+       ) do
+    {result, until, last_std_offset} =
+      transform_zone_state(zone_state, rule_sets, since, std_offset, last_zone_state)
+
+    transform_zone_states(zone_states, rule_sets, until, last_std_offset, zone_state, [
+      result | acc
+    ])
   end
 
-  defp do_transform_zone_state(zone_state, data, since, last_zone_state, opts) do
+  defp transform_zone_state(zone_state, rule_sets, since, std_offset, last_zone_state) do
     transitions(
-      rules(data, zone_state[:rules]),
+      rule_set(rule_sets, zone_state[:rules]),
       since,
-      until(zone_state[:until], opts),
-      zone_state[:utc_offset],
-      zone_state[:time_standard],
-      zone_state[:format],
-      last_zone_state[:utc_offset]
+      zone_state,
+      utc_offset(last_zone_state),
+      std_offset
     )
   end
+
+  defp transitions(:none, since, zone_state, _, _) do
+    utc_offset = zone_state[:utc_offset]
+    std_offset = 0
+    zone_abbr = Abbr.create(zone_state[:format])
+
+    {
+      [{since, {utc_offset, std_offset, zone_abbr}}],
+      until(zone_state, std_offset),
+      std_offset
+    }
+  end
+
+  defp transitions({:std_offset, std_offset}, since, zone_state, _, _) do
+    utc_offset = zone_state[:utc_offset]
+    zone_abbr = Abbr.create(zone_state[:format], std_offset)
+
+    {
+      [{since, {utc_offset, std_offset, zone_abbr}}],
+      until(zone_state, std_offset),
+      std_offset
+    }
+  end
+
+  defp transitions(rule_set, since, zone_state, last_utc_offset, std_offset) do
+    RuleSet.transitions(rule_set, since, zone_state, last_utc_offset, std_offset)
+  end
+
+  defp utc_offset(nil), do: 0
+  defp utc_offset(zone_state), do: zone_state[:utc_offset]
 
   defp delete_duplicates(transitions) do
     transitions
     |> Enum.reverse()
-    |> Enum.reduce({[], nil}, fn
-      {_, info}, {_, info} = acc -> acc
-      {_, info} = transition, {list, _} -> {[transition | list], info}
+    |> Enum.reduce([], fn
+      transition, [] -> [transition]
+      {_, period}, [{_, period} | _] = acc -> acc
+      transition, acc -> [transition | acc]
     end)
-    |> Kernel.elem(0)
   end
 
   defp add_max_rules(transitions, zone_states, data) do
@@ -71,54 +137,27 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   end
 
   defp add_rules(:no_max_rules, transitions), do: transitions
-
-  defp add_rules(rules, [{at, _info} | transitions]), do: [{at, rules} | transitions]
+  defp add_rules(rules, [{at, _} | transitions]), do: [{at, rules} | transitions]
 
   defp to_gregorian_seconds(transitions) do
-    Enum.map(transitions, fn {at, info} ->
-      {NaiveDateTimeUtil.to_gregorian_seconds(at), info}
+    Enum.map(transitions, fn {at, period} ->
+      {NaiveDateTime.to_gregorian_seconds(at), period}
     end)
   end
 
-  defp transitions(:none, since, until, utc_offset, time_standard, format, _) do
-    {
-      [{since, {utc_offset, 0, Abbr.create(format)}}],
-      NaiveDateTimeUtil.to_utc(until, time_standard, utc_offset)
-    }
+  defp rules(data, name) do
+    with {:ok, name} <- rule_name(name) do
+      get_in(data, [:rules, name])
+    end
   end
 
-  defp transitions({:std_offset, std_offset}, since, until, utc_offset, time_standard, format, _) do
-    {
-      [{since, {utc_offset, std_offset, Abbr.create(format)}}],
-      NaiveDateTimeUtil.to_utc(until, time_standard, utc_offset, std_offset)
-    }
+  defp rule_set(rule_sets, name) do
+    with {:ok, name} <- rule_name(name) do
+      Map.fetch!(rule_sets, name)
+    end
   end
 
-  defp transitions(rules, since, until, utc_offset, time_standard, format, last_utc_offset) do
-    until = NaiveDateTimeUtil.to_utc(until, time_standard, utc_offset)
-    transitions = Rule.transitions(rules, since, until, utc_offset, last_utc_offset, format)
-
-    until =
-      case time_standard do
-        :standard -> until
-        _ -> NaiveDateTime.add(until, Transition.get_std_offset(transitions) * -1)
-      end
-
-    transitions = Transition.transform(transitions)
-
-    {transitions, until}
-  end
-
-  defp until(nil, opts) do
-    %NaiveDateTime{year: year} = NaiveDateTime.utc_now()
-    NaiveDateTimeUtil.end_of_year(year + opts[:lookahead])
-  end
-
-  defp until(datetime, _opts), do: NaiveDateTimeUtil.from_iana(datetime)
-
-  defp rules(_data, nil), do: :none
-
-  defp rules(_data, std_offset) when is_integer(std_offset), do: {:std_offset, std_offset}
-
-  defp rules(data, name), do: get_in(data, [:rules, name])
+  defp rule_name(nil), do: :none
+  defp rule_name(value) when is_integer(value), do: {:std_offset, value}
+  defp rule_name(string), do: {:ok, string}
 end

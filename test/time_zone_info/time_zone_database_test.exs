@@ -126,6 +126,12 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
 
+    prove desc,
+          time_zone_period_from_utc_iso_days(
+            ~N[2043-04-03 08:20:08],
+            "Pacific/Chatham"
+          ) == {:ok, %{std_offset: 3600, utc_offset: 45900, zone_abbr: "+1345"}}
+
     # ==========================================================================
     # Additional tests, , for some bugs I can't remember.
 
@@ -160,6 +166,11 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
               zone_abbr: "+04"
             }
           }
+
+    prove time_zone_period_from_utc_iso_days(
+            ~N[1996-02-07 22:15:45],
+            "Europe/London"
+          ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
   end
 
   describe "time_zone_period_from_utc_iso_days/2 per decade/century:" do
@@ -675,12 +686,14 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             %{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}
           }
 
+    @tag :berlin
     prove "before an ambiguous time span in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2040-10-28 01:59:59],
             "Europe/Berlin"
           ) == {:ok, %{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"}}
 
+    @tag :berlin
     prove "at the start of an ambiguous time span in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2040-10-28 02:00:00],
@@ -723,6 +736,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             {%{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"}, ~N[2041-03-31 03:00:00]}
           }
 
+    @tag :berlin
     prove "at the end of a gap in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2041-03-31 02:59:59],
@@ -739,6 +753,65 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {:ok, %{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"}}
 
+    # time zone with time-standard wall rule
+
+    @tag :merida
+    prove "in the future",
+          time_zone_periods_from_wall_datetime(
+            ~N[2041-03-31 03:00:00],
+            "America/Merida"
+          ) == {:ok, %{std_offset: 0, utc_offset: -21600, zone_abbr: "CST"}}
+
+    @tag :merida
+    prove "in the future with a gap",
+          time_zone_periods_from_wall_datetime(
+            ~N[2041-04-07 02:10:00],
+            "America/Merida"
+          ) == {
+            :gap,
+            {%{std_offset: 0, utc_offset: -21600, zone_abbr: "CST"}, ~N[2041-04-07 02:00:00]},
+            {%{std_offset: 3600, utc_offset: -21600, zone_abbr: "CDT"}, ~N[2041-04-07 03:00:00]}
+          }
+
+    # time zone with time-standard wall and standard rule
+
+    @tag :amman
+    prove "in the future before a gap",
+          time_zone_periods_from_wall_datetime(
+            ~N[2041-03-28 23:59:59],
+            "Asia/Amman"
+          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}}
+
+    @tag :amman
+    prove "in the future in a gap",
+          time_zone_periods_from_wall_datetime(
+            ~N[2041-03-29 00:10:59],
+            "Asia/Amman"
+          ) == {
+            :gap,
+            {%{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}, ~N[2041-03-29 00:00:00]},
+            {%{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"}, ~N[2041-03-29 01:00:00]}
+          }
+
+    @tag :amman
+    prove "in the future after a gap",
+          time_zone_periods_from_wall_datetime(
+            ~N[2041-03-29 01:00:00],
+            "Asia/Amman"
+          ) == {:ok, %{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"}}
+
+    @tag :only
+    @tag :amman
+    prove "in the future in an ambiguous time span",
+          time_zone_periods_from_wall_datetime(
+            ~N[2041-10-25 00:30:00],
+            "Asia/Amman"
+          ) == {
+            :ambiguous,
+            %{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"},
+            %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}
+          }
+
     # ==========================================================================
 
     prove "with a negative datetime",
@@ -750,7 +823,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     # ==========================================================================
     # Issue: https://github.com/hrzndhrn/time_zone_info/issues/4
 
-    @tag :only
     prove time_zone_periods_from_wall_datetime(
             ~N[1994-09-24 22:00:00],
             "Asia/Aqtau"
@@ -762,6 +834,23 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
               zone_abbr: "+06"
             }
           }
+
+    # ==========================================================================
+
+    prove time_zone_periods_from_wall_datetime(
+            ~N[2006-04-13 06:58:29],
+            "America/Indiana/Winamac"
+          ) == {:ok, %{std_offset: 3600, utc_offset: -21600, zone_abbr: "CDT"}}
+
+    prove time_zone_periods_from_wall_datetime(
+            ~N[1942-06-22 09:10:49],
+            "America/Montevideo"
+          ) == {:ok, %{std_offset: 1800, utc_offset: -12600, zone_abbr: "-03"}}
+
+    prove time_zone_periods_from_wall_datetime(
+            ~N[1980-06-29 20:55:51],
+            "America/Godthab"
+          ) == {:ok, %{std_offset: 3600, utc_offset: -10800, zone_abbr: "-02"}}
   end
 
   describe "time_zone_periods_from_wall_datetime/2 in the transition month:" do

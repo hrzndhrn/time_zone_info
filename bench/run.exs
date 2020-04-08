@@ -7,4 +7,4 @@ Enum.each(
 )
 
 Bench.TimeZoneDatabase.run()
-# Bench.Transform.run()
+Bench.Transform.run()

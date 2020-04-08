@@ -11,7 +11,7 @@ defmodule TimeZoneInfo.UpdaterTest do
   @seconds_per_hour 60 * 60
   @seconds_per_day 24 * @seconds_per_hour
   @path "test/data.etf"
-  @fixture "data/extract/africa/data.etf"
+  @fixture "data/2019c/extract/africa/data.etf"
   @delta_seconds 30
 
   setup do
@@ -67,6 +67,17 @@ defmodule TimeZoneInfo.UpdaterTest do
           assert checksum(@path) == checksum
         end,
         [:initial, :check, :download]
+      )
+    end
+
+    test "force with disabled updater" do
+      update_env(update: :disabled)
+
+      assert_log(
+        fn ->
+          assert :ok = Updater.update(:force)
+        end,
+        [:force]
       )
     end
 
@@ -133,7 +144,7 @@ defmodule TimeZoneInfo.UpdaterTest do
           refute DataStore.empty?()
           assert data_exists?(@path)
         end,
-        [:initial, :download, :update]
+        [:initial, :force, :download, :update]
       )
     end
 
@@ -146,7 +157,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         files: [],
         downloader: [
           module: TimeZoneInfo.Downloader.Mint,
-          uri: "http://localhost:1234/data/extract/africa/data.etf",
+          uri: "http://localhost:1234/data/2019c/extract/africa/data.etf",
           format: :etf
         ]
       )
@@ -163,7 +174,7 @@ defmodule TimeZoneInfo.UpdaterTest do
           assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") ==
                    {:ok, %{std_offset: 0, utc_offset: 14400, zone_abbr: "+04"}}
         end,
-        [:initial, :download, :update]
+        [:initial, :force, :download, :update]
       )
     end
 
@@ -338,7 +349,8 @@ defmodule TimeZoneInfo.UpdaterTest do
         initial: "TimeZoneInfo: Initializing data.",
         check: "TimeZoneInfo: Checking for update.",
         download: "TimeZoneInfo: Downloading data.",
-        update: "TimeZoneInfo: Updating data."
+        update: "TimeZoneInfo: Updating data.",
+        force: "TimeZoneInfo: Force update."
       },
       fn {step, info} ->
         case Enum.member?(steps, step) do
