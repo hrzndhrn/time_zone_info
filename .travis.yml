@@ -24,7 +24,7 @@ script:
   - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix format --check-formatted ;fi
   - mix credo --strict
   - mix coveralls.travis
-  - if [[ "$TRAVIS_OTP_RELEASE_VERSION" == "22"* ]]; then mix dialyzer --halt-exit-status ;fi
+  - mix dialyzer --halt-exit-status
 
 sudo: required
 
