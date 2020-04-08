@@ -28,8 +28,8 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   defp periods_from_wall_gregorian_seconds(at_wall_seconds, time_zone, at_wall_date_time) do
     case DataStore.get_transitions(time_zone) do
-      {:ok, zone_states} ->
-        zone_states
+      {:ok, transitions} ->
+        transitions
         |> find_transitions(at_wall_seconds)
         |> to_periods(at_wall_seconds, at_wall_date_time)
 
@@ -113,22 +113,22 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     calculate_periods(utc_offset, rule_name, format, at_wall, at_wall_datetime)
   end
 
-  defp to_periods({zone_state_a, zone_state_b}, at_wall, _at_wall_datetime) do
-    at_wall_b = to_wall(zone_state_b)
-    at_wall_ba = to_wall(zone_state_b, zone_state_a)
+  defp to_periods({transition_a, transition_b}, at_wall, _at_wall_datetime) do
+    at_wall_b = to_wall(transition_b)
+    at_wall_ba = to_wall(transition_b, transition_a)
 
     cond do
       at_wall_b <= at_wall && at_wall < at_wall_ba ->
-        {:ambiguous, convert(zone_state_a), convert(zone_state_b)}
+        {:ambiguous, convert(transition_a), convert(transition_b)}
 
       at_wall_ba <= at_wall && at_wall < at_wall_b ->
-        gap(zone_state_a, at_wall_ba, zone_state_b, at_wall_b)
+        gap(transition_a, at_wall_ba, transition_b, at_wall_b)
 
       at_wall < at_wall_b ->
-        {:ok, convert(zone_state_a)}
+        {:ok, convert(transition_a)}
 
       true ->
-        {:ok, convert(zone_state_b)}
+        {:ok, convert(transition_b)}
     end
   end
 
@@ -141,34 +141,34 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     calculate_periods(utc_offset, rule_name, format, at_wall, at_wall_datetime)
   end
 
-  defp to_periods({zone_state_a, zone_state_b, zone_state_c}, at_wall, _at_wall_datetime) do
-    at_wall_a = to_wall(zone_state_a)
-    at_wall_ba = to_wall(zone_state_b, zone_state_a)
-    at_wall_b = to_wall(zone_state_b)
-    at_wall_cb = to_wall(zone_state_c, zone_state_b)
-    at_wall_c = to_wall(zone_state_c)
+  defp to_periods({transition_a, transition_b, transition_c}, at_wall, _at_wall_datetime) do
+    at_wall_a = to_wall(transition_a)
+    at_wall_ba = to_wall(transition_b, transition_a)
+    at_wall_b = to_wall(transition_b)
+    at_wall_cb = to_wall(transition_c, transition_b)
+    at_wall_c = to_wall(transition_c)
 
     cond do
       at_wall >= at_wall_c && at_wall < at_wall_cb ->
-        {:ambiguous, convert(zone_state_b), convert(zone_state_c)}
+        {:ambiguous, convert(transition_b), convert(transition_c)}
 
       at_wall >= at_wall_c ->
-        {:ok, convert(zone_state_c)}
+        {:ok, convert(transition_c)}
 
       at_wall >= at_wall_cb ->
-        gap(zone_state_b, at_wall_cb, zone_state_c, at_wall_c)
+        gap(transition_b, at_wall_cb, transition_c, at_wall_c)
 
       at_wall >= at_wall_b && at_wall < at_wall_ba ->
-        {:ambiguous, convert(zone_state_a), convert(zone_state_b)}
+        {:ambiguous, convert(transition_a), convert(transition_b)}
 
       at_wall >= at_wall_b ->
-        {:ok, convert(zone_state_b)}
+        {:ok, convert(transition_b)}
 
       at_wall >= at_wall_ba ->
-        gap(zone_state_a, at_wall_ba, zone_state_b, at_wall_b)
+        gap(transition_a, at_wall_ba, transition_b, at_wall_b)
 
       at_wall >= at_wall_a ->
-        {:ok, convert(zone_state_a)}
+        {:ok, convert(transition_a)}
     end
   end
 
@@ -202,10 +202,10 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     |> NaiveDateTimeUtil.sort()
   end
 
-  defp gap(zone_state_a, at_a, zone_state_b, at_b) do
+  defp gap(transition_a, at_a, transition_b, at_b) do
     limit_a = NaiveDateTimeUtil.from_gregorian_seconds(at_a)
     limit_b = NaiveDateTimeUtil.from_gregorian_seconds(at_b)
-    {:gap, {convert(zone_state_a), limit_a}, {convert(zone_state_b), limit_b}}
+    {:gap, {convert(transition_a), limit_a}, {convert(transition_b), limit_b}}
   end
 
   defp to_wall({at, {utc_offset, std_offset, _}}),
