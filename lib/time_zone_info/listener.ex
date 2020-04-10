@@ -12,7 +12,7 @@ defmodule TimeZoneInfo.Listener do
   - `:download` downloads data.
   - `:update` updating data.
   """
-  @callback on_update(step :: atom()) :: :ok | :undefined
+  @callback on_update(step :: atom() | {:error, term()}) :: :ok | :undefined
 
   defp impl do
     case Application.get_env(:time_zone_info, :listener) do
@@ -22,7 +22,7 @@ defmodule TimeZoneInfo.Listener do
   end
 
   @doc false
-  @spec on_update(step :: atom()) :: :ok | :undefined
+  @spec on_update(step :: atom() | {:error, term()}) :: :ok | :undefined
   def on_update(step) do
     with {:ok, module} <- impl() do
       module.on_update(step)

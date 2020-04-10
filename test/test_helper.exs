@@ -1,5 +1,5 @@
 ~w(
-  http_server.exs
+  test_plug.exs
   time_zone_info/checker.exs
   time_zone_info/data_store/server.exs
   time_zone_info/perl_checker.exs
@@ -65,7 +65,12 @@ Application.ensure_started(:stream_data)
 Application.put_env(:stream_data, :max_runs, config[:max_runs])
 
 Application.ensure_all_started(:cowboy)
-HttpServer.start(port: 1234, dir: "test/fixtures")
+
+Supervisor.start_link(
+  [{Plug.Cowboy, scheme: :http, plug: TestPlug, options: [port: 1234]}],
+  strategy: :one_for_one,
+  name: MyApp.Supervisor
+)
 
 Logger.configure(level: :info)
 

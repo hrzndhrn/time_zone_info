@@ -1,10 +1,15 @@
 # Changelog
 
+## 0.2.0-dev
+
+- Using `plug_cowboy` instead of `cowboy` in tests.
+- Add HTTP status code to the downloader.
+
+
 ## 0.2.0 - 2020/04/08
 
 - Reimplementation of the `TimeZoneInfo.Transformer` to fix a bunch of bugs.
 - Update parser to handle CRs.
-
 
 ## 0.1.1 - 2020/03/28
 

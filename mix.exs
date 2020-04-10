@@ -96,7 +96,7 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee, "~> 1.0", only: :dev},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
-      {:cowboy, "~> 2.7", only: :test},
+      # {:cowboy, "~> 2.7", only: :test},
       {:credo, "~> 1.4.0-rc.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
@@ -105,6 +105,7 @@ defmodule TimeZoneInfo.MixProject do
       {:mint, "~> 1.0", optional: true},
       {:mox, "~> 0.5", only: :test},
       {:nimble_parsec, "~> 0.5", runtime: false},
+      {:plug_cowboy, "~> 2.0", only: :test},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true}
