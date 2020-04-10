@@ -6,5 +6,5 @@ Enum.each(
   &Code.eval_file(&1, File.cwd!())
 )
 
-# Bench.TimeZoneDatabase.run()
+Bench.TimeZoneDatabase.run()
 Bench.Transform.run()
