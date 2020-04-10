@@ -12,8 +12,6 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
 
   @microsecond {0, 0}
 
-  @utc ~w(utc gmt zulu)a
-
   @typedoc "The number of gregorian seconds starting with year 0"
   @type gregorian_seconds :: non_neg_integer()
 
