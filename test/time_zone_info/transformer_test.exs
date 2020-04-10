@@ -3,7 +3,7 @@ defmodule TimeZoneInfo.TransformerTest do
 
   require Logger
 
-  alias TimeZoneInfo.{IanaParser, NaiveDateTimeUtil, Transformer}
+  alias TimeZoneInfo.{GregorianSeconds, IanaParser, Transformer}
 
   setup_all do
     path = "test/fixtures/iana/2019c"
@@ -159,7 +159,7 @@ defmodule TimeZoneInfo.TransformerTest do
             tzi = {at, utc_offset + std_offset, std_offset != 0, zone_abbr}
 
             assert tzi == tzd, """
-            #{time_zone} #{NaiveDateTimeUtil.from_gregorian_seconds(at)}:
+            #{time_zone} #{GregorianSeconds.to_naive(at)}:
             orig:       #{inspect(orig)}
             tzvalidate: #{inspect(tzd)}
             """
@@ -1290,7 +1290,7 @@ defmodule TimeZoneInfo.TransformerTest do
                 |> Enum.take(2)
                 |> Enum.join(" ")
                 |> NaiveDateTime.from_iso8601!()
-                |> NaiveDateTimeUtil.to_gregorian_seconds()
+                |> GregorianSeconds.from_naive()
 
               {
                 datetime,

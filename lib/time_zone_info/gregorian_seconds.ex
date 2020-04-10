@@ -1,0 +1,56 @@
+defmodule TimeZoneInfo.GregorianSeconds do
+  @type t :: integer()
+
+  @utc ~w(utc gmt zulu)a
+
+  @doc """
+  Converts seconds to UTC seconds.
+  """
+  @spec to_utc(
+          t(),
+          TimeZoneInfo.time_standard(),
+          Calendar.utc_offset(),
+          Calendar.std_offset()
+        ) :: t()
+  def to_utc(seconds, time_standard, _, _) when time_standard in @utc, do: seconds
+
+  def to_utc(seconds, time_standard, utc_offset, std_offset) do
+    case time_standard do
+      :wall -> seconds + (utc_offset + std_offset) * -1
+      :standard -> seconds + utc_offset * -1
+    end
+  end
+
+  @doc """
+  Sorts the given list of tuples by the seconds specified in the first element.
+  """
+  @spec sort([{t(), any()}]) :: [{t(), any()}]
+  def sort(tuples) do
+    Enum.sort(tuples, fn tuple_a, tuple_b ->
+      elem(tuple_a, 0) < elem(tuple_b, 0)
+    end)
+  end
+
+  @doc """
+  Computes the number of gregorian seconds starting with year 0 and ending at
+  the specified `naive_datetime`.
+  """
+  @spec from_naive(NaiveDateTime.t()) :: t()
+  def from_naive(%NaiveDateTime{year: year}) when year < 0, do: 0
+
+  def from_naive(naive_datetime) do
+    naive_datetime
+    |> NaiveDateTime.to_erl()
+    |> :calendar.datetime_to_gregorian_seconds()
+  end
+
+  @doc """
+  Computes the naive datetime from the specified number of gregorian seconds.
+  """
+  @spec to_naive(t()) :: NaiveDateTime.t()
+  def to_naive(seconds) when seconds >= 0 do
+    seconds
+    |> :calendar.gregorian_seconds_to_datetime()
+    |> NaiveDateTime.from_erl!()
+  end
+end
