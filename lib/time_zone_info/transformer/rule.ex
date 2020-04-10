@@ -3,15 +3,26 @@ defmodule TimeZoneInfo.Transformer.Rule do
   This module handles and transforms the IANA rules.
   """
 
+  alias TimeZoneInfo.GregorianSeconds
   alias TimeZoneInfo.IanaParser
   alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
+  alias TimeZoneInfo.Transformer.RuleSet
 
+  @doc """
+  Returns a map of rule-set for the given map of `rules`.
+  """
+  @spec to_rule_sets(%{String.t() => [TimeZoneInfo.rule()]}, non_neg_integer()) ::
+          %{String.t() => RuleSet.t()}
   def to_rule_sets(rules, lookahead) do
     Enum.into(rules, %{}, fn {name, rules} ->
       {name, to_rule_set(rules, lookahead)}
     end)
   end
 
+  @doc """
+  Returns a rule-set for the given `rules`.
+  """
+  @spec to_rule_set([TimeZoneInfo.rule()], non_neg_integer) :: RuleSet.t()
   def to_rule_set(rules, lookahead) do
     now = NaiveDateTime.utc_now()
 
@@ -27,14 +38,18 @@ defmodule TimeZoneInfo.Transformer.Rule do
           end
 
         Enum.into(from..to, [], fn year ->
-          at = NaiveDateTime.from_iana(year, rule[:in], rule[:on], rule[:at])
+          at =
+            year
+            |> NaiveDateTime.from_iana(rule[:in], rule[:on], rule[:at])
+            |> GregorianSeconds.from_naive()
+
           {at, {rule[:time_standard], rule[:std_offset], rule[:letters]}}
         end)
       end)
-      |> NaiveDateTime.sort()
+      |> GregorianSeconds.sort()
 
     {_, first} = first_standard(rule_set)
-    [{~N[-0001-01-01 00:00:00], first} | rule_set]
+    [{-1, first} | rule_set]
   end
 
   defp first_standard(rule_set) do
@@ -84,18 +99,4 @@ defmodule TimeZoneInfo.Transformer.Rule do
   end
 
   def max?(_), do: false
-
-  @doc """
-  Returns `letters` from the first rule that will produce a transition with
-  `std_offset = 0`.
-  """
-  @spec std_letters([IanaParser.rule()]) :: String.t()
-  def std_letters(rules) do
-    Enum.find_value(rules, fn rule ->
-      case rule[:std_offset] do
-        0 -> rule[:letters]
-        _ -> false
-      end
-    end)
-  end
 end

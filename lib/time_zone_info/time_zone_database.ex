@@ -4,6 +4,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   """
 
   alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.GregorianSeconds
   alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
   alias TimeZoneInfo.Transformer.RuleSet
 
@@ -17,7 +18,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   def time_zone_periods_from_wall_datetime(naive_datetime, time_zone) do
     naive_datetime
-    |> NaiveDateTime.to_gregorian_seconds()
+    |> GregorianSeconds.from_naive()
     |> periods_from_wall_gregorian_seconds(time_zone, naive_datetime)
   end
 
@@ -85,7 +86,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
       {:ok, rules} ->
         rules
         |> transitions(utc_offset, format, naive_datetime.year)
-        |> find_period(NaiveDateTime.to_gregorian_seconds(naive_datetime))
+        |> find_period(GregorianSeconds.from_naive(naive_datetime))
         |> to_period(nil)
 
       {:error, :rules_not_found} ->
@@ -193,23 +194,22 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     rules
     |> to_rule_set(year)
     |> RuleSet.transitions(utc_offset, format)
-    |> Enum.map(fn {at, period} -> {NaiveDateTime.to_gregorian_seconds(at), period} end)
   end
 
   @spec to_rule_set([TimeZoneInfo.rule()], Calendar.year()) :: [TimeZoneInfo.transition()]
   defp to_rule_set(rules, year) do
     Enum.flat_map(rules, fn {{month, day, time}, time_standard, std_offset, letters} ->
       Enum.into((year - 1)..(year + 1), [], fn year ->
-        at = NaiveDateTime.from_iana(year, month, day, time)
+        at = year |> NaiveDateTime.from_iana(month, day, time) |> GregorianSeconds.from_naive()
         {at, {time_standard, std_offset, letters}}
       end)
     end)
-    |> NaiveDateTime.sort()
+    |> GregorianSeconds.sort()
   end
 
   defp gap(transition_a, at_a, transition_b, at_b) do
-    limit_a = NaiveDateTime.from_gregorian_seconds(at_a)
-    limit_b = NaiveDateTime.from_gregorian_seconds(at_b)
+    limit_a = GregorianSeconds.to_naive(at_a)
+    limit_b = GregorianSeconds.to_naive(at_b)
     {:gap, {convert(transition_a), limit_a}, {convert(transition_b), limit_b}}
   end
 

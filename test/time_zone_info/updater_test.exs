@@ -178,7 +178,6 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
-    @tag :only
     test "gets an error if the data is not on the server" do
       rm_data(@path)
       mkdir_data(@path)

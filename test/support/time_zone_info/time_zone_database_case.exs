@@ -169,7 +169,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
       ) do
     assert_time_zone_period(time_zone_period_a)
     assert_time_zone_period(time_zone_period_b)
-    assert NaiveDateTimeUtil.before?(limit_a, limit_b)
+    assert NaiveDateTime.diff(limit_a, limit_b) < 0
   end
 
   def assert_time_zone_periods(invalid) do

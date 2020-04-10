@@ -3,10 +3,13 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   The transformer for time-zones.
   """
 
+  alias TimeZoneInfo.GregorianSeconds
   alias TimeZoneInfo.IanaParser
   alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
   alias TimeZoneInfo.Transformer
   alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
+
+  @end_of_time GregorianSeconds.from_naive(~N[9999-12-31 00:00:00])
 
   @doc """
   Transforms the `IanaPraser.zone` data in a list of `TimeZoneInfo.transition`.
@@ -18,7 +21,6 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
     zone_states
     |> transform_zone_states(rule_sets)
-    |> to_gregorian_seconds()
     |> delete_duplicates()
     |> add_max_rules(zone_states, data)
   end
@@ -26,16 +28,17 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   @doc """
   Returns the until datetime for the given `zone_state` and `std_offset`.
   """
-  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: Elixir.NaiveDateTime.t()
+  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: GregorianSeconds.t()
   def until(zone_state, std_offset) do
     case zone_state[:until] do
       nil ->
-        ~N[9999-12-31 00:00:00]
+        @end_of_time
 
       until ->
         until
         |> NaiveDateTime.from_iana()
-        |> NaiveDateTime.to_utc(
+        |> GregorianSeconds.from_naive()
+        |> GregorianSeconds.to_utc(
           zone_state[:time_standard],
           zone_state[:utc_offset],
           std_offset
@@ -46,7 +49,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   defp transform_zone_states(
          zone_states,
          rule_sets,
-         since \\ ~N[0000-01-01 00:00:00],
+         since \\ 0,
          std_offset \\ 0,
          last_zone_state \\ nil,
          acc \\ []
@@ -84,10 +87,11 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     utc_offset = zone_state[:utc_offset]
     std_offset = 0
     zone_abbr = Abbr.create(zone_state[:format])
+    until = zone_state |> until(std_offset)
 
     {
       [{since, {utc_offset, std_offset, zone_abbr}}],
-      until(zone_state, std_offset),
+      until,
       std_offset
     }
   end
@@ -95,10 +99,11 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   defp transitions({:std_offset, std_offset}, since, zone_state, _, _) do
     utc_offset = zone_state[:utc_offset]
     zone_abbr = Abbr.create(zone_state[:format], std_offset)
+    until = zone_state |> until(std_offset)
 
     {
       [{since, {utc_offset, std_offset, zone_abbr}}],
-      until(zone_state, std_offset),
+      until,
       std_offset
     }
   end
@@ -138,12 +143,6 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   defp add_rules(:no_max_rules, transitions), do: transitions
   defp add_rules(rules, [{at, _} | transitions]), do: [{at, rules} | transitions]
-
-  defp to_gregorian_seconds(transitions) do
-    Enum.map(transitions, fn {at, period} ->
-      {NaiveDateTime.to_gregorian_seconds(at), period}
-    end)
-  end
 
   defp rules(data, name) do
     with {:ok, name} <- rule_name(name) do

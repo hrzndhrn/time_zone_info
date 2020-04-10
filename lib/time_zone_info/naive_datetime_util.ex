@@ -6,15 +6,11 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
   alias Calendar.ISO
   alias TimeZoneInfo.IanaParser
 
-  @compile {:inline, compare: 2, sorter: 1}
-
   @seconds_per_minute 60
   @seconds_per_hour 60 * @seconds_per_minute
   @seconds_per_day 24 * @seconds_per_hour
 
   @microsecond {0, 0}
-
-  @utc ~w(utc gmt zulu)a
 
   @typedoc "The number of gregorian seconds starting with year 0"
   @type gregorian_seconds :: non_neg_integer()
@@ -22,7 +18,8 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
   @doc """
   Builds a new ISO naive datetime.
 
-  This function differs in the types and arity from `NaiveDateTime.new/6`.
+  This function differs in the types and arity from `NaiveDateTime.new/6`,
+  because it handles also day formats from the IANA DB.
   """
   @spec new(
           Calendar.year(),
@@ -77,11 +74,6 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
     apply(__MODULE__, :new, Tuple.to_list(tuple))
   end
 
-  @spec from_iana(Calendar.year(), tuple()) :: NaiveDateTime.t()
-  def from_iana(year, tuple) do
-    apply(__MODULE__, :new, [year | Tuple.to_list(tuple)])
-  end
-
   @spec from_iana(
           Calendar.year(),
           Calendar.month(),
@@ -108,129 +100,6 @@ defmodule TimeZoneInfo.NaiveDateTimeUtil do
     {:ok, naive_datetime} = NaiveDateTime |> apply(:new, Tuple.to_list(naive_datetime))
     naive_datetime
   end
-
-  @doc """
-  Computes the number of gregorian seconds starting with year 0 and ending at
-  the specified date and time.
-  """
-  @spec to_gregorian_seconds(NaiveDateTime.t()) :: gregorian_seconds()
-  def to_gregorian_seconds(%NaiveDateTime{year: year}) when year < 0, do: 0
-
-  def to_gregorian_seconds(datetime) do
-    datetime
-    |> NaiveDateTime.to_erl()
-    |> :calendar.datetime_to_gregorian_seconds()
-  end
-
-  @doc """
-  Computes the date and time from the specified number of gregorian seconds.
-  """
-  @spec from_gregorian_seconds(gregorian_seconds()) :: NaiveDateTime.t()
-  def from_gregorian_seconds(seconds) when seconds >= 0 do
-    seconds
-    |> :calendar.gregorian_seconds_to_datetime()
-    |> NaiveDateTime.from_erl!()
-  end
-
-  @doc """
-  Returns a naive datetime at the end of the year for the given `year` or
-  `datetime`.
-  """
-  @spec end_of_year(Calendar.year()) :: NaiveDateTime.t()
-  def end_of_year(year) when is_integer(year) do
-    with {:ok, datetime} <- NaiveDateTime.new(year, 12, 31, 23, 59, 59),
-         do: datetime
-  end
-
-  @spec end_of_year(NaiveDateTime.t()) :: NaiveDateTime.t()
-  def end_of_year(datetime), do: end_of_year(datetime.year)
-
-  @doc """
-  Returns true if `naive_datetime1` is before `naive_datetime2`.
-  """
-  @spec before?(NaiveDateTime.t(), NaiveDateTime.t()) :: boolean
-  def before?(%NaiveDateTime{} = naive_datetime1, %NaiveDateTime{} = naive_datetime2),
-    do: compare(naive_datetime1, naive_datetime2) < 0
-
-  @doc """
-  Returns `true` if `naive_datetime1` is before or equal to `naive_datetime2`.
-  """
-  @spec before_or_equal?(NaiveDateTime.t(), NaiveDateTime.t()) :: boolean()
-  def before_or_equal?(%NaiveDateTime{} = naive_datetime1, %NaiveDateTime{} = naive_datetime2),
-    do: compare(naive_datetime1, naive_datetime2) <= 0
-
-  @doc """
-  Returns `true` if `naive_datetime1` is after or equal to `naive_datetime2`.
-  """
-  @spec after?(NaiveDateTime.t(), NaiveDateTime.t()) :: boolean()
-  def after?(%NaiveDateTime{} = naive_datetime1, %NaiveDateTime{} = naive_datetime2),
-    do: compare(naive_datetime1, naive_datetime2) > 0
-
-  @doc """
-  Returns `true` if `naive_datetime1` is after or equal to `naive_datetime2`.
-  """
-  @spec after_or_equal?(NaiveDateTime.t(), NaiveDateTime.t()) :: boolean()
-  def after_or_equal?(%NaiveDateTime{} = naive_datetime1, %NaiveDateTime{} = naive_datetime2),
-    do: compare(naive_datetime1, naive_datetime2) >= 0
-
-  @doc """
-  Returns `true` if the given time spans are overlapping.
-  """
-  @spec overlap?(
-          {NaiveDateTime.t(), NaiveDateTime.t()},
-          {NaiveDateTime.t(), NaiveDateTime.t()}
-        ) :: boolean()
-  def overlap?({naive_datetime_a, naive_datetime_b}, {naive_datetime_x, naive_datetime_y}) do
-    cond do
-      before?(naive_datetime_b, naive_datetime_x) -> false
-      after?(naive_datetime_a, naive_datetime_y) -> false
-      true -> true
-    end
-  end
-
-  defp compare(%NaiveDateTime{} = datetime_a, %NaiveDateTime{} = datetime_b) do
-    cond do
-      datetime_a.year != datetime_b.year -> datetime_a.year - datetime_b.year
-      datetime_a.month != datetime_b.month -> datetime_a.month - datetime_b.month
-      datetime_a.day != datetime_b.day -> datetime_a.day - datetime_b.day
-      datetime_a.hour != datetime_b.hour -> datetime_a.hour - datetime_b.hour
-      datetime_a.minute != datetime_b.minute -> datetime_a.minute - datetime_b.minute
-      datetime_a.second != datetime_b.second -> datetime_a.second - datetime_b.second
-      true -> 0
-    end
-  end
-
-  @doc """
-  Converts a datetime to UTC.
-  """
-  @spec to_utc(
-          NaiveDateTime.t(),
-          TimeZoneInfo.time_standard(),
-          Calendar.utc_offset(),
-          Calendar.std_offset()
-        ) :: NaiveDateTime.t()
-  def to_utc(datetime, time_standard, utc_offset, std_offset \\ 0)
-
-  def to_utc(datetime, time_standard, _, _) when time_standard in @utc, do: datetime
-
-  def to_utc(datetime, time_standard, utc_offset, std_offset) do
-    case time_standard do
-      :wall -> NaiveDateTime.add(datetime, (utc_offset + std_offset) * -1)
-      :standard -> NaiveDateTime.add(datetime, utc_offset * -1)
-    end
-  end
-
-  @doc """
-  Sorts the given list of tuples by the datetime specified in the first element.
-  """
-  @spec sort([{NaiveDateTime.t(), any()}], :desc | :asc) :: [{NaiveDateTime.t(), any()}]
-  def sort(tuples, dir \\ :asc), do: Enum.sort(tuples, sorter(dir))
-
-  defp sorter(:asc), do: fn a, b -> before?(elem(a, 0), elem(b, 0)) end
-
-  defp sorter(:desc), do: fn a, b -> before?(elem(b, 0), elem(a, 0)) end
-
-  defdelegate add(datetime, seconds), to: NaiveDateTime
 
   defdelegate utc_now, to: NaiveDateTime
 end
