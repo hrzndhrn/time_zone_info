@@ -676,14 +676,23 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     # ==========================================================================
     # Periods in the future will be calculate on the fly.
 
-    prove "at the start of an ambiguous time span in the future (last without cal.)",
+    prove "in the future (last without calculation)",
           time_zone_periods_from_wall_datetime(
-            ~N[2039-10-30 02:00:00],
+            ~N[2035-03-25 00:30:00],
             "Europe/Berlin"
           ) == {
-            :ambiguous,
-            %{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"},
-            %{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}
+            :ok,
+            %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}
+          }
+
+    prove "at the start of a gap in the future (first with calculation)",
+          time_zone_periods_from_wall_datetime(
+            ~N[2035-03-25 02:30:00],
+            "Europe/Berlin"
+          ) == {
+            :gap,
+            {%{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}, ~N[2035-03-25 02:00:00]},
+            {%{std_offset: 3600, utc_offset: 3600, zone_abbr: "CEST"}, ~N[2035-03-25 03:00:00]}
           }
 
     prove "before an ambiguous time span in the future",
@@ -792,7 +801,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Amman"
           ) == {:ok, %{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"}}
 
-    @tag :only
     prove "in the future in an ambiguous time span",
           time_zone_periods_from_wall_datetime(
             ~N[2041-10-25 00:30:00],

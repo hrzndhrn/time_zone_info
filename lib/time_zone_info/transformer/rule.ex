@@ -6,11 +6,13 @@ defmodule TimeZoneInfo.Transformer.Rule do
   alias TimeZoneInfo.GregorianSeconds
   alias TimeZoneInfo.IanaParser
   alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
+  alias TimeZoneInfo.Transformer.RuleSet
 
   @doc """
   Returns a map of rule-set for the given map of `rules`.
   """
-  # TODO: @spec
+  @spec to_rule_sets(%{String.t() => [TimeZoneInfo.rule()]}, non_neg_integer()) ::
+          %{String.t() => RuleSet.t()}
   def to_rule_sets(rules, lookahead) do
     Enum.into(rules, %{}, fn {name, rules} ->
       {name, to_rule_set(rules, lookahead)}
@@ -20,7 +22,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
   @doc """
   Returns a rule-set for the given `rules`.
   """
-  # TODO: @spec
+  @spec to_rule_set([TimeZoneInfo.rule()], non_neg_integer) :: RuleSet.t()
   def to_rule_set(rules, lookahead) do
     now = NaiveDateTime.utc_now()
 

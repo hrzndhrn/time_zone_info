@@ -1,4 +1,8 @@
 defmodule TimeZoneInfo.GregorianSeconds do
+  @moduledoc """
+  An implementation for gregorian seconds.
+  """
+
   @type t :: integer()
 
   @utc ~w(utc gmt zulu)a
