@@ -42,9 +42,11 @@ defmodule TimeZoneInfo.Updater do
   - `{:error, reason}` in case of an error.
   """
   @spec update(opt :: :run | :force) :: :ok | {:next, Calendar.second()} | {:error, term()}
-  def update(opt \\ :run) do
-    step = with :run <- opt, do: mode()
-    do_update(step)
+  def update(step \\ :run) do
+    with {:error, _} = error <- step |> mode() |> do_update() do
+      Listener.on_update(error)
+      error
+    end
   end
 
   defp do_update(:initial) do
@@ -127,11 +129,11 @@ defmodule TimeZoneInfo.Updater do
   defp download do
     Listener.on_update(:download)
 
-    with {:ok, format, data} <- Downloader.download() do
-      case format do
-        :iana -> transform(data)
-        :etf -> ExternalTermFormat.decode(data)
-      end
+    case Downloader.download() do
+      {:ok, :iana, {200, data}} -> transform(data)
+      {:ok, :etf, {200, data}} -> ExternalTermFormat.decode(data)
+      {:ok, _format, response} -> {:error, response}
+      error -> error
     end
   end
 
@@ -156,12 +158,14 @@ defmodule TimeZoneInfo.Updater do
     files |> Enum.map(fn {_name, content} -> content end) |> Enum.join("\n")
   end
 
-  defp mode do
+  defp mode(:run) do
     case DataStore.empty?() do
       true -> :initial
       false -> :check
     end
   end
+
+  defp mode(step), do: step
 
   defp files do
     with {:ok, files} <- fetch_env(:files) do

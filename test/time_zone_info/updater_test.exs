@@ -178,6 +178,31 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
+    @tag :only
+    test "gets an error if the data is not on the server" do
+      rm_data(@path)
+      mkdir_data(@path)
+
+      update_env(
+        # files are not needed
+        files: [],
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/data/2019c/extract/missing/data.etf",
+          format: :etf
+        ]
+      )
+
+      assert_log(
+        fn ->
+          refute data_exists?(@path)
+          assert DataStore.empty?()
+          assert {:error, {404, "not found"}} = Updater.update()
+        end,
+        [:initial, :force, :download, :error]
+      )
+    end
+
     test "updates data for europe and etcetera" do
       update_env(files: ~w(europe etcetera))
       touch_data(@path, now(sub: 2 * @seconds_per_day))
@@ -315,7 +340,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert Updater.update() == {:error, {:invalid_config, [time_zones: :foo]}}
         end,
-        [:initial, :check, :download]
+        [:initial, :check, :download, :error]
       )
     end
 
@@ -331,7 +356,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert Updater.update() == {:error, {:invalid_config, [time_zones: [:foo]]}}
         end,
-        [:initial, :check, :download]
+        [:initial, :check, :download, :error]
       )
     end
   end
@@ -350,7 +375,8 @@ defmodule TimeZoneInfo.UpdaterTest do
         check: "TimeZoneInfo: Checking for update.",
         download: "TimeZoneInfo: Downloading data.",
         update: "TimeZoneInfo: Updating data.",
-        force: "TimeZoneInfo: Force update."
+        force: "TimeZoneInfo: Force update.",
+        error: "TimeZoneInfo: Update failed!"
       },
       fn {step, info} ->
         case Enum.member?(steps, step) do

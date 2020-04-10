@@ -14,7 +14,7 @@ defmodule TimeZoneInfo.Downloader.MintTest do
         ]
       ]
 
-      assert {:ok, body} = Mint.download(uri, opts)
+      assert {:ok, {200, body}} = Mint.download(uri, opts)
       assert byte_size(body) == 392_087
     end
   end

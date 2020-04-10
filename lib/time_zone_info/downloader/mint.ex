@@ -23,37 +23,44 @@ defmodule TimeZoneInfo.Downloader.Mint do
     end
   end
 
-  defp receive_response(conn, request_ref, body \\ []) do
-    {conn, body, status} = receive_message(conn, request_ref, body)
+  defp receive_response(conn, request_ref, status \\ nil, body \\ []) do
+    {conn, status, {body, complete}} = receive_message(conn, request_ref, status, body)
 
-    case status do
-      :incomplete -> receive_response(conn, request_ref, body)
-      :complete -> {:ok, conn, Enum.join(body)}
+    case complete do
+      :incomplete -> receive_response(conn, request_ref, status, body)
+      :complete -> {:ok, conn, {status, Enum.join(body)}}
     end
   end
 
-  defp receive_message(conn, request_ref, body) do
+  defp receive_message(conn, request_ref, status, body) do
     http = HTTP
 
     receive do
       message ->
         {:ok, conn, responses} = http.stream(conn, message)
 
-        {body, status} =
-          Enum.reduce(responses, {body, :incomplete}, fn response, {body, _status} ->
-            case response do
-              {:data, ^request_ref, data} ->
-                {body ++ [data], :incomplete}
+        {status, {body, complete}} =
+          Enum.reduce(
+            responses,
+            {status, {body, :incomplete}},
+            fn response, {status, {body, complete}} ->
+              case response do
+                {:status, ^request_ref, status} ->
+                  {status, {body, complete}}
 
-              {:done, ^request_ref} ->
-                {body, :complete}
+                {:data, ^request_ref, data} ->
+                  {status, {body ++ [data], :incomplete}}
 
-              {_, ^request_ref, _} ->
-                {body, :incomplete}
+                {:done, ^request_ref} ->
+                  {status, {body, :complete}}
+
+                {_, ^request_ref, _} ->
+                  {status, {body, :incomplete}}
+              end
             end
-          end)
+          )
 
-        {conn, body, status}
+        {conn, status, {body, complete}}
     end
   end
 

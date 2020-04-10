@@ -21,11 +21,15 @@ defmodule TimeZoneInfo.Downloader do
           format: format()
         ]
 
+  @typedoc "HTTP status code"
+  @type status_code :: non_neg_integer()
+
+  @type download :: {:ok, format(), {status_code(), binary()}}
+
   @formats ~w(iana etf)a
 
-  @callback download(uri :: URI.t(), opts :: opts) :: {:ok, binary()} | {:error, term()}
+  @callback download(uri :: URI.t(), opts :: opts) :: download() | {:error, term()}
 
-  @type download :: {:ok, format(), binary()}
   def download do
     with {:ok, uri} <- uri(),
          {:ok, format} <- format(),
