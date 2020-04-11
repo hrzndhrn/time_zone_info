@@ -89,7 +89,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
           end
         end)
 
-      info = %{
+      %{
         version: version(),
         count: count,
         memory: memory,

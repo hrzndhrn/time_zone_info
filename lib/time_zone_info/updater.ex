@@ -43,6 +43,8 @@ defmodule TimeZoneInfo.Updater do
   """
   @spec update(opt :: :run | :force) :: :ok | {:next, Calendar.second()} | {:error, term()}
   def update(step \\ :run) do
+    IO.inspect(Application.get_all_env(:time_zone_info))
+    IO.inspect(step, label: :updater)
     with {:error, _} = error <- step |> mode() |> do_update() do
       Listener.on_update(error)
       error
@@ -163,6 +165,7 @@ defmodule TimeZoneInfo.Updater do
       true -> :initial
       false -> :check
     end
+    |> IO.inspect(label: :mode)
   end
 
   defp mode(step), do: step
