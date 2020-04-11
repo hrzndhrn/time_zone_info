@@ -78,6 +78,28 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
       end)
     end
 
+    @impl true
+    def info do
+      {count, memory} =
+        :persistent_term.get()
+        |> Enum.reduce({0, 0}, fn {key, value}, {count, memory} = acc ->
+          case is_tuple(key) && elem(key, 0) == @app do
+            true -> {count + 1, memory + memory(key) + memory(value)}
+            false -> acc
+          end
+        end)
+
+      info = %{
+        version: version(),
+        count: count,
+        memory: memory,
+        time_zones: length(get_time_zones(links: :ignore)),
+        links: length(get_time_zones(links: :only))
+      }
+    end
+
+    defp memory(value), do: value |> :erlang.term_to_binary() |> byte_size()
+
     defp put_time_zone_info(data) do
       version = Map.get(data, :version)
       :persistent_term.put({@app, :version}, version)

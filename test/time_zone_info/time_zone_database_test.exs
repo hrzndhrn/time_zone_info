@@ -1,6 +1,8 @@
 defmodule TimeZoneInfo.TimeZoneDatabaseTest do
   use TimeZoneInfo.TimeZoneDatabaseCase
 
+  alias TimeZoneInfo.DataStore
+
   describe "time_zone_period_from_utc_iso_days/2" do
     prove "returns an error tuple for",
           time_zone_period_from_utc_iso_days(
@@ -941,5 +943,11 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     property_time_zone_periods_from_wall_datetime(time_zone: "Pacific/Fakaofo")
     # UTC+14
     property_time_zone_periods_from_wall_datetime(time_zone: "Pacific/Kiritimati")
+  end
+
+  describe "DataStore" do
+    test "info/0" do
+      assert DataStore.info() == :no_implementation_found
+    end
   end
 end

@@ -46,6 +46,28 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
     end
   end
 
+  @impl true
+  def info do
+    info = %{
+      version: version(),
+      tables: info([@app, @time_zones, @transitions, @links, @rules]),
+      time_zones: length(get_time_zones(links: :ignore)),
+      links: length(get_time_zones(links: :only))
+    }
+  end
+
+  defp info(tables) do
+    Enum.into(tables, %{}, fn table ->
+      case :ets.info(table) do
+        :undefined ->
+          {table, :undefined}
+
+        info ->
+          {table, [size: info[:size], memory: info[:memory]]}
+      end
+    end)
+  end
+
   def get_transitions(time_zone) do
     with :error <- fetch(@transitions, time_zone) do
       @links |> fetch(time_zone) |> get_transitions()
