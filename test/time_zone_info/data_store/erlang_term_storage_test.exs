@@ -2,14 +2,14 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorageTest do
   use TimeZoneInfo.TimeZoneDatabaseCase,
     data_store: TimeZoneInfo.DataStore.ErlangTermStorage
 
-  alias TimeZoneInfo.DataStore.ErlangTermStorage
+  alias TimeZoneInfo.DataStore
 
   test "put/1", %{data: data} do
-    assert ErlangTermStorage.put(data) == :ok
+    assert DataStore.put(data) == :ok
   end
 
   test "get_transitions/1" do
-    assert {:ok, zone_states} = ErlangTermStorage.get_transitions("Pacific/Auckland")
+    assert {:ok, zone_states} = DataStore.get_transitions("Pacific/Auckland")
 
     assert Enum.take(zone_states, 3) == [
              {64_241_906_400, {43200, "NZ", {:template, "NZ%sT"}}},
@@ -19,7 +19,7 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorageTest do
   end
 
   test "get_rules/1" do
-    assert {:ok, rules} = ErlangTermStorage.get_rules("NZ")
+    assert {:ok, rules} = DataStore.get_rules("NZ")
 
     assert rules == [
              {{4, [day: 1, op: :ge, day_of_week: 7], {2, 0, 0}}, :standard, 0, "S"},
@@ -38,11 +38,26 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorageTest do
   end
 
   test "version/0" do
-    assert ErlangTermStorage.version() == "2019c"
+    assert DataStore.version() == "2019c"
   end
 
   test "empty?" do
-    assert ErlangTermStorage.empty?() == false
+    assert DataStore.empty?() == false
+  end
+
+  test "info" do
+    assert DataStore.info() == %{
+             version: "2019c",
+             time_zones: 387,
+             links: 86,
+             tables: %{
+               time_zone_info: [size: 1, memory: 317],
+               time_zone_info_links: [size: 86, memory: 1625],
+               time_zone_info_rules: [size: 29, memory: 2160],
+               time_zone_info_time_zones: [size: 3, memory: 6274],
+               time_zone_info_transitions: [size: 387, memory: 323_687]
+             }
+           }
   end
 
   describe "time_zone_period_from_utc_iso_days/2" do

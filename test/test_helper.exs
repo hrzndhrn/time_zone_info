@@ -49,7 +49,7 @@ config =
           mod: TimeZoneInfo.PerlChecker,
           info: false,
           assert: false,
-          active: true
+          active: false
         ]
       ]
     ]

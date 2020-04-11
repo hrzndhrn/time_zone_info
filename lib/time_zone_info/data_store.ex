@@ -46,6 +46,13 @@ defmodule TimeZoneInfo.DataStore do
   """
   @callback delete! :: :ok
 
+  @doc """
+  Returns infos about the data store.
+  """
+  @callback info :: term()
+
+  @optional_callbacks info: 0
+
   # Implementation
 
   defp impl do
@@ -96,4 +103,15 @@ defmodule TimeZoneInfo.DataStore do
   @doc false
   @spec delete! :: :ok
   def delete!, do: impl().delete!()
+
+  @doc false
+  @spec info :: term()
+  def info do
+    impl = impl()
+
+    case function_exported?(impl, :info, 0) do
+      false -> :no_implementation_found
+      true -> impl.info()
+    end
+  end
 end

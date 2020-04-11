@@ -3,6 +3,8 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
     use TimeZoneInfo.TimeZoneDatabaseCase,
       data_store: TimeZoneInfo.DataStore.PersistentTerm
 
+    alias TimeZoneInfo.DataStore
+
     test "get_transitions/1" do
       assert {:ok, zone_states} = TimeZoneInfo.DataStore.get_transitions("Pacific/Auckland")
 
@@ -30,6 +32,16 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
 
       assert time_zones == links_include
       assert time_zones == links_only |> Enum.concat(links_ignore) |> Enum.sort()
+    end
+
+    test "info/0" do
+      assert DataStore.info() == %{
+               count: 504,
+               links: 86,
+               memory: 803_741,
+               time_zones: 387,
+               version: "2019c"
+             }
     end
 
     describe "time_zone_period_from_utc_iso_days/2" do

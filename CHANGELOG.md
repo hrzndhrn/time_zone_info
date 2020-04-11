@@ -3,7 +3,8 @@
 ## 0.2.0-dev
 
 - Using `plug_cowboy` instead of `cowboy` in tests.
-- Add HTTP status code to the downloader.
+- Adding HTTP status code to the downloader.
+- Adding optional `info/0` callback to the `DataStore` behaviour.
 
 
 ## 0.2.0 - 2020/04/08
