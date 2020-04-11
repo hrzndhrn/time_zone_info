@@ -247,6 +247,33 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert TimeZoneInfo.time_zones() == ["Europe/Berlin", "Indian/Chagos", "Indian/Maldives"]
     end
 
+    test "updates data filtered by time_zones (update: :disabled)" do
+      update_env(
+        update: :disabled,
+        time_zones: ["Africa/Lagos", "Indian"]
+      )
+
+      assert_log(
+        fn ->
+          assert :ok = Updater.update()
+        end,
+        [:initial, :check]
+      )
+
+      assert TimeZoneInfo.time_zones(links: :ignore) == [
+               "Africa/Lagos",
+               "Indian/Mahe",
+               "Indian/Mauritius",
+               "Indian/Reunion"
+             ]
+
+      assert TimeZoneInfo.time_zones(links: :only) == [
+               "Indian/Antananarivo",
+               "Indian/Comoro",
+               "Indian/Mayotte"
+             ]
+    end
+
     test "runs initial update once" do
       assert_log(
         fn ->
