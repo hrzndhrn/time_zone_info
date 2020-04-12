@@ -5,6 +5,7 @@
 - Using `plug_cowboy` instead of `cowboy` in tests.
 - Adding HTTP status code to the downloader.
 - Adding optional `info/0` callback to the `DataStore` behaviour.
+- Updating default `lookahead` to 15 years.
 
 
 ## 0.2.0 - 2020/04/08

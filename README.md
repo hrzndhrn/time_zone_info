@@ -56,6 +56,16 @@ For more information how to configure `TimeZoneInfo` see
 [Config](https://hexdocs.pm/time_zone_info/config.html). The site shows how to
 enable automated updates, filter time zones, and add custom `behaviour`s.
 
+## Default Time Zone Data
+
+The default configuration of `TimeZoneInfo` is `updater: :disabled`. In this
+case, the IANA database in version `2019c` with a `lookahead` of 15 years is in
+use.
+
+If a time zone has continuation rules, the periods after the lookahead are
+calculating by these rules. Note, these calculations are much more expensive as
+the determination of periods inside the prepared time span.
+
 ## Benchmarks
 
 The benchmarks can be executed with `mix bench`.
