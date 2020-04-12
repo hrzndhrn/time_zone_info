@@ -46,7 +46,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
           {at, {rule[:time_standard], rule[:std_offset], rule[:letters]}}
         end)
       end)
-      |> GregorianSeconds.sort()
+      |> Enum.sort_by(&elem(&1, 0))
 
     {_, first} = first_standard(rule_set)
     [{-1, first} | rule_set]

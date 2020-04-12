@@ -204,7 +204,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
         {at, {time_standard, std_offset, letters}}
       end)
     end)
-    |> GregorianSeconds.sort()
+    |> Enum.sort_by(&elem(&1, 0))
   end
 
   defp gap(transition_a, at_a, transition_b, at_b) do
