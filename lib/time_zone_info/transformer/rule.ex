@@ -3,9 +3,8 @@ defmodule TimeZoneInfo.Transformer.Rule do
   This module handles and transforms the IANA rules.
   """
 
-  alias TimeZoneInfo.GregorianSeconds
+  alias TimeZoneInfo.IanaDateTime
   alias TimeZoneInfo.IanaParser
-  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
   alias TimeZoneInfo.Transformer.RuleSet
 
   @doc """
@@ -38,10 +37,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
           end
 
         Enum.into(from..to, [], fn year ->
-          at =
-            year
-            |> NaiveDateTime.from_iana(rule[:in], rule[:on], rule[:at])
-            |> GregorianSeconds.from_naive()
+          at = IanaDateTime.to_gregorian_seconds(year, rule[:in], rule[:on], rule[:at])
 
           {at, {rule[:time_standard], rule[:std_offset], rule[:letters]}}
         end)

@@ -5,7 +5,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
     Checker,
     DataStore,
     ExternalTermFormat,
-    NaiveDateTimeUtil,
+    TestUtils,
     TimeZoneDatabase
   }
 
@@ -18,7 +18,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
 
       import TimeZoneInfo.TestUtils
       import TimeZoneInfo.TimeZoneDatabaseCase
-      import TimeZoneInfo.NaiveDateTimeUtil, only: [to_iso_days: 1]
 
       require Logger
 
@@ -74,7 +73,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
     quote do
       test "#{unquote(desc)} #{unquote(time_zone)} at #{unquote(datetime_str)}" do
         assert TimeZoneDatabase.time_zone_period_from_utc_iso_days(
-                 to_iso_days(unquote(datetime)),
+                 TestUtils.to_iso_days(unquote(datetime)),
                  unquote(time_zone)
                ) == unquote(expected)
 
@@ -89,7 +88,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
         check all at <- datetime(~N[1900-01-01 00:00:00], ~N[2050-01-01 00:00:00]) do
           assert {:ok, period} =
                    TimeZoneDatabase.time_zone_period_from_utc_iso_days(
-                     NaiveDateTimeUtil.to_iso_days(at),
+                     TestUtils.to_iso_days(at),
                      unquote(time_zone)
                    )
 
@@ -111,7 +110,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
         check all {at, time_zone} <- time_zone_datetime(unquote(from), unquote(to)) do
           assert {:ok, period} =
                    TimeZoneDatabase.time_zone_period_from_utc_iso_days(
-                     NaiveDateTimeUtil.to_iso_days(at),
+                     TestUtils.to_iso_days(at),
                      time_zone
                    )
 
