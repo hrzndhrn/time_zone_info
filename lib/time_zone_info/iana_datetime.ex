@@ -4,11 +4,11 @@ defmodule TimeZoneInfo.IanaDateTime do
   """
 
   alias Calendar.ISO
+
   alias TimeZoneInfo.{
     GregorianSeconds,
     IanaParser
   }
-
 
   @type time :: {Calendar.hour(), Calendar.minute(), Calendar.second()}
 
