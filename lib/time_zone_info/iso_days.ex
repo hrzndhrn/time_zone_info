@@ -19,16 +19,6 @@ defmodule TimeZoneInfo.IsoDays do
   end
 
   @doc """
-  Converts an ISO day to a naive datetime.
-  """
-  @spec to_naive(Calendar.iso_days()) :: NaiveDateTime.t()
-  def to_naive(iso_days) do
-    naive_datetime = ISO.naive_datetime_from_iso_days(iso_days)
-    {:ok, naive_datetime} = apply(NaiveDateTime, :new, Tuple.to_list(naive_datetime))
-    naive_datetime
-  end
-
-  @doc """
   Converts an ISO day to year.
   """
   @spec to_year(Calendar.iso_days()) :: Calendar.year()
