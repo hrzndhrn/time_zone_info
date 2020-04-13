@@ -8,6 +8,7 @@ defmodule TimeZoneInfo.Updater do
   require Logger
 
   alias TimeZoneInfo.{
+    DataConfig,
     DataPersistence,
     DataStore,
     Downloader,
@@ -53,6 +54,8 @@ defmodule TimeZoneInfo.Updater do
     Listener.on_update(:initial)
 
     with {:ok, data} <- DataPersistence.fetch(),
+         {:ok, time_zones} <- fetch_env(:time_zones),
+         {:ok, data} <- DataConfig.update(data, [time_zones: time_zones]),
          :ok <- DataStore.put(data) do
       do_update(:check)
     else

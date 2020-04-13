@@ -52,6 +52,7 @@ defmodule TimeZoneInfo.UpdaterTest do
   describe "update/0 (ErlangTermStorage)" do
     setup do
       update_env(data_store: ErlangTermStorage)
+      on_exit(&DataStore.delete!/0)
     end
 
     test "tries to update old file" do
@@ -267,11 +268,17 @@ defmodule TimeZoneInfo.UpdaterTest do
                "Indian/Reunion"
              ]
 
-      assert TimeZoneInfo.time_zones(links: :only) == [
-               "Indian/Antananarivo",
-               "Indian/Comoro",
-               "Indian/Mayotte"
-             ]
+        assert TimeZoneInfo.time_zones(links: :only) == [
+                 "Africa/Bangui",
+                 "Africa/Brazzaville",
+                 "Africa/Douala",
+                 "Africa/Kinshasa",
+                 "Africa/Libreville",
+                 "Africa/Luanda",
+                 "Africa/Malabo",
+                 "Africa/Niamey",
+                 "Africa/Porto-Novo"
+               ]
     end
 
     test "runs initial update once" do
@@ -309,10 +316,11 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
   end
 
-  if function_exported?(PersistentTerm, :put, 1) do
+  if function_exported?(:persistent_term, :get, 0) do
     describe "update/0 (PersistentTerm)" do
       setup do
         update_env(data_store: PersistentTerm)
+        on_exit(&DataStore.delete!/0)
       end
 
       test "tries to update old file and new config" do
@@ -330,6 +338,39 @@ defmodule TimeZoneInfo.UpdaterTest do
           end,
           [:initial, :check, :download, :update]
         )
+      end
+
+      test "updates data filtered by time_zones (update: :disabled)" do
+        update_env(
+          update: :disabled,
+          time_zones: ["Africa/Lagos", "Indian"]
+        )
+
+        assert_log(
+          fn ->
+            assert :ok = Updater.update()
+          end,
+          [:initial, :check]
+        )
+
+        assert TimeZoneInfo.time_zones(links: :ignore) == [
+                 "Africa/Lagos",
+                 "Indian/Mahe",
+                 "Indian/Mauritius",
+                 "Indian/Reunion"
+               ]
+
+        assert TimeZoneInfo.time_zones(links: :only) == [
+                 "Africa/Bangui",
+                 "Africa/Brazzaville",
+                 "Africa/Douala",
+                 "Africa/Kinshasa",
+                 "Africa/Libreville",
+                 "Africa/Luanda",
+                 "Africa/Malabo",
+                 "Africa/Niamey",
+                 "Africa/Porto-Novo"
+               ]
       end
     end
   end
