@@ -10,12 +10,11 @@ defmodule TimeZoneInfo do
 
   alias TimeZoneInfo.{
     DataStore,
+    GregorianSeconds,
     IanaParser,
     Transformer.Abbr,
     Worker
   }
-
-  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
 
   @typedoc "The data structure containing all informations for `TimeZoneInfo`."
   @type data :: %{
@@ -32,7 +31,7 @@ defmodule TimeZoneInfo do
   A transition marks a point in time when one or more of the values `utc-offset`,
   `std_offset` or `zone-abbr` change.
   """
-  @type transition :: {NaiveDateTime.gregorian_seconds() | Elixir.NaiveDateTime.t(), zone_state}
+  @type transition :: {GregorianSeconds.t() | NaiveDateTime.t(), zone_state}
 
   @typedoc "The `zone_state` is either a `timezone_period` or a `rules_ref`."
   @type zone_state :: time_zone_period | rules_ref

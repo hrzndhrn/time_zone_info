@@ -1,11 +1,10 @@
 defmodule TimeZoneInfo.TimeZoneDatabaseChecker do
   defmacro __using__(opts) do
     quote do
-      import TimeZoneInfo.NaiveDateTimeUtil, only: [to_iso_days: 1]
+      import TimeZoneInfo.TestUtils, only: [to_iso_days: 1]
 
       @module unquote(opts[:module])
       alias unquote(opts[:module]).TimeZoneDatabase
-      alias TimeZoneInfo.NaiveDateTimeUtil
 
       def periods_from_wall(datetime, time_zone, expected) do
         case check?(@module, datetime, time_zone) do

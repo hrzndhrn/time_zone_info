@@ -4,8 +4,8 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   """
 
   alias TimeZoneInfo.GregorianSeconds
+  alias TimeZoneInfo.IanaDateTime
   alias TimeZoneInfo.IanaParser
-  alias TimeZoneInfo.NaiveDateTimeUtil, as: NaiveDateTime
   alias TimeZoneInfo.Transformer
   alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
 
@@ -36,8 +36,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
       until ->
         until
-        |> NaiveDateTime.from_iana()
-        |> GregorianSeconds.from_naive()
+        |> IanaDateTime.to_gregorian_seconds()
         |> GregorianSeconds.to_utc(
           zone_state[:time_standard],
           zone_state[:utc_offset],

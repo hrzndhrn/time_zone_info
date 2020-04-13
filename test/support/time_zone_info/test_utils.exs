@@ -1,5 +1,8 @@
 defmodule TimeZoneInfo.TestUtils do
+  alias Calendar.ISO
   alias TimeZoneInfo.ExternalTermFormat
+
+  @microsecond {0, 0}
 
   def put_env(env) do
     delete_env()
@@ -80,4 +83,7 @@ defmodule TimeZoneInfo.TestUtils do
   def now(add: value) do
     DateTime.utc_now() |> DateTime.add(value) |> DateTime.to_unix()
   end
+
+  def to_iso_days(%NaiveDateTime{year: yr, month: mo, day: dy, hour: hr, minute: m, second: s}),
+    do: ISO.naive_datetime_to_iso_days(yr, mo, dy, hr, m, s, @microsecond)
 end
