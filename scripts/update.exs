@@ -17,7 +17,7 @@ defmodule TimeZoneInfo.Scripts.Update do
 
     info("Download: #{uri()}")
 
-    with {:ok, format, data} <- Downloader.download(),
+    with {:ok, format, {200, data}} <- Downloader.download(),
          {:ok, data} <- transform(format, data),
          {:ok, checksum} <- ExternalTermFormat.checksum(data),
          :ok <- DataPersistence.put(data) do

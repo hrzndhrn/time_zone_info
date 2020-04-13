@@ -26,16 +26,6 @@ defmodule TimeZoneInfo.GregorianSeconds do
   end
 
   @doc """
-  Sorts the given list of tuples by the seconds specified in the first element.
-  """
-  @spec sort([{t(), any()}]) :: [{t(), any()}]
-  def sort(tuples) do
-    Enum.sort(tuples, fn tuple_a, tuple_b ->
-      elem(tuple_a, 0) < elem(tuple_b, 0)
-    end)
-  end
-
-  @doc """
   Computes the number of gregorian seconds starting with year 0 and ending at
   the specified `naive_datetime`.
   """

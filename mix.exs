@@ -34,7 +34,7 @@ defmodule TimeZoneInfo.MixProject do
   defp env do
     [
       files: ~w(africa antarctica asia australasia etcetera europe northamerica southamerica),
-      lookahead: 5,
+      lookahead: 15,
       data_store: :detect,
       update: :disabled,
       downloader: [
