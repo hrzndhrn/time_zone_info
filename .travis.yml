@@ -1,3 +1,7 @@
+os: linux
+
+dist: trusty
+
 language: elixir
 
 elixir:
@@ -10,7 +14,7 @@ otp_release:
   - 21.3
   - 22.2
 
-matrix:
+jobs:
   exclude:
     - elixir: 1.10.2
       otp_release: 20.3
@@ -26,9 +30,6 @@ script:
   - mix coveralls.travis
 #  - mix dialyzer --halt-exit-status
 
-sudo: required
-
-dist: trusty
 
 cache:
   directories:
