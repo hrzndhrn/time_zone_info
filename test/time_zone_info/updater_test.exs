@@ -4,9 +4,14 @@ defmodule TimeZoneInfo.UpdaterTest do
   import ExUnit.CaptureLog
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.DataPersistence.Priv
-  alias TimeZoneInfo.{DataStore, TimeZoneDatabase, Updater}
-  alias TimeZoneInfo.DataStore.{ErlangTermStorage, PersistentTerm}
+  alias TimeZoneInfo.{
+    DataPersistence.Priv,
+    DataStore,
+    DataStore.ErlangTermStorage,
+    DataStore.PersistentTerm,
+    TimeZoneDatabase,
+    Updater
+  }
 
   @seconds_per_hour 60 * 60
   @seconds_per_day 24 * @seconds_per_hour
@@ -17,10 +22,14 @@ defmodule TimeZoneInfo.UpdaterTest do
   setup do
     cp_data(@fixture, @path)
 
-    # The next two lines can be costly, because some tests are working with the
-    # full data set from the IANA time zone database.
-    ErlangTermStorage.delete!()
-    if function_exported?(PersistentTerm, :delete!, 0), do: PersistentTerm.delete!()
+    data_store =
+      if function_exported?(:persistent_term, :get, 0) do
+        PersistentTerm
+      else
+        ErlangTermStorage
+      end
+
+    data_store.delete!()
 
     # The commented out lines show the default value of the configuration entry.
     put_env(
@@ -35,7 +44,8 @@ defmodule TimeZoneInfo.UpdaterTest do
       ],
       # update: :disabled,
       update: :daily,
-      # data_store: TimeZoneInfo.DataStore.PersistentTerm,
+      # data_store: :auto,
+      data_store: data_store,
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
       # priv: [path: "data.etf"]
       priv: [path: @path],
@@ -50,9 +60,9 @@ defmodule TimeZoneInfo.UpdaterTest do
   end
 
   describe "update/0 (ErlangTermStorage)" do
-    setup do
-      update_env(data_store: ErlangTermStorage)
-    end
+    # setup do
+    # update_env(data_store: ErlangTermStorage)
+    # end
 
     test "tries to update old file" do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
@@ -202,6 +212,30 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
+    test "gets an error if ..." do
+      rm_data(@path)
+      mkdir_data(@path)
+
+      update_env(
+        # files are not needed
+        files: [],
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:666",
+          format: :etf
+        ]
+      )
+
+      assert_log(
+        fn ->
+          refute data_exists?(@path)
+          assert DataStore.empty?()
+          assert {:error, {:error, _}} = Updater.update()
+        end,
+        [:initial, :force, :download, :error]
+      )
+    end
+
     test "updates data for europe and etcetera" do
       update_env(files: ~w(europe etcetera))
       touch_data(@path, now(sub: 2 * @seconds_per_day))
@@ -229,7 +263,32 @@ defmodule TimeZoneInfo.UpdaterTest do
                {:ok, %{std_offset: 0, utc_offset: -14400, zone_abbr: "-04"}}
     end
 
-    test "updates data for europe and asia filtered by time_zones" do
+    test "updates data filtered by time_zones" do
+      update_env(
+        files: ~w(africa europe),
+        time_zones: ["Europe/Berlin", "Indian"]
+      )
+
+      touch_data(@path, now(sub: 2 * @seconds_per_day))
+
+      assert_log(
+        fn ->
+          assert {:next, _timestamp} = Updater.update()
+        end,
+        [:initial, :force, :download, :update]
+      )
+
+      assert TimeZoneInfo.time_zones(links: :ignore) == [
+               "Europe/Berlin",
+               "Indian/Mahe",
+               "Indian/Mauritius",
+               "Indian/Reunion"
+             ]
+
+      assert TimeZoneInfo.time_zones(links: :only) == []
+    end
+
+    test "updates data filtered by time_zones (forced update)" do
       update_env(
         files: ~w(europe asia),
         time_zones: ["Europe/Berlin", "Indian"]
@@ -241,10 +300,43 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert {:next, _timestamp} = Updater.update()
         end,
-        [:initial, :check, :download, :update]
+        [:initial, :force, :download, :update]
       )
 
       assert TimeZoneInfo.time_zones() == ["Europe/Berlin", "Indian/Chagos", "Indian/Maldives"]
+    end
+
+    test "updates data filtered by time_zones (update: :disabled)" do
+      update_env(
+        update: :disabled,
+        time_zones: ["Africa/Lagos", "Indian"]
+      )
+
+      assert_log(
+        fn ->
+          assert :ok = Updater.update()
+        end,
+        [:initial, :check]
+      )
+
+      assert TimeZoneInfo.time_zones(links: :ignore) == [
+               "Africa/Lagos",
+               "Indian/Mahe",
+               "Indian/Mauritius",
+               "Indian/Reunion"
+             ]
+
+      assert TimeZoneInfo.time_zones(links: :only) == [
+               "Africa/Bangui",
+               "Africa/Brazzaville",
+               "Africa/Douala",
+               "Africa/Kinshasa",
+               "Africa/Libreville",
+               "Africa/Luanda",
+               "Africa/Malabo",
+               "Africa/Niamey",
+               "Africa/Porto-Novo"
+             ]
     end
 
     test "runs initial update once" do
@@ -282,31 +374,6 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
   end
 
-  if function_exported?(PersistentTerm, :put, 1) do
-    describe "update/0 (PersistentTerm)" do
-      setup do
-        update_env(data_store: PersistentTerm)
-      end
-
-      test "tries to update old file and new config" do
-        update_env(files: ~w(europe))
-        touch_data(@path, now(sub: 2 * @seconds_per_day))
-        checksum = checksum(@path)
-
-        assert_log(
-          fn ->
-            assert DataStore.empty?()
-            assert {:next, timestamp} = Updater.update()
-            assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-            refute DataStore.empty?()
-            assert checksum(@path) != checksum
-          end,
-          [:initial, :check, :download, :update]
-        )
-      end
-    end
-  end
-
   describe "update/0 returns error" do
     test "without any config" do
       delete_env()
@@ -339,7 +406,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert Updater.update() == {:error, {:invalid_config, [time_zones: :foo]}}
         end,
-        [:initial, :check, :download, :error]
+        [:initial, :error]
       )
     end
 
@@ -355,7 +422,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert Updater.update() == {:error, {:invalid_config, [time_zones: [:foo]]}}
         end,
-        [:initial, :check, :download, :error]
+        [:initial, :error]
       )
     end
   end
