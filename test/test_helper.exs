@@ -8,7 +8,6 @@
   time_zone_info/time_zone_database_checker.exs
   time_zone_info/tz_checker.exs
   time_zone_info/tzdata_checker.exs
-  time_zone_info_case.exs
 )
 |> Enum.each(fn file ->
   "support" |> Path.join(file) |> Code.require_file(__DIR__)

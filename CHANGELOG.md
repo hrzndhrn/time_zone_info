@@ -4,9 +4,12 @@
 
 - Using `plug_cowboy` instead of `cowboy` in tests.
 - Adding HTTP status code to the downloader.
-- Adding optional `info/0` callback to the `DataStore` behaviour.
 - Updating default `lookahead` to 15 years.
 - Refactoring date time handling.
+- Adding `TimeZoneInfo.info/0`.
+- Adding optional `info/0` callback to the `DataStore` behaviour.
+- Adding optional `info/0` callback to the `DataPersistence` behaviour.
+- Adding `TimeZoneInfo.Listener.ErrorLogger`.
 
 ## 0.2.0 - 2020/04/08
 

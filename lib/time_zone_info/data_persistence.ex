@@ -28,6 +28,13 @@ defmodule TimeZoneInfo.DataPersistence do
   """
   @callback put_last_update(time :: non_neg_integer()) :: :ok | {:error, term()}
 
+  @doc """
+  Returns infos about the persisted data.
+  """
+  @callback info :: term()
+
+  @optional_callbacks info: 0
+
   # Implementation
 
   @spec impl :: module()
@@ -52,4 +59,15 @@ defmodule TimeZoneInfo.DataPersistence do
   @doc false
   @spec put_last_update(non_neg_integer()) :: :ok | {:error, term()}
   def put_last_update(time), do: impl().put_last_update(time)
+
+  @doc false
+  @spec info :: term()
+  def info do
+    impl = impl()
+
+    case function_exported?(impl, :info, 0) do
+      false -> :no_implementation_found
+      true -> impl.info()
+    end
+  end
 end

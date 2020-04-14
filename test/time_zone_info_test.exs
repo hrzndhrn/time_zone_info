@@ -1,8 +1,36 @@
 defmodule TimeZoneInfoTest do
-  use TimeZoneInfoCase
+  use ExUnit.Case
 
-  # All data in the comments are lent from Noda Time.
-  # https://nodatime.org/tzvalidate/generate?version=2019c
+  import TimeZoneInfo.TestUtils
+
+  alias TimeZoneInfo.{
+    DataPersistence.Priv,
+    DataStore,
+    DataStore.Server,
+    IanaParser,
+    Transformer
+  }
+
+  setup_all do
+    put_env(
+      data_store: Server,
+      data_persistence: Priv,
+      priv: [path: "data.etf"]
+    )
+
+    path = "test/fixtures/iana/2019c"
+    files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
+
+    with {:ok, data} <- IanaParser.parse(path, files) do
+      data
+      |> Transformer.transform("2019c", lookahead: 10)
+      |> DataStore.put()
+    end
+
+    on_exit(&delete_env/0)
+
+    :ok
+  end
 
   test "time_zones/0 returns all time zones" do
     time_zones = TimeZoneInfo.time_zones()

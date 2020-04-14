@@ -1,6 +1,8 @@
 defmodule TimeZoneInfo.ApplicationTest do
   use ExUnit.Case
 
+  alias TimeZoneInfo.DataStore
+
   test "start" do
     assert {:ok, _} = Application.ensure_all_started(:time_zone_info)
 
@@ -13,5 +15,6 @@ defmodule TimeZoneInfo.ApplicationTest do
     assert TimeZoneInfo.update() == :ok
     assert TimeZoneInfo.update(:force) == :ok
     assert TimeZoneInfo.next_update() == :never
+    assert %{persistence: _, store: _, worker: _} = TimeZoneInfo.info()
   end
 end

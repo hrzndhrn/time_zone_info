@@ -56,14 +56,11 @@ defmodule TimeZoneInfo.UpdaterTest do
     on_exit(fn ->
       rm_data(@path)
       delete_env()
+      data_store.delete!()
     end)
   end
 
-  describe "update/0 (ErlangTermStorage)" do
-    # setup do
-    # update_env(data_store: ErlangTermStorage)
-    # end
-
+  describe "update/0" do
     test "tries to update old file" do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
       checksum = checksum(@path)
@@ -387,8 +384,8 @@ defmodule TimeZoneInfo.UpdaterTest do
       delete_env()
 
       put_env(
-        data_persistence: Priv,
-        data_store: ErlangTermStorage
+        data_store: ErlangTermStorage,
+        data_persistence: Priv
       )
 
       assert Updater.update() == {:error, {:invalid_config, :priv}}
@@ -397,10 +394,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     test "for invalid time_zones" do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
 
-      update_env(
-        data_store: ErlangTermStorage,
-        time_zones: :foo
-      )
+      update_env(time_zones: :foo)
 
       assert_log(
         fn ->
@@ -413,10 +407,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     test "for invalid time zone in time_zones" do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
 
-      update_env(
-        data_store: ErlangTermStorage,
-        time_zones: [:foo]
-      )
+      update_env(time_zones: [:foo])
 
       assert_log(
         fn ->
@@ -447,10 +438,10 @@ defmodule TimeZoneInfo.UpdaterTest do
       fn {step, info} ->
         case Enum.member?(steps, step) do
           true ->
-            assert log =~ info, ~s(assert log: "#{info}")
+            assert log =~ info, ~s(assert log: "#{info}\nlog = #{log}")
 
           false ->
-            refute log =~ info, ~s(refute log: "#{info}")
+            refute log =~ info, ~s(refute log: "#{info}\nlog = #{log}")
         end
       end
     )

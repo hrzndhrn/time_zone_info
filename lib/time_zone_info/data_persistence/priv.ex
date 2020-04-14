@@ -50,6 +50,18 @@ defmodule TimeZoneInfo.DataPersistence.Priv do
     end
   end
 
+  @impl true
+  def info do
+    with {:ok, path} <- fetch_path(),
+         {:ok, stat} <- File.stat(path),
+         {:ok, data} <- File.read(path) do
+      %{
+        stat: stat,
+        checksum: ExternalTermFormat.checksum(data)
+      }
+    end
+  end
+
   @spec fetch_path ::
           {:ok, Path.t()} | {:error, {:invalid_config, Keyword.key() | [Keyword.key()]}}
   defp fetch_path do

@@ -5,8 +5,6 @@ defmodule TimeZoneInfo.Worker do
   """
   use GenServer
 
-  require Logger
-
   alias TimeZoneInfo.Updater.Interface, as: Updater
 
   @timeout 3 * 60 * 1_000
@@ -101,7 +99,6 @@ defmodule TimeZoneInfo.Worker do
         {:next, timer}
 
       error ->
-        log_error(error)
         error
     end
   end
@@ -121,24 +118,4 @@ defmodule TimeZoneInfo.Worker do
         error
     end
   end
-
-  defp log_error(error) do
-    case error do
-      {:error, {:invalid_config, [update: value]}} ->
-        """
-        TimeZoneInfo config invalid. Found #{inspect(value)} for key :update
-        valid values are :disabled and :daily."
-        """
-        |> to_one_line()
-        |> Logger.error()
-
-      {:error, {:invalid_config, path}} ->
-        Logger.error("TimeZoneInfo config invalid. path: #{inspect(path)}")
-
-      {:error, _reason} = error ->
-        Logger.error("TimeZoneInfo update failed! #{inspect(error)}")
-    end
-  end
-
-  defp to_one_line(string), do: String.replace(string, "\n", " ")
 end

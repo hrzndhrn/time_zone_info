@@ -36,6 +36,6 @@ defmodule TimeZoneInfo.Listener.Logger do
   end
 
   def on_update({:error, _} = error) do
-    Logger.info("TimeZoneInfo: Update failed! #{inspect(error)}")
+    Logger.error("TimeZoneInfo: Update failed! #{inspect(error)}")
   end
 end
