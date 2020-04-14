@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.ApplicationTest do
   use ExUnit.Case
 
-  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.DataStore.{PersistentTerm, ErlangTermStorage}
 
   setup_all do
     data_store =
