@@ -3,8 +3,6 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
     use TimeZoneInfo.TimeZoneDatabaseCase,
       data_store: TimeZoneInfo.DataStore.PersistentTerm
 
-    alias TimeZoneInfo.DataStore
-
     test "get_transitions/1" do
       assert {:ok, zone_states} = DataStore.get_transitions("Pacific/Auckland")
 

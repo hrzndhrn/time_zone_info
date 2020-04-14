@@ -15,6 +15,7 @@ defmodule TimeZoneInfo.DataPersistence.Priv do
   def put(data) do
     with {:ok, path} <- fetch_path(),
          {:ok, data} <- ExternalTermFormat.encode(data) do
+      IO.inspect(path)
       File.write(path, data)
     end
   end
