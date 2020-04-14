@@ -57,6 +57,7 @@ defmodule TimeZoneInfo.DataPersistence.Priv do
          {:ok, data} <- File.read(path) do
       %{
         stat: stat,
+        path: path,
         checksum: ExternalTermFormat.checksum(data)
       }
     end

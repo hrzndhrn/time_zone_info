@@ -1,21 +1,6 @@
 defmodule TimeZoneInfo.ApplicationTest do
   use ExUnit.Case
 
-  alias TimeZoneInfo.DataStore.{PersistentTerm, ErlangTermStorage}
-
-  setup_all do
-    data_store =
-      if function_exported?(:persistent_term, :get, 0) do
-        PersistentTerm
-      else
-        ErlangTermStorage
-      end
-
-    data_store.delete!()
-
-    :ok
-  end
-
   test "start" do
     assert {:ok, _} = Application.ensure_all_started(:time_zone_info)
 
