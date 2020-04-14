@@ -9,6 +9,7 @@ defmodule TimeZoneInfo do
   """
 
   alias TimeZoneInfo.{
+    DataPersistence,
     DataStore,
     GregorianSeconds,
     IanaParser,
@@ -116,4 +117,15 @@ defmodule TimeZoneInfo do
   """
   @spec state :: :ok | {:next, non_neg_integer()} | {:error, term()}
   def state, do: Worker.state()
+
+  @doc """
+  Returns infos about persisted and stored data.
+  """
+  def info do
+    %{
+      store: DataStore.info(),
+      persistence: DataPersistence.info(),
+      worker: Worker.state()
+    }
+  end
 end

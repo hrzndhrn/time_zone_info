@@ -1,7 +1,6 @@
 defmodule TimeZoneInfo.WorkerTest do
   use ExUnit.Case
 
-  import ExUnit.CaptureLog
   import Mox
   import TimeZoneInfo.TestUtils
 
@@ -9,9 +8,11 @@ defmodule TimeZoneInfo.WorkerTest do
 
   setup_all do
     Application.put_env(:time_zone_info, :updater, TimeZoneInfo.UpdaterMock)
+    Application.put_env(:time_zone_info, :listener, TimeZoneInfo.Listener.ErrorLogger)
 
     on_exit(fn ->
       Application.delete_env(:time_zone_info, :updater)
+      Application.delete_env(:time_zone_info, :listener)
     end)
   end
 
@@ -40,41 +41,10 @@ defmodule TimeZoneInfo.WorkerTest do
     test "ends in state {:error, ...}" do
       expect(UpdaterMock, :update, 1, fn _ -> {:error, :foo} end)
 
-      log =
-        capture_log(fn ->
-          assert {:ok, _pid} = Worker.start_link(name: :worker_test)
-        end)
+      assert {:ok, _pid} = Worker.start_link(name: :worker_test)
 
-      assert log =~ "[error] TimeZoneInfo update failed! {:error, :foo}"
       assert Worker.state(:worker_test) == {:error, :foo}
       assert Worker.next(:worker_test) == {:error, :foo}
-    end
-
-    test "logs an error for an invalid :update value" do
-      expect(UpdaterMock, :update, 1, fn _ ->
-        {:error, {:invalid_config, [update: 42]}}
-      end)
-
-      log =
-        capture_log(fn ->
-          assert {:ok, _pid} = Worker.start_link(name: :worker_test)
-        end)
-
-      assert log =~ "[error] TimeZoneInfo config invalid. Found 42 for key :update"
-      assert log =~ "valid values are :disabled and :daily."
-    end
-
-    test "logs an error for an invalid config" do
-      expect(UpdaterMock, :update, 1, fn _ ->
-        {:error, {:invalid_config, [foo: 42]}}
-      end)
-
-      log =
-        capture_log(fn ->
-          assert {:ok, _pid} = Worker.start_link(name: :worker_test)
-        end)
-
-      assert log =~ "[error] TimeZoneInfo config invalid. path: [foo: 42]"
     end
 
     test "recalls update after {:next, seconds}" do

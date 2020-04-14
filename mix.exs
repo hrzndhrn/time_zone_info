@@ -37,6 +37,7 @@ defmodule TimeZoneInfo.MixProject do
       lookahead: 15,
       data_store: :detect,
       update: :disabled,
+      listener: TimeZoneInfo.Listener.ErrorLogger,
       downloader: [
         module: TimeZoneInfo.Downloader.Mint,
         uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",

@@ -13,5 +13,6 @@ defmodule TimeZoneInfo.ApplicationTest do
     assert TimeZoneInfo.update() == :ok
     assert TimeZoneInfo.update(:force) == :ok
     assert TimeZoneInfo.next_update() == :never
+    assert %{persistence: _, store: _, worker: _} = TimeZoneInfo.info()
   end
 end
