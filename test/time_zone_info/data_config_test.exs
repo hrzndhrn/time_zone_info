@@ -2,8 +2,8 @@ defmodule TimeZoneInfo.DataConfigTest do
   use ExUnit.Case
 
   alias TimeZoneInfo.{
-    ExternalTermFormat,
-    DataConfig
+    DataConfig,
+    ExternalTermFormat
   }
 
   setup_all do
@@ -25,6 +25,19 @@ defmodule TimeZoneInfo.DataConfigTest do
 
       assert DataConfig.update(data, time_zones: time_zones) ==
                {:error, {:time_zones_not_found, ["Foo"]}}
+    end
+
+    test "returns time zones for configured link", %{data: data} do
+      time_zones = ["Europe/Jersey"]
+      assert {:ok, data} = DataConfig.update(data, time_zones: time_zones)
+      assert Map.keys(data.time_zones) == ["Europe/London"]
+      assert Map.keys(data.rules) == ["EU"]
+
+      assert Map.keys(data.links) == [
+               "Europe/Guernsey",
+               "Europe/Isle_of_Man",
+               "Europe/Jersey"
+             ]
     end
 
     test "returns configured time zones", %{data: data} do

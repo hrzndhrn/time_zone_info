@@ -55,14 +55,22 @@ defmodule TimeZoneInfo.Updater do
 
     with {:ok, data} <- DataPersistence.fetch(),
          {:ok, time_zones} <- fetch_env(:time_zones),
-         {:ok, data} <- DataConfig.update(data, [time_zones: time_zones]),
+         {:ok, data} <- DataConfig.update(data, time_zones: time_zones),
          :ok <- DataStore.put(data) do
       do_update(:check)
     else
-      {:error, :enoent} -> do_update(:force)
-      error -> error
+      {:error, {:time_zones_not_found, _}} = error ->
+        force_update(error)
+
+      {:error, :enoent} = error ->
+        force_update(error)
+
+      error ->
+        error
     end
   end
+
+  defp do_update(:force), do: force_update(:ok)
 
   defp do_update(:check) do
     Listener.on_update(:check)
@@ -104,7 +112,18 @@ defmodule TimeZoneInfo.Updater do
     end
   end
 
-  defp do_update(:force) do
+  defp do_update(:finally, data) do
+    Listener.on_update(:update)
+
+    with {:ok, time_zones} <- fetch_env(:time_zones),
+         {:ok, data} <- DataConfig.update(data, time_zones: time_zones),
+         :ok <- DataStore.put(data),
+         :ok <- DataPersistence.put(data) do
+      :ok
+    end
+  end
+
+  defp force_update(on_disabled) do
     Listener.on_update(:force)
 
     now = DateTime.utc_now() |> DateTime.to_unix()
@@ -115,17 +134,8 @@ defmodule TimeZoneInfo.Updater do
          :ok <- DataPersistence.put_last_update(now) do
       {:next, now + @seconds_per_day}
     else
-      {:ok, :disabled} -> :ok
+      {:ok, :disabled} -> on_disabled
       error -> error
-    end
-  end
-
-  defp do_update(:finally, data) do
-    Listener.on_update(:update)
-
-    with :ok <- DataStore.put(data),
-         :ok <- DataPersistence.put(data) do
-      :ok
     end
   end
 

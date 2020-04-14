@@ -4,8 +4,11 @@ defmodule TimeZoneInfo.Transformer do
   `TimeZoneInfo`.
   """
 
-  alias TimeZoneInfo.IanaParser
-  alias TimeZoneInfo.Transformer.{Rule, ZoneState}
+  alias TimeZoneInfo.{
+    IanaParser,
+    Transformer.Rule,
+    Transformer.ZoneState
+  }
 
   @type opts :: [lookahead: non_neg_integer()]
 
@@ -16,10 +19,7 @@ defmodule TimeZoneInfo.Transformer do
   """
   @spec transform(IanaParser.output(), version :: String.t(), opts()) :: TimeZoneInfo.data()
   def transform(iana_data, version, opts \\ @default_opts) do
-    time_zones =
-      iana_data
-      |> zones(opts)
-
+    time_zones = zones(iana_data, opts)
     rules = rules(iana_data, time_zones)
     links = links(iana_data, time_zones)
 
@@ -27,9 +27,8 @@ defmodule TimeZoneInfo.Transformer do
   end
 
   # Transform IANA zone to TimeZoneInfo time-zones.
-  @spec zones(IanaParser.output(), opts()) :: %{
-          Calendar.time_zone() => [TimeZoneInfo.transition()]
-        }
+  @spec zones(IanaParser.output(), opts()) ::
+          %{Calendar.time_zone() => [TimeZoneInfo.transition()]}
   defp zones(iana_data, opts) do
     iana_data
     |> Map.get(:zones, %{})
@@ -40,7 +39,7 @@ defmodule TimeZoneInfo.Transformer do
 
   # Transform rules that are required by time zones.
   # These rules are used to determine periods in the future.
-  @spec rules(IanaParser.output(), [TimeZoneInfo.rule_name()]) ::
+  @spec rules(IanaParser.output(), %{Calendar.time_zone() => [TimeZoneInfo.transition()]}) ::
           %{TimeZoneInfo.rule_name() => [TimeZoneInfo.rule()]}
   defp rules(iana_data, time_zones) do
     used_rules = used_rules(time_zones)
@@ -71,10 +70,8 @@ defmodule TimeZoneInfo.Transformer do
     |> Enum.uniq()
   end
 
-  @doc """
-  Filters out all links that refer to an existing time zone.
-  """
-  @spec links(IanaParser.output(), [Calendar.time_zone()]) ::
+  # Filters out all links that refer to an existing time zone.
+  @spec links(IanaParser.output(), %{Calendar.time_zone() => [TimeZoneInfo.transition()]}) ::
           %{Calendar.time_zone() => Calendar.time_zone()}
   defp links(iana_data, time_zones) do
     time_zone_names = Map.keys(time_zones)
@@ -83,26 +80,6 @@ defmodule TimeZoneInfo.Transformer do
     |> Map.get(:links, %{})
     |> Enum.filter(fn {_, name} ->
       Enum.member?(time_zone_names, name)
-    end)
-    |> Enum.into(%{})
-  end
-
-  @spec filter(
-          %{Calendar.time_zone() => [TimeZoneInfo.transition()]},
-          :all | [Calendar.time_zone()]
-        ) :: %{Calendar.time_zone() => [TimeZoneInfo.transition()]}
-  defp filter(time_zones, :all), do: time_zones
-
-  defp filter(time_zones, names) do
-    names = Enum.map(names, fn name -> String.split(name, "/") end)
-
-    time_zones
-    |> Enum.filter(fn {time_zone_name, _} ->
-      time_zone_name = String.split(time_zone_name, "/")
-
-      Enum.any?(names, fn name ->
-        List.starts_with?(time_zone_name, name)
-      end)
     end)
     |> Enum.into(%{})
   end
