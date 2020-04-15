@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0-dev
+## 0.3.0
 
 - Using `plug_cowboy` instead of `cowboy` in tests.
 - Adding HTTP status code to the downloader.

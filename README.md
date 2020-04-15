@@ -15,7 +15,7 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:time_zone_info, "~> 0.2"}
+    {:time_zone_info, "~> 0.3"}
   ]
 end
 ```
