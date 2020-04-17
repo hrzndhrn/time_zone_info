@@ -1,5 +1,9 @@
 # Changelog
 
+##
+
+- Making some modules private. According to [Hiding Internal Modules and Functions](https://hexdocs.pm/elixir/master/writing-documentation.html#hiding-internal-modules-and-functions).
+
 ## 0.3.0
 
 - Using `plug_cowboy` instead of `cowboy` in tests.
