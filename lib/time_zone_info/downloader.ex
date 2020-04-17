@@ -30,6 +30,7 @@ defmodule TimeZoneInfo.Downloader do
 
   @callback download(uri :: URI.t(), opts :: opts) :: download() | {:error, term()}
 
+  @doc false
   def download do
     with {:ok, uri} <- uri(),
          {:ok, format} <- format(),

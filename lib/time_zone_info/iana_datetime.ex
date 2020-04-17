@@ -1,7 +1,6 @@
 defmodule TimeZoneInfo.IanaDateTime do
-  @moduledoc """
-  Some functions to handle datetimes in `TimeZoneInfo`.
-  """
+  @moduledoc false
+  # Some functions to handle datetimes in `TimeZoneInfo`.
 
   alias Calendar.ISO
 

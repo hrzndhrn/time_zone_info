@@ -1,8 +1,8 @@
 defmodule TimeZoneInfo.Worker do
-  @moduledoc """
-  Holds the state for `TimeZoneInfo` and starts the initial update and when
-  configured the automatic updates.
-  """
+  @moduledoc false
+  # Holds the state for `TimeZoneInfo` and starts the initial update and when
+  # configured the automatic updates.
+
   use GenServer
 
   alias TimeZoneInfo.Updater.Interface, as: Updater

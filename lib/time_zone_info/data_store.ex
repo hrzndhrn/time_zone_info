@@ -1,7 +1,6 @@
 defmodule TimeZoneInfo.DataStore do
-  @moduledoc """
-  A behaviour to store data and serve them later on.
-  """
+  @moduledoc false
+  # A behaviour to store data and serve them later on.
 
   @doc "Puts the given `data` into the store."
   @callback put(data :: TimeZoneInfo.data()) :: :ok | :error

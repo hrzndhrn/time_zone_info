@@ -6,11 +6,13 @@ defmodule TimeZoneInfo.Listener do
   @doc """
   A callback to listen on the update process.
 
-  Possible steps:
+  Possible events:
   - `:initial` initializing data.
   - `:check` checking whether an update is necessary.
+  - `:force` an update is forced.
   - `:download` downloads data.
   - `:update` updating data.
+  - `{:error, reason}
   """
   @callback on_update(step :: atom() | {:error, term()}) :: :ok | :undefined
 

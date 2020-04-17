@@ -6,6 +6,7 @@ defmodule TimeZoneInfo.MixProject do
       app: :time_zone_info,
       version: "0.3.0",
       elixir: "~> 1.8",
+      name: "TimeZoneInfo",
       description: description(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -69,6 +70,20 @@ defmodule TimeZoneInfo.MixProject do
       extras: [
         "README.md",
         "docs/config.md"
+      ],
+      groups_for_modules: [
+        Behaviours: [
+          TimeZoneInfo.DataPersistence,
+          TimeZoneInfo.DataPersistence.Priv,
+          # TimeZoneInfo.DataStore,
+          # TimeZoneInfo.DataStore.ErlangTermStorage,
+          # TimeZoneInfo.DataStore.PersistentTerm,
+          TimeZoneInfo.Downloader,
+          TimeZoneInfo.Downloader.Mint,
+          TimeZoneInfo.Listener,
+          TimeZoneInfo.Listener.ErrorLogger,
+          TimeZoneInfo.Listener.Logger
+        ]
       ]
     ]
   end

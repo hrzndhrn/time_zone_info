@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.DataConfig do
-  @moduledoc """
-  This module applies the configuration to the transition tables.
-  """
+  @moduledoc false
+  # This module applies the configuration to the transition tables.
+
 
   alias TimeZoneInfo.Transformer
 

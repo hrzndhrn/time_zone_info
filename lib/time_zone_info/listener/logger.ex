@@ -8,9 +8,7 @@ defmodule TimeZoneInfo.Listener.Logger do
   require Logger
 
   @impl true
-  @doc """
-  Listen on update events.
-  """
+  @doc false
   def on_update(:initial) do
     Logger.info("TimeZoneInfo: Initializing data.")
   end

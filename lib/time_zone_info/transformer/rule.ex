@@ -1,7 +1,6 @@
 defmodule TimeZoneInfo.Transformer.Rule do
-  @moduledoc """
-  This module handles and transforms the IANA rules.
-  """
+  @moduledoc false
+  # This module handles and transforms the IANA rules.
 
   alias TimeZoneInfo.IanaDateTime
   alias TimeZoneInfo.IanaParser

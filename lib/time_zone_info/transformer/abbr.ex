@@ -1,7 +1,6 @@
 defmodule TimeZoneInfo.Transformer.Abbr do
-  @moduledoc """
-  This module provides some functions to create time zone abbreviations.
-  """
+  @moduledoc false
+  # This module provides some functions to create time zone abbreviations.
 
   @typedoc "The format of a `zone_abbr`."
   @type format ::

@@ -1,7 +1,6 @@
 defmodule TimeZoneInfo.Updater do
-  @moduledoc """
-  Handles the automatic update and the initial setup.
-  """
+  @moduledoc false
+  # Handles the automatic update and the initial setup.
 
   @behaviour TimeZoneInfo.Updater.Interface
 
