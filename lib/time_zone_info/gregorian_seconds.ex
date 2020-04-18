@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.GregorianSeconds do
   @moduledoc false
+
   # An implementation for gregorian seconds.
 
   @type t :: integer()

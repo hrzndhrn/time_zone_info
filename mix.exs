@@ -42,10 +42,10 @@ defmodule TimeZoneInfo.MixProject do
       downloader: [
         module: TimeZoneInfo.Downloader.Mint,
         uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
-        format: :iana,
+        mode: :iana,
         headers: [
-          {"Content-Type", "application/tar+gzip"},
-          {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
+          {"content-type", "application/gzip"},
+          {"user-agent", "Elixir.TimeZoneInfo.Mint"}
         ]
       ],
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
@@ -121,7 +121,7 @@ defmodule TimeZoneInfo.MixProject do
       {:mint, "~> 1.0", optional: true},
       {:mox, "~> 0.5", only: :test},
       {:nimble_parsec, "~> 0.5", runtime: false},
-      {:plug_cowboy, "~> 2.0", only: :test},
+      {:plug_cowboy, "~> 2.0", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true}

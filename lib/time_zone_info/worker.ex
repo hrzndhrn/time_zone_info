@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.Worker do
   @moduledoc false
+
   # Holds the state for `TimeZoneInfo` and starts the initial update and when
   # configured the automatic updates.
 

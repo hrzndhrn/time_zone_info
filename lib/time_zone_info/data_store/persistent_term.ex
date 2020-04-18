@@ -1,6 +1,7 @@
 defmodule TimeZoneInfo.DataStore.PersistentTerm do
   if function_exported?(:persistent_term, :get, 0) do
     @moduledoc false
+
     # This module implements the `TimeZoneInfo.DataStore` and stores the data with
     # [:persistent_term](https://erlang.org/doc/man/persistent_term.html).
 

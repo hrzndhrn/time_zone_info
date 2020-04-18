@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.DataStore do
   @moduledoc false
+
   # A behaviour to store data and serve them later on.
 
   @doc "Puts the given `data` into the store."

@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
   @moduledoc false
+
   # This module implements the `TimeZoneInfo.DataStore` and stores the data with
   # [:ets](https://erlang.org/doc/man/ets.html).
 

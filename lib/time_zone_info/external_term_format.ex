@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.ExternalTermFormat do
   @moduledoc false
+
   # Encodes and decodes the `TimeZoneInfo.data`.
 
   @doc """

@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.Updater do
   @moduledoc false
+
   # Handles the automatic update and the initial setup.
 
   @behaviour TimeZoneInfo.Updater.Interface
@@ -43,7 +44,7 @@ defmodule TimeZoneInfo.Updater do
   """
   @spec update(opt :: :run | :force) :: :ok | {:next, Calendar.second()} | {:error, term()}
   def update(step \\ :run) do
-    with {:error, _} = error <- step |> mode() |> do_update() do
+    with {:error, _} = error <- step |> step() |> do_update() do
       Listener.on_update(error)
       error
     end
@@ -98,7 +99,7 @@ defmodule TimeZoneInfo.Updater do
 
   defp do_update(:maybe) do
     with {:ok, checksum_persistence} <- DataPersistence.checksum(),
-         {:ok, data} <- download(),
+         {:ok, data} when not is_atom(data) <- download(),
          {:ok, checksum_download} <- ExternalTermFormat.checksum(data) do
       case checksum_persistence == checksum_download do
         true ->
@@ -108,6 +109,13 @@ defmodule TimeZoneInfo.Updater do
         false ->
           do_update(:finally, data)
       end
+    else
+      {:ok, :not_modified} ->
+        Listener.on_update(:up_to_date)
+        :ok
+
+      error ->
+        error
     end
   end
 
@@ -127,25 +135,54 @@ defmodule TimeZoneInfo.Updater do
 
     now = DateTime.utc_now() |> DateTime.to_unix()
 
-    with {:ok, mode} when mode != :disabled <- fetch_env(:update),
-         {:ok, data} <- download(),
+    with {:ok, update} when update != :disabled <- fetch_env(:update),
+         {:ok, data} when not is_atom(data) <- download(),
          :ok <- do_update(:finally, data),
          :ok <- DataPersistence.put_last_update(now) do
       {:next, now + @seconds_per_day}
     else
-      {:ok, :disabled} -> on_disabled
-      error -> error
+      {:ok, :not_modified} ->
+        Listener.on_update(:up_to_date)
+        {:next, now + @seconds_per_day}
+
+      {:ok, :disabled} ->
+        on_disabled
+
+      error ->
+        error
     end
   end
 
   defp download do
     Listener.on_update(:download)
 
-    case Downloader.download() do
-      {:ok, :iana, {200, data}} -> transform(data)
-      {:ok, :etf, {200, data}} -> ExternalTermFormat.decode(data)
-      {:ok, _format, response} -> {:error, response}
-      error -> error
+    with {:ok, files} <- files(),
+         {:ok, time_zones} <- fetch_env(:time_zones),
+         {:ok, lookahead} <- fetch_env(:lookahead) do
+      opts = [files: files, time_zones: time_zones, lookahead: lookahead]
+
+      opts =
+        case DataPersistence.checksum() do
+          {:ok, checksum} -> Keyword.put(opts, :checksum, checksum)
+          _ -> opts
+        end
+
+      case Downloader.download(opts) do
+        {:ok, :iana, {200, data}} ->
+          transform(data)
+
+        {:ok, mode, {200, data}} when mode in [:etf, :ws] ->
+          ExternalTermFormat.decode(data)
+
+        {:ok, _mode, {304, _body}} ->
+          {:ok, :not_modified}
+
+        {:ok, _mode, response} ->
+          {:error, response}
+
+        error ->
+          error
+      end
     end
   end
 
@@ -170,14 +207,14 @@ defmodule TimeZoneInfo.Updater do
     files |> Enum.map(fn {_name, content} -> content end) |> Enum.join("\n")
   end
 
-  defp mode(:run) do
+  defp step(:run) do
     case DataStore.empty?() do
       true -> :initial
       false -> :check
     end
   end
 
-  defp mode(step), do: step
+  defp step(step), do: step
 
   defp files do
     with {:ok, files} <- fetch_env(:files) do

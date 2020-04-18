@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.Transformer.ZoneState do
   @moduledoc false
+
   # The transformer for time-zones.
 
   alias TimeZoneInfo.GregorianSeconds

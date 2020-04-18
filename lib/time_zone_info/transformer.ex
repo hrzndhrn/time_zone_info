@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.Transformer do
   @moduledoc false
+
   # The `Transformer` transfers the parsed IANA data into the required format for
   # `TimeZoneInfo`.
 

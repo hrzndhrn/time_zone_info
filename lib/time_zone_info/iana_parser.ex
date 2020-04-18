@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.IanaParser do
   @moduledoc false
+
   # The IANA-Parser builds the data structure for `TimeZoneInfo`.
   #
   # The format of the IANA data explains the article [How to Read the tz Database

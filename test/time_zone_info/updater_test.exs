@@ -39,8 +39,8 @@ defmodule TimeZoneInfo.UpdaterTest do
       downloader: [
         module: TimeZoneInfo.Downloader.Mint,
         # uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
-        uri: "http://localhost:1234/iana/2019c.tar.gz",
-        format: :iana
+        uri: "http://localhost:1234/fixtures/iana/2019c.tar.gz",
+        mode: :iana
       ],
       # update: :disabled,
       update: :daily,
@@ -73,7 +73,7 @@ defmodule TimeZoneInfo.UpdaterTest do
           refute DataStore.empty?()
           assert checksum(@path) == checksum
         end,
-        [:initial, :check, :download]
+        [:initial, :check, :download, :up_to_date]
       )
     end
 
@@ -164,8 +164,8 @@ defmodule TimeZoneInfo.UpdaterTest do
         files: [],
         downloader: [
           module: TimeZoneInfo.Downloader.Mint,
-          uri: "http://localhost:1234/data/2019c/extract/africa/data.etf",
-          format: :etf
+          uri: "http://localhost:1234/fixtures/data/2019c/extract/africa/data.etf",
+          mode: :etf
         ]
       )
 
@@ -185,6 +185,71 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
+    @tag :ws
+    test "downloads data from a web service" do
+      rm_data(@path)
+      mkdir_data(@path)
+
+      update_env(
+        files: ~w(europe),
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/api/time_zone_info",
+          mode: :ws,
+          headers: [
+            {"Content-Type", "application/gzip"},
+            {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
+          ]
+        ]
+      )
+
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+        end,
+        [:initial, :force, :download, :update]
+      )
+
+      refute DataStore.empty?()
+      assert data_exists?(@path)
+      assert Enum.member?(TimeZoneInfo.time_zones(), "Europe/Amsterdam")
+      refute Enum.member?(TimeZoneInfo.time_zones(), "America/New_York")
+
+      assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") ==
+               {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
+    end
+
+    @tag :un
+    test "server return 304 if data is unchanged" do
+      update_env(
+        files: ~w(africa),
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/api/time_zone_info",
+          mode: :ws,
+          headers: [
+            {"content-type", "application/gzip"},
+            {"user-agent", "Elixir.TimeZoneInfo.Mint"}
+          ]
+        ]
+      )
+
+      assert_log(
+        fn ->
+          assert data_exists?(@path)
+          assert DataStore.empty?()
+          assert {:next, timestamp} = Updater.update(:force)
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert DataStore.empty?()
+        end,
+        [:force, :download, :up_to_date]
+      )
+    end
+
     test "gets an error if the data is not on the server" do
       rm_data(@path)
       mkdir_data(@path)
@@ -194,8 +259,8 @@ defmodule TimeZoneInfo.UpdaterTest do
         files: [],
         downloader: [
           module: TimeZoneInfo.Downloader.Mint,
-          uri: "http://localhost:1234/data/2019c/extract/missing/data.etf",
-          format: :etf
+          uri: "http://localhost:1234/fixtures/data/2019c/extract/missing/data.etf",
+          mode: :etf
         ]
       )
 
@@ -203,7 +268,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           refute data_exists?(@path)
           assert DataStore.empty?()
-          assert {:error, {404, "not found"}} = Updater.update()
+          assert {:error, {404, "Not Found"}} = Updater.update()
         end,
         [:initial, :force, :download, :error]
       )
@@ -219,7 +284,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         downloader: [
           module: TimeZoneInfo.Downloader.Mint,
           uri: "http://localhost:666",
-          format: :etf
+          mode: :etf
         ]
       )
 
@@ -233,6 +298,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
+    @tag :only
     test "updates data for europe and etcetera" do
       update_env(files: ~w(europe etcetera))
       touch_data(@path, now(sub: 2 * @seconds_per_day))
@@ -359,14 +425,14 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert {:next, timestamp} = Updater.update()
         end,
-        [:initial, :check, :download]
+        [:initial, :check, :download, :up_to_date]
       )
 
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
         end,
-        :check
+        [:check]
       )
     end
   end
@@ -432,16 +498,17 @@ defmodule TimeZoneInfo.UpdaterTest do
         check: "TimeZoneInfo: Checking for update.",
         download: "TimeZoneInfo: Downloading data.",
         update: "TimeZoneInfo: Updating data.",
+        up_to_date: "TimeZoneInfo: No update available.",
         force: "TimeZoneInfo: Force update.",
         error: "TimeZoneInfo: Update failed!"
       },
       fn {step, info} ->
         case Enum.member?(steps, step) do
           true ->
-            assert log =~ info, ~s(assert log: "#{info}\nlog = #{log}")
+            assert log =~ info, ~s(assert log: "#{info}\nfound logs: #{log}")
 
           false ->
-            refute log =~ info, ~s(refute log: "#{info}\nlog = #{log}")
+            refute log =~ info, ~s(refute log: "#{info}\nfound logs: #{log}")
         end
       end
     )

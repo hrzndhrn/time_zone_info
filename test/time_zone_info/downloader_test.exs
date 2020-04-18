@@ -36,7 +36,7 @@ defmodule TimeZoneInfo.DownloaderTest do
                |> Keyword.delete(:uri)
     end)
 
-    assert Downloader.download()
+    assert Downloader.download([])
   end
 
   test "returns error tuple if config is unavailable" do
