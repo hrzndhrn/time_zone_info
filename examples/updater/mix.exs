@@ -7,6 +7,7 @@ defmodule Updater.MixProject do
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
+      build_embedded: true,
       deps: deps()
     ]
   end
