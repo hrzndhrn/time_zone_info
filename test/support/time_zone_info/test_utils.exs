@@ -13,6 +13,7 @@ defmodule TimeZoneInfo.TestUtils do
     Enum.each(env, fn {key, value} ->
       Application.put_env(:time_zone_info, key, value)
     end)
+    Application.get_all_env(:time_zone_info)
   end
 
   def delete_env do
