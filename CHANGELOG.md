@@ -1,10 +1,11 @@
 # Changelog
 
-##
+## dev.0
 
+- Adding `TimeZoneInfo.data` generations as a web service.
 - Making some modules private. According to [Hiding Internal Modules and Functions](https://hexdocs.pm/elixir/master/writing-documentation.html#hiding-internal-modules-and-functions).
 
-## 0.3.0
+## 0.3.0 - 2020/04/15
 
 - Using `plug_cowboy` instead of `cowboy` in tests.
 - Adding HTTP status code to the downloader.
