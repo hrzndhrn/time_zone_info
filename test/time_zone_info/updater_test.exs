@@ -65,16 +65,18 @@ defmodule TimeZoneInfo.UpdaterTest do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
       checksum = checksum(@path)
 
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          assert DataStore.empty?()
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-          refute DataStore.empty?()
-          assert checksum(@path) == checksum
         end,
         [:initial, :check, :download, :up_to_date]
       )
+
+      refute DataStore.empty?()
+      assert checksum(@path) == checksum
     end
 
     test "force with disabled updater" do
@@ -93,32 +95,36 @@ defmodule TimeZoneInfo.UpdaterTest do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
       checksum = checksum(@path)
 
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          assert DataStore.empty?()
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-          refute DataStore.empty?()
-          assert checksum(@path) != checksum
         end,
         [:initial, :check, :download, :update]
       )
+
+      refute DataStore.empty?()
+      assert checksum(@path) != checksum
     end
 
     test "tries to update with an actual file" do
       touch_data(@path, now(sub: @seconds_per_hour))
       checksum = checksum(@path)
 
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          assert DataStore.empty?()
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: 23 * @seconds_per_hour), @delta_seconds)
-          refute DataStore.empty?()
-          assert checksum(@path) == checksum
         end,
         [:initial, :check]
       )
+
+      refute DataStore.empty?()
+      assert checksum(@path) == checksum
     end
 
     test "tries to update with an actual file and new config" do
@@ -126,33 +132,37 @@ defmodule TimeZoneInfo.UpdaterTest do
       touch_data(@path, now(sub: @seconds_per_hour))
       checksum = checksum(@path)
 
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          assert DataStore.empty?()
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: 23 * @seconds_per_hour), @delta_seconds)
-          refute DataStore.empty?()
-          assert checksum(@path) == checksum
         end,
         [:initial, :check]
       )
+
+      refute DataStore.empty?()
+      assert checksum(@path) == checksum
     end
 
     test "writes data file if it is not exist" do
       rm_data(@path)
       mkdir_data(@path)
 
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          refute data_exists?(@path)
-          assert DataStore.empty?()
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-          refute DataStore.empty?()
-          assert data_exists?(@path)
         end,
         [:initial, :force, :download, :update]
       )
+
+      refute DataStore.empty?()
+      assert data_exists?(@path)
     end
 
     test "downloads direct etf data" do
@@ -169,23 +179,24 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          refute data_exists?(@path)
-          assert DataStore.empty?()
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-          refute DataStore.empty?()
-          assert data_exists?(@path)
-
-          assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") ==
-                   {:ok, %{std_offset: 0, utc_offset: 14400, zone_abbr: "+04"}}
         end,
         [:initial, :force, :download, :update]
       )
+
+      refute DataStore.empty?()
+      assert data_exists?(@path)
+
+      assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") ==
+               {:ok, %{std_offset: 0, utc_offset: 14400, zone_abbr: "+04"}}
     end
 
-    @tag :ws
     test "downloads data from a web service" do
       rm_data(@path)
       mkdir_data(@path)
@@ -223,7 +234,6 @@ defmodule TimeZoneInfo.UpdaterTest do
                {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
     end
 
-    @tag :un
     test "server return 304 if data is unchanged" do
       update_env(
         files: ~w(africa),
@@ -238,16 +248,18 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
+      assert data_exists?(@path)
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          assert data_exists?(@path)
-          assert DataStore.empty?()
           assert {:next, timestamp} = Updater.update(:force)
           assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-          assert DataStore.empty?()
         end,
         [:force, :download, :up_to_date]
       )
+
+      assert DataStore.empty?()
     end
 
     test "gets an error if the data is not on the server" do
@@ -264,14 +276,17 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          refute data_exists?(@path)
-          assert DataStore.empty?()
           assert {:error, {404, "Not Found"}} = Updater.update()
         end,
         [:initial, :force, :download, :error]
       )
+
+      assert DataStore.empty?()
     end
 
     test "gets an error if ..." do
@@ -288,17 +303,17 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
       assert_log(
         fn ->
-          refute data_exists?(@path)
-          assert DataStore.empty?()
           assert {:error, {:error, _}} = Updater.update()
         end,
         [:initial, :force, :download, :error]
       )
     end
 
-    @tag :only
     test "updates data for europe and etcetera" do
       update_env(files: ~w(europe etcetera))
       touch_data(@path, now(sub: 2 * @seconds_per_day))

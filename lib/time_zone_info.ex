@@ -75,10 +75,10 @@ defmodule TimeZoneInfo do
 
   @typedoc "The configuration for data generation"
   @type config :: [
-    files: [String.t()],
-    time_zones: [Calendar.time_zone()],
-    lookahead: non_neg_integer()
-  ]
+          files: [String.t()],
+          time_zones: [Calendar.time_zone()],
+          lookahead: non_neg_integer()
+        ]
 
   @doc """
   Returns the list of all available time zones with or without links. The option

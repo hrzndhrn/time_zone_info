@@ -11,7 +11,6 @@ defmodule TestPlug do
 
       with {:ok, file} <- File.read(@iana_data_archive),
            {:ok, data, checksum} <- TimeZoneInfo.data(file, config) do
-
         case modified?(conn, checksum) do
           false ->
             conn

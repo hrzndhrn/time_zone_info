@@ -13,17 +13,18 @@ defmodule TimeZoneInfo.DownloaderTest do
   setup :verify_on_exit!
 
   test "download/1" do
-    env = put_env(
-      downloader: [
-        module: DownloaderMock,
-        mode: :etf,
-        uri: "http://localhost:123/data.etf",
-        headers: [
-          {"Content-Type", "application/tar+gzip"},
-          {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
+    env =
+      put_env(
+        downloader: [
+          module: DownloaderMock,
+          mode: :etf,
+          uri: "http://localhost:123/data.etf",
+          headers: [
+            {"Content-Type", "application/tar+gzip"},
+            {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
+          ]
         ]
-      ]
-    )
+      )
 
     expect(DownloaderMock, :download, fn uri, opts ->
       assert uri == URI.parse(env[:downloader][:uri])
