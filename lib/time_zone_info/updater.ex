@@ -167,7 +167,7 @@ defmodule TimeZoneInfo.Updater do
           _ -> opts
         end
 
-        case Downloader.download(opts) do
+      case Downloader.download(opts) do
         {:ok, :iana, {200, data}} ->
           transform(data)
 
@@ -175,7 +175,7 @@ defmodule TimeZoneInfo.Updater do
           ExternalTermFormat.decode(data)
 
         {:ok, _mode, {304, _body}} ->
-            {:ok, :not_modified}
+          {:ok, :not_modified}
 
         {:ok, _mode, response} ->
           {:error, response}
