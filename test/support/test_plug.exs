@@ -65,6 +65,10 @@ defmodule TestPlug do
       TimeZoneInfo.get(conn)
     end
 
+    get "/api/error" do
+      send_resp(conn, 500, "You Want It, You Got It")
+    end
+
     match _ do
       send_resp(conn, 404, "Not Found")
     end

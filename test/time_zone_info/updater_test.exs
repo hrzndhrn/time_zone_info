@@ -235,6 +235,34 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "server return 304 if data is unchanged" do
+      touch_data(@path, now(sub: @seconds_per_day * 2))
+
+      update_env(
+        files: ~w(africa),
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/api/time_zone_info",
+          mode: :ws,
+          headers: [
+            {"content-type", "application/gzip"},
+            {"user-agent", "Elixir.TimeZoneInfo.Mint"}
+          ]
+        ]
+      )
+
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+        end,
+        [:initial, :check, :download, :up_to_date]
+      )
+
+      refute DataStore.empty?()
+    end
+
+    test "server return 304 if data is unchanged and update forced" do
       update_env(
         files: ~w(africa),
         downloader: [
@@ -260,6 +288,48 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       assert DataStore.empty?()
+    end
+
+    test "server returns 500" do
+      touch_data(@path, now(sub: 2 * @seconds_per_day))
+
+      update_env(
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/api/error",
+          mode: :ws
+        ]
+      )
+
+      assert data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:error, {500, "You Want It, You Got It"}} = Updater.update()
+        end,
+        [:initial, :check, :download, :error]
+      )
+    end
+
+    test "server returns 500 on forced update" do
+      update_env(
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/api/error",
+          mode: :ws
+        ]
+      )
+
+      assert data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:error, {500, "You Want It, You Got It"}} = Updater.update(:force)
+        end,
+        [:force, :download, :error]
+      )
     end
 
     test "gets an error if the data is not on the server" do

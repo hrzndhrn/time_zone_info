@@ -9,6 +9,7 @@ defmodule TimeZoneInfo.MixProject do
       name: "TimeZoneInfo",
       description: description(),
       start_permanent: Mix.env() == :prod,
+      build_embedded: true,
       deps: deps(),
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
