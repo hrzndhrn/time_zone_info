@@ -4,8 +4,6 @@ defmodule TimeZoneInfo.DataPersistence.Priv do
   data in the `priv` dir.
   """
 
-  require Logger
-
   alias File.Stat
   alias TimeZoneInfo.ExternalTermFormat
 
