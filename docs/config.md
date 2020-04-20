@@ -36,7 +36,7 @@ config :time_zone_info, [
   downloader: [
     module: MyApp.TimeZonInfo.Downloader,
     uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
-    format: :iana,
+    mode: :iana,
     headers: [
       {"Content-Type", "application/tar+gzip"},
       {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
@@ -50,8 +50,20 @@ and `:disabled` to disable the automated update.
 
 The keys `uri` and `headers` containing to download the data.
 
-The key `format` can contain `:iana` or `:etf` and indicates whether they data
-are delivered in IANA format (.tar.gz) or in zipped ETF (External Term Format).
+The key `mode` can contain `:iana`, `:etf`, or `:ws` and indicates whether they
+data are delivered in IANA format (.tar.gz) or in zipped ETF
+([External Term Format](http://erlang.org/doc/apps/erts/erl_ext_dist.html)).
+
+In `:ws` mode, the request for the data contains query parameters. The parameters
+are containing the configuration:
+- `files[]`: A list of IANA files which are used to generate the
+  `TimeZoneInfo.data`.
+- `time_zones[]`: A list of time zones. These parameters do not apply if no
+  time zones are specified.
+- `lookahead`
+
+The response format in `:ws` mode is the same as in `:etf` mode.
+
 
 ## Time zone manipulation
 

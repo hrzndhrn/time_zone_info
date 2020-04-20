@@ -75,13 +75,17 @@ defmodule TimeZoneInfo.MixProject do
       groups_for_modules: [
         Behaviours: [
           TimeZoneInfo.DataPersistence,
-          TimeZoneInfo.DataPersistence.Priv,
-          # TimeZoneInfo.DataStore,
-          # TimeZoneInfo.DataStore.ErlangTermStorage,
-          # TimeZoneInfo.DataStore.PersistentTerm,
           TimeZoneInfo.Downloader,
-          TimeZoneInfo.Downloader.Mint,
-          TimeZoneInfo.Listener,
+          TimeZoneInfo.Listener
+        ],
+        DataPersistence: [
+          TimeZoneInfo.DataPersistence.Priv,
+          TimeZoneInfo.DataPersistence.FileSystem
+        ],
+        Downlaoder: [
+          TimeZoneInfo.Downloader.Mint
+        ],
+        Listener: [
           TimeZoneInfo.Listener.ErrorLogger,
           TimeZoneInfo.Listener.Logger
         ]
@@ -113,7 +117,6 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee, "~> 1.0", only: :dev},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
-      # {:cowboy, "~> 2.7", only: :test},
       {:credo, "~> 1.4.0-rc.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},

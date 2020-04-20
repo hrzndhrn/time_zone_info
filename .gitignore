@@ -25,3 +25,6 @@ time_zone_info-*.tar
 # dialyzer plt
 /test/support/plts/*.plt
 /test/support/plts/*.plt.hash
+
+# test temp dir
+/test/temp

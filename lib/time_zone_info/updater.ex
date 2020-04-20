@@ -16,7 +16,8 @@ defmodule TimeZoneInfo.Updater do
     FileArchive,
     IanaParser,
     Listener,
-    Transformer
+    Transformer,
+    UtcDateTime
   }
 
   @type step ::
@@ -82,7 +83,7 @@ defmodule TimeZoneInfo.Updater do
 
   defp do_update(:daily) do
     with {:ok, last_update} <- DataPersistence.fetch_last_update() do
-      now = DateTime.utc_now() |> DateTime.to_unix()
+      now = UtcDateTime.now(:unix)
 
       case last_update + @seconds_per_day - now do
         next when next > 0 ->
@@ -133,7 +134,7 @@ defmodule TimeZoneInfo.Updater do
   defp force_update(on_disabled) do
     Listener.on_update(:force)
 
-    now = DateTime.utc_now() |> DateTime.to_unix()
+    now = UtcDateTime.now(:unix)
 
     with {:ok, update} when update != :disabled <- fetch_env(:update),
          {:ok, data} when not is_atom(data) <- download(),

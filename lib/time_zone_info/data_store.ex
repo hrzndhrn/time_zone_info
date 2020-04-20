@@ -3,6 +3,8 @@ defmodule TimeZoneInfo.DataStore do
 
   # A behaviour to store data and serve them later on.
 
+  @default_time_zone "Etc/UTC"
+
   @doc "Puts the given `data` into the store."
   @callback put(data :: TimeZoneInfo.data()) :: :ok | :error
 
@@ -81,7 +83,20 @@ defmodule TimeZoneInfo.DataStore do
 
   @doc false
   @spec get_time_zones(links: :ignore | :only | :include) :: [Calendar.time_zone()]
-  def get_time_zones(opts), do: impl().get_time_zones(opts)
+  def get_time_zones(opts) do
+    time_zones = impl().get_time_zones(opts)
+
+    case opts[:links] do
+      :only ->
+        time_zones
+
+      _ ->
+        case Enum.member?(time_zones, @default_time_zone) do
+          true -> time_zones
+          false -> Enum.sort([@default_time_zone | time_zones])
+        end
+    end
+  end
 
   @doc false
   @spec get_rules(TimeZoneInfo.rule_name()) ::
