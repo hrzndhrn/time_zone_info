@@ -1,9 +1,9 @@
-defmodule Updater.MixProject do
+defmodule Clock.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :updater,
+      app: :clock,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
@@ -16,7 +16,7 @@ defmodule Updater.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Updater.Application, []}
+      mod: {Clock.Application, []}
     ]
   end
 
