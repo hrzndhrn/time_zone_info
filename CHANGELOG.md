@@ -1,8 +1,8 @@
 # Changelog
 
-## dev.0
+## 0.4.0.dev.0 - 2020/04
 
-- Adding `TimeZoneInfo.data` generations as a web service.
+- The Etc/UTC time-zone is always supported, no matter how the configuration is specified.
 - Adding `TimeZoneInfo.DataPersistence.FileSystem`.
 - Changing configuration option `format` to `mode`.
 - Adding mode `:ws`. In this mode the `Downloader` will call a web service to
