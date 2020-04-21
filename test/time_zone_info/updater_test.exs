@@ -427,6 +427,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       assert TimeZoneInfo.time_zones(links: :ignore) == [
+               "Etc/UTC",
                "Europe/Berlin",
                "Indian/Mahe",
                "Indian/Mauritius",
@@ -451,7 +452,8 @@ defmodule TimeZoneInfo.UpdaterTest do
         [:initial, :force, :download, :update]
       )
 
-      assert TimeZoneInfo.time_zones() == ["Europe/Berlin", "Indian/Chagos", "Indian/Maldives"]
+      assert TimeZoneInfo.time_zones() ==
+               ["Etc/UTC", "Europe/Berlin", "Indian/Chagos", "Indian/Maldives"]
     end
 
     test "updates data filtered by time_zones (update: :disabled)" do
@@ -469,6 +471,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
       assert TimeZoneInfo.time_zones(links: :ignore) == [
                "Africa/Lagos",
+               "Etc/UTC",
                "Indian/Mahe",
                "Indian/Mauritius",
                "Indian/Reunion"
