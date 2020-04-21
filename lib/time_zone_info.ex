@@ -9,6 +9,7 @@ defmodule TimeZoneInfo do
   """
 
   alias TimeZoneInfo.{
+    DataConfig,
     DataPersistence,
     DataStore,
     ExternalTermFormat,
@@ -151,6 +152,7 @@ defmodule TimeZoneInfo do
          {:ok, version, content} <- content(files),
          {:ok, parsed} <- IanaParser.parse(content),
          data <- Transformer.transform(parsed, version, config),
+         {:ok, data} <- DataConfig.update(data, config),
          {:ok, checksum} <- ExternalTermFormat.checksum(data),
          {:ok, data} <- encode(data, config[:encode]) do
       {:ok, data, checksum}
