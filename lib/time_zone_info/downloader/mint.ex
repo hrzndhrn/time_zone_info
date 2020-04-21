@@ -28,22 +28,14 @@ defmodule TimeZoneInfo.Downloader.Mint do
   defp path(%URI{path: path, query: query}), do: "#{path}?#{query}"
 
   defp receive_response(conn, request_ref, status \\ nil, body \\ []) do
-    {conn, status, {body, complete}} =
-      receive_message(conn, request_ref, status, body)
+    {conn, status, {body, complete}} = receive_message(conn, request_ref, status, body)
 
     case complete do
       :incomplete ->
         receive_response(conn, request_ref, status, body)
 
       :complete ->
-        case body do
-          [] ->
-            {buffer, conn} = buffer(conn)
-            {:ok, conn, {status, buffer}}
-
-          body ->
-            {:ok, conn, {status, Enum.join(body)}}
-        end
+        {:ok, conn, {status, Enum.join(body)}}
     end
   end
 
@@ -78,8 +70,6 @@ defmodule TimeZoneInfo.Downloader.Mint do
         {conn, status, {body, complete}}
     end
   end
-
-  defp buffer(conn), do: Map.get_and_update(conn, :buffer, fn buffer -> {buffer, ""} end)
 
   defp scheme(%{scheme: "http"}), do: :http
 

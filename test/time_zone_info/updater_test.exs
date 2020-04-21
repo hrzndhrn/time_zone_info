@@ -234,6 +234,7 @@ defmodule TimeZoneInfo.UpdaterTest do
                {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
     end
 
+    @tag :only
     test "server return 304 if data is unchanged" do
       touch_data(@path, now(sub: @seconds_per_day * 2))
 

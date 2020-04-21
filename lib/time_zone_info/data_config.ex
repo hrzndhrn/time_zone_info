@@ -16,6 +16,8 @@ defmodule TimeZoneInfo.DataConfig do
           {:ok, TimeZoneInfo.data()} | {:error, {:time_zones_not_found, [String.t()]}}
   def update(data, config), do: update(:time_zones, data, config[:time_zones])
 
+  defp update(:time_zones, data, nil), do: {:ok, data}
+
   defp update(:time_zones, data, :all), do: {:ok, data}
 
   defp update(:time_zones, data, time_zones) when is_list(time_zones) do
