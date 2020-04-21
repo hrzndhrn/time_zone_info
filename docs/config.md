@@ -64,11 +64,18 @@ are containing the configuration:
 
 The response format in `:ws` mode is the same as in `:etf` mode.
 
-
 ## Time zone manipulation
 
 `TimeZoneInfo` provides some configuration options to select a subset form the
 available time zones and the size of the generated periods table.
+
+```
+config :time_zone_info,
+  ...
+  files: ~w(europe asia),
+  time_zones: ~w(Europe Asia/Istanbul),
+  lookahead: 5
+```
 
 `files:`\
 Default: `~w(africa antarctica asia australasia etcetera europe
@@ -94,15 +101,30 @@ calculated.\
 **Note:** They configuration `:lookahead` takes no effect if `update: :disabled`
 is set.
 
-## No runtime config, no delete
+## Data persistence
 
-It is not recomented to update the configuration at runtime. Becaus the data
-in runtime will just be updated but never deleted. That means if you change
-`time_zones: :all` to `time_zones: ["Europe"]` then **all** time zones are
-available after an update.
+`TimeZoneInfo` has two implementations of the behaviour
+`TimeZoneInfo.DataPersistence` to persist data.
 
-This is not a problem for the automated update. Because all period tables will
-be updated.
+`TimeZoneInfo.DataPersistence.Priv` is used in the default configuration.
+```
+config :time_zone_info,
+  ...
+  data_persistence: TimeZoneInfo.DataPersistence.Priv,
+  priv: [path: "data.etf"]
+```
+This module is intended for simple configurations. The specified `data.etf` is
+part of the `TimeZoneInfo` package and contains the transformed data from the
+actual IANA time zone DB.
+
+`TimeZoneInfo.DataPersistence.FileSystem` stores the data in a file to be
+specified.
+```
+config :time_zone_info,
+  ...
+  data_persistence: TimeZoneInfo.DataPersistence.FileSystem,
+  file_system: [path: "data/tzi.etf"]
+```
 
 ## The data store
 
@@ -113,3 +135,13 @@ method with `:persistent_term` will be used if `:persitent_term` is available
 (OTP >= 21.2). To set a method explicitly use
 `data_store: TimeZoneInfo.DataStore.PersistentTerm` or
 `data_store: TimeZoneInfo.DataStore.ErlangTermStorage`.
+
+## No runtime config, no delete
+
+It is not recomented to update the configuration at runtime. Becaus the data
+in runtime will just be updated but never deleted. That means if you change
+`time_zones: :all` to `time_zones: ["Europe"]` then **all** time zones are
+available after an update.
+
+This is not a problem for the automated update. Because all period tables will
+be updated.
