@@ -36,7 +36,12 @@ defmodule TimeZoneInfoServer.Controller do
     end
   end
 
-  defp modified?(conn, checksum), do: get_req_header(conn, "if-none-match") != [checksum]
+  defp modified?(conn, checksum) do
+    if_none_match = get_req_header(conn, "if-none-match")
+    Logger.debug("header: if-none-match: #{inspect if_none_match}")
+    Logger.debug("checksum: #{checksum}")
+    if_none_match != [checksum]
+  end
 
   defp config(conn) do
     conn

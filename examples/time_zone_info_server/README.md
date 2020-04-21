@@ -1,21 +1,16 @@
-# TimeZoneInfoServer
+# TimeZoneInfo Server Example
 
-**TODO: Add description**
+This example shows a server that provides a web service that returns time zones
+data under the URI `http://localhost:4001/api/time_zone_info`. The example
+[Clock](../example/clock) uses this web service.
 
-## Installation
+The server can be started with `mix run --no-halt` or `iex -S mix`.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `time_zone_info_server` to your list of dependencies in `mix.exs`:
+The server contains the module `FakeUtcDateTime`, which the server uses for the
+current date-time, and that can be set for tests.
 
-```elixir
-def deps do
-  [
-    {:time_zone_info_server, "~> 0.1.0"}
-  ]
-end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/time_zone_info_server](https://hexdocs.pm/time_zone_info_server).
-
+> iex -S mix
+iex> FakeUtcDateTime.put(~U[2020-04-25 12:00:00Z])
+:ok
+```

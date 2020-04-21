@@ -1,12 +1,15 @@
 import Config
 
-config :logger, level: :debug
+config :logger,
+  level: :debug,
+  console: [format: "[$level] $message\n"]
 
 config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 
 config :time_zone_info,
   utc_datetime: FakeUtcDateTime,
   listener: TimeZoneInfo.Listener.Logger,
+  lookahead: 1,
   files: ~w(europe asia),
   time_zones: [
     "Europe/Berlin",
