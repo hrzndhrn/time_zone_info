@@ -98,4 +98,24 @@ defmodule TimeZoneInfo.DataPersistence.FileSystemTest do
       assert FileSystem.fetch_last_update() == {:error, :enoent}
     end
   end
+
+  describe "put_last_update/1" do
+    test "puts the last update datetime" do
+      datetime = DateTime.to_unix(~U[1978-01-01 00:00:00Z])
+      assert :ok = FileSystem.put_last_update(datetime)
+      assert {:ok, ^datetime} = FileSystem.fetch_last_update()
+    end
+
+    test "returns error if the data is unavalable" do
+      File.rm!(@path)
+      datetime = DateTime.to_unix(~U[1978-01-01 00:00:00Z])
+      assert FileSystem.put_last_update(datetime) == {:error, :enoent}
+    end
+  end
+
+  describe "info/0" do
+    test "returns info" do
+      assert %{stat: _stat, path: _path, checksum: _checksum} = FileSystem.info()
+    end
+  end
 end

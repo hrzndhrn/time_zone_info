@@ -44,7 +44,10 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
   @impl true
   def put_last_update(time) do
     with {:ok, path} <- fetch_path() do
-      File.touch(path, time)
+      case File.exists?(path) do
+        true -> File.touch(path, time)
+        false -> {:error, :enoent}
+      end
     end
   end
 

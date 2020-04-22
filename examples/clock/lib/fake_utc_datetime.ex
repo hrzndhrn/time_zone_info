@@ -10,7 +10,7 @@ defmodule FakeUtcDateTime do
   end
 
   @impl true
-  def now do
+  def now(:datetime) do
     offset = case Process.whereis(__MODULE__) do
       nil -> 0
       _ ->
