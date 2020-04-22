@@ -24,7 +24,7 @@ config =
   if System.get_env("CI") do
     [
       max_runs: 10_000,
-      timeout: 60_000,
+      timeout: 60_000 * 3,
       checker: []
     ]
   else
