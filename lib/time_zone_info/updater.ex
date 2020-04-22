@@ -87,6 +87,7 @@ defmodule TimeZoneInfo.Updater do
 
       case last_update + @seconds_per_day - now do
         next when next > 0 ->
+          Listener.on_update(:not_required)
           {:next, now + next}
 
         _next ->
@@ -137,9 +138,9 @@ defmodule TimeZoneInfo.Updater do
     now = UtcDateTime.now(:unix)
 
     with {:ok, update} when update != :disabled <- fetch_env(:update),
+         :ok <- DataPersistence.put_last_update(now),
          {:ok, data} when not is_atom(data) <- download(),
-         :ok <- do_update(:finally, data),
-         :ok <- DataPersistence.put_last_update(now) do
+         :ok <- do_update(:finally, data) do
       {:next, now + @seconds_per_day}
     else
       {:ok, :not_modified} ->
