@@ -23,10 +23,8 @@ defmodule Clock do
       |> NaiveDateTime.add(utc_offset)
       |> TimeZoneDatabase.time_zone_periods_from_wall_datetime(get_time_zone())
 
-    Logger.debug("""
-    \nutc: #{DateTime.to_string(now)}
-    period: #{inspect(period, pretty: true)}\
-    """)
+    Logger.debug("utc: #{DateTime.to_string(now)}")
+    Logger.debug("period: #{inspect(period, pretty: true)}")
 
     [
       ANSI.color_background(3),

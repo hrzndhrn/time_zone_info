@@ -2,7 +2,14 @@ import Config
 
 config :logger,
   level: :debug,
-  console: [format: "[$level] $message\n"]
+  console: [
+    format:
+      IO.iodata_to_binary([
+        IO.ANSI.color(252),
+        "[$level] $message\n",
+        IO.ANSI.default_color()
+      ])
+  ]
 
 config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 
