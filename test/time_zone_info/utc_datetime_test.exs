@@ -12,7 +12,7 @@ defmodule TimeZoneInfo.UtcDateTimeTest do
     def now(:datetime), do: fix()
     def now(:unix), do: DateTime.to_unix(fix())
 
-    def fix, do: ~U[2000-01-01 00:00:00Z]
+    def fix, do: DateTime.utc_now() |> DateTime.add(-86400)
   end
 
   describe "now/1" do
