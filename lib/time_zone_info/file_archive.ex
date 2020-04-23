@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.FileArchive do
-  @moduledoc """
-  This module provides a function to extract files form a zipped tar archive.
-  """
+  @moduledoc false
+
+  # This module provides a function to extract files form a zipped tar archive.
 
   @doc """
   Extracts the given `files` from the `archive`.

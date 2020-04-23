@@ -14,7 +14,7 @@ defmodule TimeZoneInfo.Downloader.Mint do
     http = http!()
 
     with {:ok, conn} <- http.connect(scheme(uri), uri.host, uri.port),
-         {:ok, conn, request_ref} <- http.request(conn, method, uri.path, headers, ""),
+         {:ok, conn, request_ref} <- http.request(conn, method, path(uri), headers, ""),
          {:ok, conn, body} <- receive_response(conn, request_ref),
          {:ok, _conn} <- http.close(conn) do
       {:ok, body}
@@ -23,12 +23,19 @@ defmodule TimeZoneInfo.Downloader.Mint do
     end
   end
 
+  defp path(%URI{path: path, query: nil}), do: path
+
+  defp path(%URI{path: path, query: query}), do: "#{path}?#{query}"
+
   defp receive_response(conn, request_ref, status \\ nil, body \\ []) do
     {conn, status, {body, complete}} = receive_message(conn, request_ref, status, body)
 
     case complete do
-      :incomplete -> receive_response(conn, request_ref, status, body)
-      :complete -> {:ok, conn, {status, Enum.join(body)}}
+      :incomplete ->
+        receive_response(conn, request_ref, status, body)
+
+      :complete ->
+        {:ok, conn, {status, Enum.join(body)}}
     end
   end
 

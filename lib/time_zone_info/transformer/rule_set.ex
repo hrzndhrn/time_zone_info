@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.Transformer.RuleSet do
-  @moduledoc """
-  A rule set is a set of IANA rules with one entry per rule execution.
-  """
+  @moduledoc false
+
+  # A rule set is a set of IANA rules with one entry per rule execution.
 
   alias TimeZoneInfo.GregorianSeconds
   alias TimeZoneInfo.IanaParser

@@ -1,6 +1,18 @@
 # Changelog
 
-## 0.3.0
+## 0.4.0.dev.0 - 2020/04
+
+- The Etc/UTC time-zone is always supported, no matter how the configuration is specified.
+- Adding `TimeZoneInfo.DataPersistence.FileSystem`.
+- Changing configuration option `format` to `mode`.
+- Adding mode `:ws`. In this mode the `Downloader` will call a web service to
+  fetch data.
+- Adding `TimeZoneInfo.data/2`, this function generates `TimeZoneInfo.data` and
+  is intended for use in a time-zone-info-server.
+- Adding examples `TimeZoneInfoServer` and `Clock`.
+- Making some modules private. According to [Hiding Internal Modules and Functions](https://hexdocs.pm/elixir/master/writing-documentation.html#hiding-internal-modules-and-functions).
+
+## 0.3.0 - 2020/04/15
 
 - Using `plug_cowboy` instead of `cowboy` in tests.
 - Adding HTTP status code to the downloader.

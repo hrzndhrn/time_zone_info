@@ -30,8 +30,8 @@ defmodule TimeZoneInfo.DataStoreTest do
   end
 
   test "get_time_zones/1" do
-    expect(DataStoreMock, :get_time_zones, fn data -> data == "data" end)
-    assert DataStore.get_time_zones("data")
+    expect(DataStoreMock, :get_time_zones, fn _data -> [] end)
+    assert DataStore.get_time_zones(links: :include) == ["Etc/UTC"]
   end
 
   test "version/0" do

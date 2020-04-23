@@ -1,11 +1,14 @@
 defmodule TimeZoneInfo.Transformer.Rule do
-  @moduledoc """
-  This module handles and transforms the IANA rules.
-  """
+  @moduledoc false
 
-  alias TimeZoneInfo.IanaDateTime
-  alias TimeZoneInfo.IanaParser
-  alias TimeZoneInfo.Transformer.RuleSet
+  # This module handles and transforms the IANA rules.
+
+  alias TimeZoneInfo.{
+    IanaDateTime,
+    IanaParser,
+    Transformer.RuleSet,
+    UtcDateTime
+  }
 
   @doc """
   Returns a map of rule-set for the given map of `rules`.
@@ -23,7 +26,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
   """
   @spec to_rule_set([TimeZoneInfo.rule()], non_neg_integer) :: RuleSet.t()
   def to_rule_set(rules, lookahead) do
-    now = NaiveDateTime.utc_now()
+    now = UtcDateTime.now()
 
     rule_set =
       Enum.flat_map(rules, fn rule ->

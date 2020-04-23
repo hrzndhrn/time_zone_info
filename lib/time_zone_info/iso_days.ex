@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.IsoDays do
-  @moduledoc """
-  A module to handle ISO days.
-  """
+  @moduledoc false
+
+  # A module to handle ISO days.
 
   alias Calendar.ISO
   alias TimeZoneInfo.GregorianSeconds

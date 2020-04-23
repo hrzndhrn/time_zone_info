@@ -1,6 +1,8 @@
 defmodule TimeZoneInfo.Listener.ErrorLogger do
   @moduledoc """
   A listener to log `TimeZoneInfo` errors.
+
+  This is the default implementation of the `TimeZoneInfo.Listener`.
   """
 
   @behaviour TimeZoneInfo.Listener
@@ -8,9 +10,7 @@ defmodule TimeZoneInfo.Listener.ErrorLogger do
   require Logger
 
   @impl true
-  @doc """
-  Listen on errors.
-  """
+  @doc false
   def on_update({:error, {:invalid_config, [update: value]}}) do
     """
     TimeZoneInfo: Invalid config!

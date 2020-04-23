@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.DataConfig do
-  @moduledoc """
-  This module applies the configuration to the transition tables.
-  """
+  @moduledoc false
+
+  # This module applies the configuration to the transition tables.
 
   alias TimeZoneInfo.Transformer
 
@@ -15,6 +15,8 @@ defmodule TimeZoneInfo.DataConfig do
   @spec update(TimeZoneInfo.data(), config()) ::
           {:ok, TimeZoneInfo.data()} | {:error, {:time_zones_not_found, [String.t()]}}
   def update(data, config), do: update(:time_zones, data, config[:time_zones])
+
+  defp update(:time_zones, data, nil), do: {:ok, data}
 
   defp update(:time_zones, data, :all), do: {:ok, data}
 

@@ -1,11 +1,13 @@
 defmodule TimeZoneInfo.Worker do
-  @moduledoc """
-  Holds the state for `TimeZoneInfo` and starts the initial update and when
-  configured the automatic updates.
-  """
+  @moduledoc false
+
+  # Holds the state for `TimeZoneInfo` and starts the initial update and when
+  # configured the automatic updates.
+
   use GenServer
 
   alias TimeZoneInfo.Updater.Interface, as: Updater
+  alias TimeZoneInfo.UtcDateTime
 
   @timeout 3 * 60 * 1_000
 
@@ -74,7 +76,7 @@ defmodule TimeZoneInfo.Worker do
           {:next, :never}
 
         {:next, milliseconds} when is_integer(milliseconds) ->
-          datetime = DateTime.add(DateTime.utc_now(), milliseconds, :millisecond)
+          datetime = DateTime.add(UtcDateTime.now(), milliseconds, :millisecond)
           {:next, datetime}
 
         error ->
@@ -90,7 +92,7 @@ defmodule TimeZoneInfo.Worker do
         :ok
 
       {:next, seconds} ->
-        now = DateTime.utc_now() |> DateTime.to_unix()
+        now = UtcDateTime.now(:unix)
         next = seconds - now
         timer = Process.send_after(self(), :update, next * 1_000)
 

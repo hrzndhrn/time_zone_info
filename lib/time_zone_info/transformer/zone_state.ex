@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.Transformer.ZoneState do
-  @moduledoc """
-  The transformer for time-zones.
-  """
+  @moduledoc false
+
+  # The transformer for time-zones.
 
   alias TimeZoneInfo.GregorianSeconds
   alias TimeZoneInfo.IanaDateTime

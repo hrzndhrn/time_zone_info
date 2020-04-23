@@ -7,6 +7,7 @@ defmodule Updater.MixProject do
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
+      build_embedded: true,
       deps: deps()
     ]
   end
@@ -26,7 +27,7 @@ defmodule Updater.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:castore, "~> 0.1"},
       {:mint, "~> 1.0"},
-      # {:time_zone_info, "~> 0.2"}
+      # {:time_zone_info, "~> 0.4"}
       {:time_zone_info, path: "../.."}
     ]
   end

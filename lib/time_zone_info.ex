@@ -9,13 +9,19 @@ defmodule TimeZoneInfo do
   """
 
   alias TimeZoneInfo.{
+    DataConfig,
     DataPersistence,
     DataStore,
+    ExternalTermFormat,
+    FileArchive,
     GregorianSeconds,
     IanaParser,
+    Transformer,
     Transformer.Abbr,
     Worker
   }
+
+  @default_lookahead 15
 
   @typedoc "The data structure containing all informations for `TimeZoneInfo`."
   @type data :: %{
@@ -67,6 +73,13 @@ defmodule TimeZoneInfo do
 
   @typedoc "The time standards used by IANA."
   @type time_standard :: :wall | :standard | :gmt | :utc | :zulu
+
+  @typedoc "The configuration for data generation"
+  @type config :: [
+          files: [String.t()],
+          time_zones: [Calendar.time_zone()],
+          lookahead: non_neg_integer()
+        ]
 
   @doc """
   Returns the list of all available time zones with or without links. The option
@@ -127,5 +140,51 @@ defmodule TimeZoneInfo do
       persistence: DataPersistence.info(),
       worker: Worker.state()
     }
+  end
+
+  @doc """
+  Generates `TimeZoneInfo.data` from the given `iana_data_archive`.
+  """
+  @spec data(binary(), config()) :: {:ok, binary() | data(), String.t()} | {:error, term()}
+  def data(iana_data_archive, config) do
+    with {:ok, config} <- validate(config),
+         {:ok, files} <- FileArchive.extract(iana_data_archive, config[:files]),
+         {:ok, version, content} <- content(files),
+         {:ok, parsed} <- IanaParser.parse(content),
+         data <- Transformer.transform(parsed, version, config),
+         {:ok, data} <- DataConfig.update(data, config),
+         {:ok, checksum} <- ExternalTermFormat.checksum(data),
+         {:ok, data} <- encode(data, config[:encode]) do
+      {:ok, data, checksum}
+    end
+  end
+
+  defp encode(data, true), do: ExternalTermFormat.encode(data)
+
+  defp encode(data, _), do: {:ok, data}
+
+  defp content(files) do
+    case Map.pop(files, "version") do
+      {nil, _} -> {:error, :version_not_found}
+      {version, files} -> {:ok, String.trim(version), join(files)}
+    end
+  end
+
+  defp join(files) do
+    files |> Enum.map(fn {_name, content} -> content end) |> Enum.join("\n")
+  end
+
+  defp validate(config) do
+    with {:ok, config} <- validate(:lookahead, config) do
+      {:ok, config}
+    end
+  end
+
+  defp validate(:lookahead, config) do
+    case config[:lookahead] do
+      nil -> {:ok, Keyword.put(config, :lookahead, @default_lookahead)}
+      years when is_integer(years) -> {:ok, config}
+      value -> {:error, {:invalid_config, [lookahead: value]}}
+    end
   end
 end

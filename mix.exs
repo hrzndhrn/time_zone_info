@@ -6,8 +6,10 @@ defmodule TimeZoneInfo.MixProject do
       app: :time_zone_info,
       version: "0.3.0",
       elixir: "~> 1.8",
+      name: "TimeZoneInfo",
       description: description(),
       start_permanent: Mix.env() == :prod,
+      build_embedded: true,
       deps: deps(),
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
@@ -41,10 +43,10 @@ defmodule TimeZoneInfo.MixProject do
       downloader: [
         module: TimeZoneInfo.Downloader.Mint,
         uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
-        format: :iana,
+        mode: :iana,
         headers: [
-          {"Content-Type", "application/tar+gzip"},
-          {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
+          {"content-type", "application/gzip"},
+          {"user-agent", "Elixir.TimeZoneInfo.Mint"}
         ]
       ],
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
@@ -69,6 +71,24 @@ defmodule TimeZoneInfo.MixProject do
       extras: [
         "README.md",
         "docs/config.md"
+      ],
+      groups_for_modules: [
+        Behaviours: [
+          TimeZoneInfo.DataPersistence,
+          TimeZoneInfo.Downloader,
+          TimeZoneInfo.Listener
+        ],
+        DataPersistence: [
+          TimeZoneInfo.DataPersistence.Priv,
+          TimeZoneInfo.DataPersistence.FileSystem
+        ],
+        Downlaoder: [
+          TimeZoneInfo.Downloader.Mint
+        ],
+        Listener: [
+          TimeZoneInfo.Listener.ErrorLogger,
+          TimeZoneInfo.Listener.Logger
+        ]
       ]
     ]
   end
@@ -97,8 +117,7 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee, "~> 1.0", only: :dev},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
-      # {:cowboy, "~> 2.7", only: :test},
-      {:credo, "~> 1.4.0-rc.1", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
@@ -106,7 +125,7 @@ defmodule TimeZoneInfo.MixProject do
       {:mint, "~> 1.0", optional: true},
       {:mox, "~> 0.5", only: :test},
       {:nimble_parsec, "~> 0.5", runtime: false},
-      {:plug_cowboy, "~> 2.0", only: :test},
+      {:plug_cowboy, "~> 2.2", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true}

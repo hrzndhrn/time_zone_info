@@ -15,11 +15,19 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   @compile {:inline, gap: 4, convert: 1, to_wall: 1, to_wall: 2}
 
+  @impl true
+  def time_zone_periods_from_wall_datetime(_, "Etc/UTC"),
+    do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC"}}
+
   def time_zone_periods_from_wall_datetime(naive_datetime, time_zone) do
     naive_datetime
     |> GregorianSeconds.from_naive()
     |> periods_from_wall_gregorian_seconds(time_zone, naive_datetime)
   end
+
+  @impl true
+  def time_zone_period_from_utc_iso_days(_, "Etc/UTC"),
+    do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC"}}
 
   def time_zone_period_from_utc_iso_days(iso_days, time_zone) do
     iso_days
