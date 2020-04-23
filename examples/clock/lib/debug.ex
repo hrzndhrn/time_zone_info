@@ -13,10 +13,4 @@ defmodule Debug do
       end)
     end
   end
-
-  def tc(mod, fun, args) do
-    {microseconds, result} = :timer.tc(mod, fun, args)
-    Logger.debug("#{microseconds}μs")
-    result
-  end
 end

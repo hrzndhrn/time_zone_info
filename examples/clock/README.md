@@ -45,3 +45,17 @@ iex> TimeZoneInfo.update()
 {:next, 86399000}
 ```
 
+The example contains also a `Debug` module.
+
+`Debug.transitions/1` returns the transitions for a time zone.
+
+```
+iex> Debug.transitions("Europe/Berlin") |> Enum.take(5)
+[
+  {~N[2021-10-31 01:00:00], {3600, "EU", {:template, "CE%sT"}}},
+  {~N[2021-03-28 01:00:00], {3600, 3600, "CEST"}},
+  {~N[2020-10-25 01:00:00], {3600, 0, "CET"}},
+  {~N[2020-03-29 01:00:00], {3600, 3600, "CEST"}},
+  {~N[2019-10-27 01:00:00], {3600, 0, "CET"}}
+]
+```
