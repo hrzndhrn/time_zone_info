@@ -1,12 +1,15 @@
 defmodule TimeZoneInfo.UtcDateTimeTest do
   use ExUnit.Case, async: true
 
-  import TimeZoneInfo.TestUtils
+  import TimeZoneInfo.TestUtils, only: [put_env: 1, delete_env: 0]
 
   alias TimeZoneInfo.UtcDateTime
 
   defmodule UtcFixDateTime do
     @behaviour TimeZoneInfo.UtcDateTime
+
+    @impl true
+    def now, do: now(:datetime)
 
     @impl true
     def now(:datetime), do: fix()
@@ -39,11 +42,11 @@ defmodule TimeZoneInfo.UtcDateTimeTest do
     end
 
     test "retruns fixed datetime" do
-      assert DateTime.diff(UtcFixDateTime.fix(), UtcDateTime.now()) == 0
+      assert_in_delta(DateTime.diff(UtcFixDateTime.fix(), UtcDateTime.now()), 0, 1)
     end
 
     test "returns fixed datetime as unix" do
-      assert UtcFixDateTime.fix() |> DateTime.to_unix() == UtcDateTime.now(:unix)
+      assert_in_delta(UtcFixDateTime.fix() |> DateTime.to_unix(), UtcDateTime.now(:unix), 1)
     end
   end
 end

@@ -63,6 +63,7 @@ Application.put_env(:time_zone_info, :checker, config[:checker])
 Application.ensure_started(:stream_data)
 Application.put_env(:stream_data, :max_runs, config[:max_runs])
 
+Application.ensure_all_started(:telemetry)
 Application.ensure_all_started(:cowboy)
 
 Supervisor.start_link(

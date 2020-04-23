@@ -3,6 +3,7 @@ import Config
 config :logger,
   level: :debug,
   console: [
+    # changes the format for the log messages and hides the time
     format:
       IO.iodata_to_binary([
         IO.ANSI.color(252),
@@ -11,9 +12,11 @@ config :logger,
       ])
   ]
 
+# sets the current time zone database
 config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 
 config :time_zone_info,
+  # faske
   utc_datetime: FakeUtcDateTime,
   listener: TimeZoneInfo.Listener.Logger,
   lookahead: 1,
@@ -28,5 +31,6 @@ config :time_zone_info,
     uri: "http://localhost:4001/api/time_zone_info",
     mode: :ws
   ],
+  # saves
   data_persistence: TimeZoneInfo.DataPersistence.FileSystem,
   file_system: [path: "data/tzi.etf"]
