@@ -138,13 +138,13 @@ defmodule TimeZoneInfo.Updater do
     now = UtcDateTime.now(:unix)
 
     with {:ok, update} when update != :disabled <- fetch_env(:update),
-         :ok <- DataPersistence.put_last_update(now),
          {:ok, data} when not is_atom(data) <- download(),
          :ok <- do_update(:finally, data) do
       {:next, now + @seconds_per_day}
     else
       {:ok, :not_modified} ->
         Listener.on_update(:up_to_date)
+        DataPersistence.put_last_update(now)
         {:next, now + @seconds_per_day}
 
       {:ok, :disabled} ->

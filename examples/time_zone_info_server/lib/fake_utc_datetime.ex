@@ -10,7 +10,10 @@ defmodule FakeUtcDateTime do
   end
 
   @impl true
-  def now do
+  def now, do: now(:datetime)
+
+  @impl true
+  def now(:datetime) do
     DateTime.utc_now() |> DateTime.add(get_offset())
   end
 

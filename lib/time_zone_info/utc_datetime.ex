@@ -3,6 +3,7 @@ defmodule TimeZoneInfo.UtcDateTime do
 
   # A behaviour to wrap DateTime.utc_now/0
 
+  @callback now() :: DateTime.t()
   @callback now(:datetime | :unix) :: DateTime.t()
 
   def now(type \\ :datetime)
