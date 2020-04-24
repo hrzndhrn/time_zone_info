@@ -5,7 +5,7 @@ defmodule TimeZoneInfoServer.Controller do
 
   import Plug.Conn
 
-  @iana_data "2019c.tar.gz"
+  @iana_data "tzdata2019c.tar.gz"
   @default_lookahead 15
   @default_files ~w(
     version africa antarctica asia australasia etcetera europe northamerica southamerica

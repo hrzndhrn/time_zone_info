@@ -39,7 +39,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       downloader: [
         module: TimeZoneInfo.Downloader.Mint,
         # uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
-        uri: "http://localhost:1234/fixtures/iana/2019c.tar.gz",
+        uri: "http://localhost:1234/fixtures/iana/tzdata2019c.tar.gz",
         mode: :iana
       ],
       # update: :disabled,
