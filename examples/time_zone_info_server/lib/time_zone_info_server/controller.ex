@@ -5,7 +5,7 @@ defmodule TimeZoneInfoServer.Controller do
 
   import Plug.Conn
 
-  @iana_data "tzdata2019c.tar.gz"
+  @iana_tzdata "tzdata2019c.tar.gz"
   @default_lookahead 15
   @default_files ~w(
     version africa antarctica asia australasia etcetera europe northamerica southamerica
@@ -66,7 +66,7 @@ defmodule TimeZoneInfoServer.Controller do
   defp iana_data do
     :time_zone_info_server
     |> Application.get_env(:iana_data_path)
-    |> Path.join(@iana_data)
+    |> Path.join(@iana_tzdata)
     |> File.read()
   end
 end
