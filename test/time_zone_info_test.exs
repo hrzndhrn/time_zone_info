@@ -70,6 +70,7 @@ defmodule TimeZoneInfoTest do
       assert map_size(links) == 86
       assert map_size(rules) == 29
       assert map_size(time_zones) == 387
+      refute time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
     end
 
     test "tzdata2020a" do
@@ -86,6 +87,7 @@ defmodule TimeZoneInfoTest do
       assert map_size(links) == 86
       assert map_size(rules) == 29
       assert map_size(time_zones) == 387
+      assert time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
     end
   end
 end
