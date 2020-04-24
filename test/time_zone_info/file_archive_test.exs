@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.FileArchiveTest do
   alias TimeZoneInfo.FileArchive
 
   setup do
-    archive = File.read!("test/fixtures/iana/2019c.tar.gz")
+    archive = File.read!("test/fixtures/iana/tzdata2019c.tar.gz")
     %{archive: archive}
   end
 

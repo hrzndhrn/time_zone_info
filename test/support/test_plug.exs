@@ -4,7 +4,7 @@ defmodule TestPlug do
   defmodule Controller.TimeZoneInfo do
     import Plug.Conn
 
-    @iana_data_archive "test/fixtures/iana/2019c.tar.gz"
+    @iana_data_archive "test/fixtures/iana/tzdata2019c.tar.gz"
 
     def get(conn) do
       config = config(conn)

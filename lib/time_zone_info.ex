@@ -22,6 +22,7 @@ defmodule TimeZoneInfo do
   }
 
   @default_lookahead 15
+  @default_files ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
 
   @typedoc "The data structure containing all informations for `TimeZoneInfo`."
   @type data :: %{
@@ -146,7 +147,7 @@ defmodule TimeZoneInfo do
   Generates `TimeZoneInfo.data` from the given `iana_data_archive`.
   """
   @spec data(binary(), config()) :: {:ok, binary() | data(), String.t()} | {:error, term()}
-  def data(iana_data_archive, config) do
+  def data(iana_data_archive, config \\ []) do
     with {:ok, config} <- validate(config),
          {:ok, files} <- FileArchive.extract(iana_data_archive, config[:files]),
          {:ok, version, content} <- content(files),
@@ -175,8 +176,27 @@ defmodule TimeZoneInfo do
   end
 
   defp validate(config) do
-    with {:ok, config} <- validate(:lookahead, config) do
+    with {:ok, config} <- validate(:lookahead, config),
+         {:ok, config} <- validate(:files, config),
+         {:ok, config} <- validate(:version, config) do
       {:ok, config}
+    end
+  end
+
+  defp validate(:version, config) do
+    files = config[:files]
+
+    case Enum.member?(files, "version") do
+      true -> {:ok, config}
+      false -> {:ok, Keyword.put(config, :files, ["version" | files])}
+    end
+  end
+
+  defp validate(:files, config) do
+    case config[:files] do
+      nil -> {:ok, Keyword.put(config, :files, @default_files)}
+      files when is_list(files) -> {:ok, config}
+      value -> {:error, {:invalid_config, [files: value]}}
     end
   end
 

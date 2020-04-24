@@ -6,7 +6,7 @@ defmodule TimeZoneInfo.Downloader.MintTest do
   describe "get/1" do
     test "returns data" do
       # uri = URI.parse("https://data.iana.org/time-zones/tzdata-latest.tar.gz")
-      uri = URI.parse("http://localhost:1234/fixtures/iana/2019c.tar.gz")
+      uri = URI.parse("http://localhost:1234/fixtures/iana/tzdata2019c.tar.gz")
 
       opts = [
         headers: [

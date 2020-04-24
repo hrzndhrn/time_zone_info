@@ -54,4 +54,38 @@ defmodule TimeZoneInfoTest do
   test "iana_version/0" do
     assert TimeZoneInfo.iana_version() == "2019c"
   end
+
+  describe "data/2" do
+    test "tzdata2019c" do
+      iana = "test/fixtures/iana/tzdata2019c.tar.gz"
+
+      assert {
+               :ok,
+               %{links: links, rules: rules, time_zones: time_zones, version: version},
+               checksum
+             } = iana |> File.read!() |> TimeZoneInfo.data()
+
+      assert version == "2019c"
+      assert checksum == "803FD3930E149155DFA561A600DE3F31"
+      assert map_size(links) == 86
+      assert map_size(rules) == 29
+      assert map_size(time_zones) == 387
+    end
+
+    test "tzdata2020a" do
+      iana = "test/fixtures/iana/tzdata2020a.tar.gz"
+
+      assert {
+               :ok,
+               %{links: links, rules: rules, time_zones: time_zones, version: version},
+               checksum
+             } = iana |> File.read!() |> TimeZoneInfo.data()
+
+      assert version == "2020a"
+      assert checksum == "90B7F1DC1FADBBFAE59F08EFBCA97CFF"
+      assert map_size(links) == 86
+      assert map_size(rules) == 29
+      assert map_size(time_zones) == 387
+    end
+  end
 end

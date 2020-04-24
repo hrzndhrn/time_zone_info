@@ -19,48 +19,14 @@ defmodule TimeZoneInfo.UpdaterTest do
   @fixture "data/2019c/extract/africa/data.etf"
   @delta_seconds 30
 
-  setup do
-    cp_data(@fixture, @path)
+  describe "update/1" do
+    setup do
+      cp_data(@fixture, @path)
+      data_store = data_store()
+      put_test_env(data_store)
+      on_exit(fn -> do_exit(data_store) end)
+    end
 
-    data_store =
-      if function_exported?(:persistent_term, :get, 0) do
-        PersistentTerm
-      else
-        ErlangTermStorage
-      end
-
-    data_store.delete!()
-
-    # The commented out lines show the default value of the configuration entry.
-    put_env(
-      lookahead: 1,
-      # files: ~w(africa antarctica asia australasia etcetera europe northamerica southamerica),
-      files: ~w(africa),
-      downloader: [
-        module: TimeZoneInfo.Downloader.Mint,
-        # uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
-        uri: "http://localhost:1234/fixtures/iana/2019c.tar.gz",
-        mode: :iana
-      ],
-      # update: :disabled,
-      update: :daily,
-      # data_store: :auto,
-      data_store: data_store,
-      data_persistence: TimeZoneInfo.DataPersistence.Priv,
-      # priv: [path: "data.etf"]
-      priv: [path: @path],
-      # none default config
-      listener: TimeZoneInfo.Listener.Logger
-    )
-
-    on_exit(fn ->
-      rm_data(@path)
-      delete_env()
-      data_store.delete!()
-    end)
-  end
-
-  describe "update/0" do
     test "tries to update old file" do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
       checksum = checksum(@path)
@@ -146,95 +112,6 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert checksum(@path) == checksum
     end
 
-    test "writes data file if it is not exist" do
-      rm_data(@path)
-      mkdir_data(@path)
-
-      refute data_exists?(@path)
-      assert DataStore.empty?()
-
-      assert_log(
-        fn ->
-          assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-        end,
-        [:initial, :force, :download, :update]
-      )
-
-      refute DataStore.empty?()
-      assert data_exists?(@path)
-    end
-
-    test "downloads direct etf data" do
-      rm_data(@path)
-      mkdir_data(@path)
-
-      update_env(
-        # files are not needed
-        files: [],
-        downloader: [
-          module: TimeZoneInfo.Downloader.Mint,
-          uri: "http://localhost:1234/fixtures/data/2019c/extract/africa/data.etf",
-          mode: :etf
-        ]
-      )
-
-      refute data_exists?(@path)
-      assert DataStore.empty?()
-
-      assert_log(
-        fn ->
-          assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-        end,
-        [:initial, :force, :download, :update]
-      )
-
-      refute DataStore.empty?()
-      assert data_exists?(@path)
-
-      assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") ==
-               {:ok, %{std_offset: 0, utc_offset: 14400, zone_abbr: "+04"}}
-    end
-
-    test "downloads data from a web service" do
-      rm_data(@path)
-      mkdir_data(@path)
-
-      update_env(
-        files: ~w(europe),
-        downloader: [
-          module: TimeZoneInfo.Downloader.Mint,
-          uri: "http://localhost:1234/api/time_zone_info",
-          mode: :ws,
-          headers: [
-            {"Content-Type", "application/gzip"},
-            {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
-          ]
-        ]
-      )
-
-      refute data_exists?(@path)
-      assert DataStore.empty?()
-
-      assert_log(
-        fn ->
-          assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
-        end,
-        [:initial, :force, :download, :update]
-      )
-
-      refute DataStore.empty?()
-      assert data_exists?(@path)
-      assert Enum.member?(TimeZoneInfo.time_zones(), "Europe/Amsterdam")
-      refute Enum.member?(TimeZoneInfo.time_zones(), "America/New_York")
-
-      assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") ==
-               {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
-    end
-
-    @tag :only
     test "server return 304 if data is unchanged" do
       touch_data(@path, now(sub: @seconds_per_day * 2))
 
@@ -263,6 +140,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       refute DataStore.empty?()
     end
 
+    @tag :only
     test "server return 304 if data is unchanged and update forced" do
       update_env(
         files: ~w(africa),
@@ -330,58 +208,6 @@ defmodule TimeZoneInfo.UpdaterTest do
           assert {:error, {500, "You Want It, You Got It"}} = Updater.update(:force)
         end,
         [:force, :download, :error]
-      )
-    end
-
-    test "gets an error if the data is not on the server" do
-      rm_data(@path)
-      mkdir_data(@path)
-
-      update_env(
-        # files are not needed
-        files: [],
-        downloader: [
-          module: TimeZoneInfo.Downloader.Mint,
-          uri: "http://localhost:1234/fixtures/data/2019c/extract/missing/data.etf",
-          mode: :etf
-        ]
-      )
-
-      refute data_exists?(@path)
-      assert DataStore.empty?()
-
-      assert_log(
-        fn ->
-          assert {:error, {404, "Not Found"}} = Updater.update()
-        end,
-        [:initial, :force, :download, :error]
-      )
-
-      assert DataStore.empty?()
-    end
-
-    test "gets an error if ..." do
-      rm_data(@path)
-      mkdir_data(@path)
-
-      update_env(
-        # files are not needed
-        files: [],
-        downloader: [
-          module: TimeZoneInfo.Downloader.Mint,
-          uri: "http://localhost:666",
-          mode: :etf
-        ]
-      )
-
-      refute data_exists?(@path)
-      assert DataStore.empty?()
-
-      assert_log(
-        fn ->
-          assert {:error, {:error, _}} = Updater.update()
-        end,
-        [:initial, :force, :download, :error]
       )
     end
 
@@ -526,7 +352,180 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
   end
 
-  describe "update/0 returns error" do
+  describe "update/1 initial" do
+    setup do
+      mkdir_data(@path)
+      data_store = data_store()
+      put_test_env(data_store)
+      on_exit(fn -> do_exit(data_store) end)
+    end
+
+    test "writes data file if it is not exist (tzdata2019c)" do
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+        end,
+        [:initial, :force, :download, :update]
+      )
+
+      refute DataStore.empty?()
+      assert data_exists?(@path)
+
+      assert %{links: links, time_zones: time_zones} = DataStore.info()
+      assert links == 36
+      assert time_zones == 23
+    end
+
+    test "writes data file if it is not exist (tzdata2020a)" do
+      update_env(
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/fixtures/iana/tzdata2020a.tar.gz",
+          mode: :iana
+        ]
+      )
+
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+        end,
+        [:initial, :force, :download, :update]
+      )
+
+      refute DataStore.empty?()
+      assert data_exists?(@path)
+
+      assert %{links: links, time_zones: time_zones} = DataStore.info()
+      assert links == 36
+      assert time_zones == 23
+    end
+
+    test "downloads direct etf data" do
+      update_env(
+        # files are not needed
+        files: [],
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/fixtures/data/2019c/extract/africa/data.etf",
+          mode: :etf
+        ]
+      )
+
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+        end,
+        [:initial, :force, :download, :update]
+      )
+
+      refute DataStore.empty?()
+      assert data_exists?(@path)
+
+      assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") ==
+               {:ok, %{std_offset: 0, utc_offset: 14400, zone_abbr: "+04"}}
+    end
+
+    test "downloads data from a web service" do
+      update_env(
+        files: ~w(europe),
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/api/time_zone_info",
+          mode: :ws,
+          headers: [
+            {"Content-Type", "application/gzip"},
+            {"User-Agent", "Elixir.TimeZoneInfo.Mint"}
+          ]
+        ]
+      )
+
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+        end,
+        [:initial, :force, :download, :update]
+      )
+
+      refute DataStore.empty?()
+      assert data_exists?(@path)
+      assert Enum.member?(TimeZoneInfo.time_zones(), "Europe/Amsterdam")
+      refute Enum.member?(TimeZoneInfo.time_zones(), "America/New_York")
+
+      assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") ==
+               {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
+    end
+
+    test "gets an error if the data is not on the server" do
+      update_env(
+        # files are not needed
+        files: [],
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/fixtures/data/2019c/extract/missing/data.etf",
+          mode: :etf
+        ]
+      )
+
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:error, {404, "Not Found"}} = Updater.update()
+        end,
+        [:initial, :force, :download, :error]
+      )
+
+      assert DataStore.empty?()
+    end
+
+    test "gets an error if the host is not available" do
+      update_env(
+        # files are not needed
+        files: [],
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:666",
+          mode: :etf
+        ]
+      )
+
+      refute data_exists?(@path)
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:error, {:error, _}} = Updater.update()
+        end,
+        [:initial, :force, :download, :error]
+      )
+    end
+  end
+
+  describe "update/1 returns error" do
+    setup do
+      cp_data(@fixture, @path)
+      data_store = data_store()
+      put_test_env(data_store)
+      on_exit(fn -> do_exit(data_store) end)
+    end
+
     test "without any config" do
       delete_env()
 
@@ -601,5 +600,47 @@ defmodule TimeZoneInfo.UpdaterTest do
         end
       end
     )
+  end
+
+  defp put_test_env(data_store) do
+    # The commented out lines show the default value of the configuration entry.
+    put_env(
+      lookahead: 1,
+      # files: ~w(africa antarctica asia australasia etcetera europe northamerica southamerica),
+      files: ~w(africa),
+      downloader: [
+        module: TimeZoneInfo.Downloader.Mint,
+        # uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
+        uri: "http://localhost:1234/fixtures/iana/tzdata2019c.tar.gz",
+        mode: :iana
+      ],
+      # update: :disabled,
+      update: :daily,
+      # data_store: :auto,
+      data_store: data_store,
+      data_persistence: TimeZoneInfo.DataPersistence.Priv,
+      # priv: [path: "data.etf"]
+      priv: [path: @path],
+      # none default config
+      listener: TimeZoneInfo.Listener.Logger
+    )
+  end
+
+  defp do_exit(data_store) do
+    rm_data(@path)
+    delete_env()
+    data_store.delete!()
+  end
+
+  defp data_store do
+    store =
+      if function_exported?(:persistent_term, :get, 0) do
+        PersistentTerm
+      else
+        ErlangTermStorage
+      end
+
+    store.delete!()
+    store
   end
 end
