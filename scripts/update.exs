@@ -2,13 +2,14 @@ defmodule TimeZoneInfo.Scripts.Update do
   import Mix.Shell.IO, only: [info: 1, error: 1]
 
   alias TimeZoneInfo.{
-    DataPersistence,
     Downloader,
     ExternalTermFormat,
     FileArchive,
     IanaParser,
     Transformer
   }
+
+  @path "priv/data.etf"
 
   def run do
     info("Update TimeZoneInfo Data")
@@ -27,8 +28,10 @@ defmodule TimeZoneInfo.Scripts.Update do
     with {:ok, format, {200, data}} <- Downloader.download(opts),
          {:ok, data} <- transform(format, data),
          {:ok, checksum} <- ExternalTermFormat.checksum(data),
-         :ok <- DataPersistence.put(data) do
+         {:ok, compressed} <- ExternalTermFormat.encode(data) do
       info("Checksum: #{checksum}")
+      info("Write: #{@path}")
+      File.write!(@path, compressed)
     else
       error -> error("Update failed! #{inspect(error)}")
     end
