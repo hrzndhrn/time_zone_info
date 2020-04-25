@@ -15,9 +15,16 @@ defmodule TimeZoneInfo.Scripts.Update do
     Logger.configure(level: :warn)
     Application.ensure_all_started(:time_zone_info)
 
-    info("Download: #{uri()}")
+    uri = uri()
+    info("Download: #{uri}")
 
-    with {:ok, format, {200, data}} <- Downloader.download(),
+    opts = [
+      uri: uri,
+      mode: :iana,
+      headers: headers()
+    ]
+
+    with {:ok, format, {200, data}} <- Downloader.download(opts),
          {:ok, data} <- transform(format, data),
          {:ok, checksum} <- ExternalTermFormat.checksum(data),
          :ok <- DataPersistence.put(data) do
@@ -55,6 +62,8 @@ defmodule TimeZoneInfo.Scripts.Update do
   defp files, do: Application.get_env(:time_zone_info, :files)
 
   defp uri, do: Application.get_env(:time_zone_info, :downloader)[:uri]
+
+  defp headers, do: Application.get_env(:time_zone_info, :downloader)[:headers]
 end
 
 TimeZoneInfo.Scripts.Update.run()
