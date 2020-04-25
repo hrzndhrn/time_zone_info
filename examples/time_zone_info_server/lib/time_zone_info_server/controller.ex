@@ -19,6 +19,7 @@ defmodule TimeZoneInfoServer.Controller do
          {:ok, data, checksum} <- TimeZoneInfo.data(file, config) do
       case modified?(conn, checksum) do
         false ->
+          Logger.debug("Not modified.")
           conn
           |> put_resp_content_type("text/plain")
           |> send_resp(304, "")
