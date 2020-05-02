@@ -14,7 +14,7 @@ defmodule Bench.Transform do
     [
       Benchee.Formatters.Console,
       {Benchee.Formatters.Markdown,
-       file: Path.expand("trnasformer.md", __DIR__),
+       file: Path.expand("transform.md", __DIR__),
        description: """
        This benchmark measures the performance of the transformation of the
        raw IANA data to the data structure used by `TimeZoneInfo`.

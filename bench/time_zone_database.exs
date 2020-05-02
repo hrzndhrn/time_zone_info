@@ -48,11 +48,11 @@ defmodule Bench.TimeZoneDatabase do
     - **ambiguous:** 333 `(datetime, time_zone)` arguments that are resulting in
       a `:ambiguous` return tuple.
     - **ok_gap_ambiguous:** **ok**, **gap**, and **ambiguous** together.
-    - **last_year:** 1000 `(datetime, time_zone)` arguments with random time zone
+    - **last_year:** 333 `(datetime, time_zone)` arguments with random time zone
       and a date time from now to one year in the past. The data is calculated
       once for all test candidates.
-    - **berlin_gap_2020**: Gaps in the time zone `Europe/Berlin` in 2020.
-    - **berlin_ambiguous_2020**: Ambiguous date time in the time zone
+    - **berlin_gap_2020**: 333 gaps in the time zone `Europe/Berlin` in 2020.
+    - **berlin_ambiguous_2020**: 333 ambiguous date time in the time zone
       `Europe/Berlin` in 2020.
 
     The inputs **ok**, **gap**, and **ambiguous** containing random time zones
@@ -93,7 +93,7 @@ defmodule Bench.TimeZoneDatabase do
   defp last_year do
     now = NaiveDateTime.utc_now()
 
-    Enum.map(0..999, fn _ ->
+    Enum.map(0..333, fn _ ->
       time_zone = Enum.random(TimeZoneInfo.time_zones())
       datetime = NaiveDateTime.add(now, :rand.uniform(@seconds_per_year) * -1)
       {datetime, time_zone}
@@ -110,7 +110,7 @@ defmodule Bench.TimeZoneDatabase do
           ~N[2020-10-25 02:00:01]
       end
 
-    Enum.map(0..999, fn index ->
+    Enum.map(0..333, fn index ->
       {NaiveDateTime.add(datetime, index), "Europe/Berlin"}
     end)
   end
