@@ -6,7 +6,7 @@ BencheeDsl.config(
   before_each_benchmark: fn benchmark ->
     file_name =
       case benchmark.module do
-        TimeZoneInfoBench -> "README.md"
+        TimeZoneDatabaseBench -> "README.md"
         module -> Macro.underscore(module) <> ".md"
       end
 
@@ -16,6 +16,7 @@ BencheeDsl.config(
       formatter = {Benchee.Formatters.Markdown, file: file, description: benchmark.description}
       [formatter|formatters]
     end)
+    |> IO.inspect
   end
 )
 
