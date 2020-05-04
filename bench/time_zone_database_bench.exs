@@ -42,7 +42,7 @@ defmodule TimeZoneDatabaseBench do
   and date times between 1900 and 2050.
   """
 
-  setup_all do
+  setup do
     path = "test/fixtures/iana/2019c"
     files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
 
@@ -154,5 +154,4 @@ defmodule TimeZoneDatabaseBench do
       {NaiveDateTime.add(datetime, index), "Europe/Berlin"}
     end)
   end
-
 end

@@ -1,3 +1,5 @@
+alias BencheeDsl.Benchmark
+
 Code.require_file("test/support/time_zone_info/data_store/server.exs")
 
 Application.ensure_all_started(:tzdata)
@@ -12,11 +14,14 @@ BencheeDsl.config(
 
     file = Path.join(benchmark.dir, file_name)
 
-    update_in(benchmark, [:config, :formatters], fn formatters ->
-      formatter = {Benchee.Formatters.Markdown, file: file, description: benchmark.description}
-      [formatter|formatters]
+    Benchmark.update(benchmark, [:config, :formatters], fn formatters ->
+      formatter = {
+        Benchee.Formatters.Markdown,
+        file: file, description: benchmark.description
+      }
+
+      [formatter | formatters]
     end)
-    |> IO.inspect
   end
 )
 

@@ -113,11 +113,12 @@ defmodule TimeZoneInfo.MixProject do
   defp deps do
     [
       {:benchee, "~> 1.0", only: :dev},
-      {:benchee_dsl, path: "../benchee_dsl", only: :dev},
+      # {:benchee_dsl, path: "../benchee_dsl", only: :dev},
+      {:benchee_dsl, github: "hrzndhrn/benchee_dsl", only: :dev},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
       {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0.0-rc.7", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
