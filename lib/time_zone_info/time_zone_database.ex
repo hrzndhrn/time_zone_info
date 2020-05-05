@@ -38,7 +38,6 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   defp periods_from_wall_gregorian_seconds(at_wall_seconds, time_zone, at_wall_date_time) do
     case DataStore.get_transitions(time_zone) do
       {:ok, transitions} ->
-        :timer.tc(__MODULE__, &find_transitions/2, [transitions, at_wall_seconds]) |> IO.inspect
         transitions
         |> find_transitions(at_wall_seconds)
         |> to_periods(at_wall_seconds, at_wall_date_time)
@@ -66,22 +65,16 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end)
   end
 
-  defp find_transitions(transitions, at_wall) do
-    IO.inspect(at_wall, label: :find)
-    Enum.reduce_while(transitions, nil, fn
-      transition_a, {:none, transition_b, transition_c} ->
-        {:halt, {transition_a, transition_b, transition_c}}
-
-      {at_utc, _} = transition, _ when at_utc > at_wall ->
-        {:cont, transition}
-
-      transition, nil ->
-        {:cont, {:none, transition, :none}}
-
-      transition, last_transition ->
-        {:cont, {:none, transition, last_transition}}
-    end)
+  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, last \\ :none) do
+    case at_utc > at_wall do
+      false -> {head(transitions, :none), transition, last}
+      true -> find_transitions(transitions, at_wall, transition)
+    end
   end
+
+  defp head([], default), do: default
+
+  defp head(list, _), do: hd(list)
 
   defp to_period(
          {utc_offset, rule_name, {_, _} = format},

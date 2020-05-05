@@ -60,7 +60,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Chisinau"
           ) == {:ok, %{std_offset: 0, utc_offset: 6264, zone_abbr: "BMT"}}
 
-    @tag :only
     prove "when zone-state becomes active",
           time_zone_period_from_utc_iso_days(
             ~N[1931-07-23 22:15:36],
@@ -853,6 +852,12 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             ~N[1980-06-29 20:55:51],
             "America/Godthab"
           ) == {:ok, %{std_offset: 3600, utc_offset: -10800, zone_abbr: "-02"}}
+
+    @tag :only
+    prove time_zone_periods_from_wall_datetime(
+            ~N[1100-06-29 20:55:51],
+            "America/Godthab"
+          ) == {:ok, %{std_offset: 0, utc_offset: -12416, zone_abbr: "LMT"}}
   end
 
   describe "time_zone_periods_from_wall_datetime/2 in the transition month:" do
