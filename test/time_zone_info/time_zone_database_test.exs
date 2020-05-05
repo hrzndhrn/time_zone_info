@@ -22,7 +22,6 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/London"
           ) == {:ok, %{std_offset: 3600, utc_offset: 0, zone_abbr: "BST"}}
 
-    @tag :only
     prove "for zone_state.format choice and letters in choice",
           time_zone_period_from_utc_iso_days(
             ~N[1960-12-05 01:28:14],
@@ -61,6 +60,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Chisinau"
           ) == {:ok, %{std_offset: 0, utc_offset: 6264, zone_abbr: "BMT"}}
 
+    @tag :only
     prove "when zone-state becomes active",
           time_zone_period_from_utc_iso_days(
             ~N[1931-07-23 22:15:36],
