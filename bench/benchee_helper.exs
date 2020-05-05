@@ -1,8 +1,22 @@
 alias BencheeDsl.Benchmark
-
-Code.require_file("test/support/time_zone_info/data_store/server.exs")
+alias TimeZoneInfo.{DataStore, IanaParser, Transformer}
 
 Application.ensure_all_started(:tzdata)
+
+Code.require_file("bench/data.exs")
+Code.require_file("test/support/time_zone_info/data_store/server.exs")
+
+path = "test/fixtures/iana/2019c"
+files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
+
+time_zone_info_data =
+  with {:ok, data} <- IanaParser.parse(path, files) do
+    Transformer.transform(data, "2019c", lookahead: 5)
+  end
+
+DataStore.PersistentTerm.put(time_zone_info_data)
+DataStore.ErlangTermStorage.put(time_zone_info_data)
+DataStore.Server.put(time_zone_info_data)
 
 BencheeDsl.config(
   before_each_benchmark: fn benchmark ->
