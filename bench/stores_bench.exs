@@ -1,4 +1,4 @@
-defmodule TimeZoneDatabaseBench do
+defmodule StoresBench do
   use BencheeDsl.Benchmark
 
   alias TimeZoneInfo.{DataStore, IanaParser, Transformer}
@@ -6,13 +6,18 @@ defmodule TimeZoneDatabaseBench do
   @title "Benchmark: TimeZoneDatabase"
 
   @description """
-  This benchmark compares `TimeZoneInfo` with
-  [`Tzdata`](https://github.com/lau/tzdata) and
-  [`Tz`](https://github.com/mathieuprog/tz).
+  This benchmark compares the different `DataStores` available in
+  `TimeZoneInfo`.
 
-  All testees have an implementation for `TimeZoneDatabas`. For the benchmark,
-  each of them calls the function
-  `TimeZoneDatabase.time_zone_periods_from_wall_datetime/2`.
+  The `TimeZoneInfo` will be tested in three different configurations.
+  Each version uses a different strategy to keep the data available.
+  - `time_zone_info_pst` is using
+    [`:persistent_term`](https://erlang.org/doc/man/persistent_term.html)
+  - `time_zone_info_ets` is using `:ets`
+    [(Erlang Term Storage)](https://erlang.org/doc/man/ets.html)
+  - `time_zone_info_map` is using a `GenServer` with a `Map` as state. This
+    version isn't an available configuration in `TimeZoneInfo`. The
+    `GenServer` version is otherwise only used in the tests.
 
   The inputs for every benchmark run:
   - **ok:** 333 `(datetime, time_zone)` arguments that are resulting in a
@@ -46,7 +51,8 @@ defmodule TimeZoneDatabaseBench do
       end
 
     DataStore.PersistentTerm.put(time_zone_info_data)
-    Application.put_env(:time_zone_info, :data_store, DataStore.PersistentTerm)
+    DataStore.ErlangTermStorage.put(time_zone_info_data)
+    DataStore.Server.put(time_zone_info_data)
   end
 
   inputs do
@@ -62,7 +68,9 @@ defmodule TimeZoneDatabaseBench do
     }
   end
 
-  job time_zone_info(data) do
+  job time_zone_info_ets(data) do
+    Application.put_env(:time_zone_info, :data_store, DataStore.ErlangTermStorage)
+
     Enum.each(data, fn {datetime, time_zone} ->
       datetime
       |> TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(time_zone)
@@ -70,18 +78,22 @@ defmodule TimeZoneDatabaseBench do
     end)
   end
 
-  job tz(data) do
+  job time_zone_info_pst(data) do
+    Application.put_env(:time_zone_info, :data_store, DataStore.PersistentTerm)
+
     Enum.each(data, fn {datetime, time_zone} ->
       datetime
-      |> Tz.TimeZoneDatabase.time_zone_periods_from_wall_datetime(time_zone)
+      |> TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(time_zone)
       |> validate()
     end)
   end
 
-  job tzdata(data) do
+  job time_zone_info_map(data) do
+    Application.put_env(:time_zone_info, :data_store, DataStore.Server)
+
     Enum.each(data, fn {datetime, time_zone} ->
       datetime
-      |> Tzdata.TimeZoneDatabase.time_zone_periods_from_wall_datetime(time_zone)
+      |> TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(time_zone)
       |> validate()
     end)
   end
