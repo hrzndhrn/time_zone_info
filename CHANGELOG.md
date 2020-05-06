@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0-dev.0 - 2020/05
+
+- Increasing speed of `TimeZoneDatabase.time_zone_periods_from_wall_datetime/2`.
+
 ## 0.4.0 - 2020/04/25
 
 - Updating `priv/data.etf` with IANA tzdata version 2020a.

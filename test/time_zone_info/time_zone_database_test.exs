@@ -112,27 +112,15 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
 
     prove desc,
           time_zone_period_from_utc_iso_days(
-            ~N[2034-03-26 01:00:00],
+            ~N[2050-03-27 01:00:00],
             "Europe/Berlin"
           ) == {:ok, %{std_offset: 3600, utc_offset: 3600, zone_abbr: "CEST"}}
 
     prove desc,
           time_zone_period_from_utc_iso_days(
-            ~N[2034-03-26 00:59:59],
+            ~N[2050-03-27 00:59:59],
             "Europe/Berlin"
           ) == {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
-
-    prove desc,
-          time_zone_period_from_utc_iso_days(
-            ~N[2034-01-01 00:59:59],
-            "Europe/Berlin"
-          ) == {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
-
-    prove desc,
-          time_zone_period_from_utc_iso_days(
-            ~N[2043-04-03 08:20:08],
-            "Pacific/Chatham"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 45900, zone_abbr: "+1345"}}
 
     # ==========================================================================
     # Additional tests, , for some bugs I can't remember.
@@ -852,6 +840,12 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             ~N[1980-06-29 20:55:51],
             "America/Godthab"
           ) == {:ok, %{std_offset: 3600, utc_offset: -10800, zone_abbr: "-02"}}
+
+    @tag :only
+    prove time_zone_periods_from_wall_datetime(
+            ~N[1100-06-29 20:55:51],
+            "America/Godthab"
+          ) == {:ok, %{std_offset: 0, utc_offset: -12416, zone_abbr: "LMT"}}
   end
 
   describe "time_zone_periods_from_wall_datetime/2 in the transition month:" do

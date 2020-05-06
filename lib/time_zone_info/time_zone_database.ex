@@ -51,7 +51,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     case DataStore.get_transitions(time_zone) do
       {:ok, transitions} ->
         transitions
-        |> find_period(gregorian_seconds)
+        |> find_transition(gregorian_seconds)
         |> to_period(date_time)
 
       {:error, :transitions_not_found} ->
@@ -59,27 +59,22 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end
   end
 
-  defp find_period(transitions, timestamp) do
+  defp find_transition(transitions, timestamp) do
     Enum.find_value(transitions, fn {at, period} ->
       with true <- at <= timestamp, do: period
     end)
   end
 
-  defp find_transitions(transitions, at_wall) do
-    Enum.reduce_while(transitions, nil, fn
-      transition_a, {:none, transition_b, transition_c} ->
-        {:halt, {transition_a, transition_b, transition_c}}
-
-      {at_utc, _} = transition, _ when at_utc > at_wall ->
-        {:cont, transition}
-
-      transition, nil ->
-        {:cont, {:none, transition, :none}}
-
-      transition, last_transition ->
-        {:cont, {:none, transition, last_transition}}
-    end)
+  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, last \\ :none) do
+    case at_utc > at_wall do
+      false -> {head(transitions, :none), transition, last}
+      true -> find_transitions(transitions, at_wall, transition)
+    end
   end
+
+  defp head([], default), do: default
+
+  defp head(list, _), do: hd(list)
 
   defp to_period(
          {utc_offset, rule_name, {_, _} = format},
@@ -89,7 +84,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
       {:ok, rules} ->
         rules
         |> transitions(utc_offset, format, IsoDays.to_year(iso_days))
-        |> find_period(IsoDays.to_gregorian_seconds(iso_days))
+        |> find_transition(IsoDays.to_gregorian_seconds(iso_days))
         |> to_period(nil)
 
       {:error, :rules_not_found} ->
