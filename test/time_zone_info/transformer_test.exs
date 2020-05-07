@@ -9,7 +9,8 @@ defmodule TimeZoneInfo.TransformerTest do
     path = "test/fixtures/iana/2019c"
     files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
 
-    %{data: path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)}
+    # %{data: path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)}
+    %{}
   end
 
   describe "transform/1 extract" do
@@ -89,6 +90,7 @@ defmodule TimeZoneInfo.TransformerTest do
       assert_time_zone("Europe/Belgrade")
     end
 
+    @tag :only
     test "returns transformed data for time zone Europe/Berlin" do
       assert_time_zone("Europe/Berlin")
     end
