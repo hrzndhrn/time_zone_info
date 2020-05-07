@@ -60,11 +60,11 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap; text-align: right">0.26</td>
-    <td style="white-space: nowrap; text-align: right">3.85 s</td>
-    <td style="white-space: nowrap; text-align: right">±1.89%</td>
-    <td style="white-space: nowrap; text-align: right">3.82 s</td>
-    <td style="white-space: nowrap; text-align: right">4.01 s</td>
+    <td style="white-space: nowrap; text-align: right">0.25</td>
+    <td style="white-space: nowrap; text-align: right">3.97 s</td>
+    <td style="white-space: nowrap; text-align: right">±3.24%</td>
+    <td style="white-space: nowrap; text-align: right">3.91 s</td>
+    <td style="white-space: nowrap; text-align: right">4.22 s</td>
   </tr>
 </table>
 Memory Usage
