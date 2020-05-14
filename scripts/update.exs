@@ -11,11 +11,11 @@ defmodule TimeZoneInfo.Scripts.Update do
 
   @path "priv/data.etf"
 
-  def run do
-    info("Update TimeZoneInfo Data")
-    Logger.configure(level: :warn)
-    Application.ensure_all_started(:time_zone_info)
+  def run([file]) do
+    do_run(:iana, File.read!(file))
+  end
 
+  def run([]) do
     uri = uri()
     info("Download: #{uri}")
 
@@ -25,8 +25,15 @@ defmodule TimeZoneInfo.Scripts.Update do
       headers: headers()
     ]
 
-    with {:ok, format, {200, data}} <- Downloader.download(opts),
-         {:ok, data} <- transform(format, data),
+    with {:ok, format, {200, data}} <- Downloader.download(opts) do
+      do_run(format, data)
+    else
+      error -> error("Update failed! #{inspect(error)}")
+    end
+  end
+
+  def do_run(format, data) do
+    with {:ok, data} <- transform(format, data),
          {:ok, checksum} <- ExternalTermFormat.checksum(data),
          {:ok, compressed} <- ExternalTermFormat.encode(data) do
       info("Checksum: #{checksum}")
@@ -69,4 +76,6 @@ defmodule TimeZoneInfo.Scripts.Update do
   defp headers, do: Application.get_env(:time_zone_info, :downloader)[:headers]
 end
 
-TimeZoneInfo.Scripts.Update.run()
+Mix.Shell.IO.info("Update TimeZoneInfo Data")
+Logger.configure(level: :warn)
+TimeZoneInfo.Scripts.Update.run(System.argv())

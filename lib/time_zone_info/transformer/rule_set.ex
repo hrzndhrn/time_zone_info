@@ -197,7 +197,9 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
         ) :: [TimeZoneInfo.transition()]
   defp transitions_seq(rule_set, utc_offset, format, last_std_offset \\ 0, acc \\ [])
 
-  defp transitions_seq([], _utc_offset, _format, _last_std_offset, acc), do: acc
+  defp transitions_seq([], _utc_offset, _format, _last_std_offset, acc) do
+    ZoneState.add_wall_period(acc)
+  end
 
   defp transitions_seq([rule | rule_set], utc_offset, format, last_std_offset, acc) do
     {at, {std_offset, letters}} = to_utc(rule, utc_offset, last_std_offset)

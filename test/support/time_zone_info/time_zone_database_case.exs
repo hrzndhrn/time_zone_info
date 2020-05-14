@@ -36,7 +36,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
 
         DataStore.put(data)
 
-        %{data: data}
+        :ok
       end
     end
   end
@@ -176,14 +176,20 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
   end
 
   def assert_time_zone_period(time_zone_period) do
-    assert Map.keys(time_zone_period) == ~w(std_offset utc_offset zone_abbr)a
+    assert Map.keys(time_zone_period) == [:std_offset, :utc_offset, :wall_period, :zone_abbr]
 
-    assert %{std_offset: std_offset, utc_offset: utc_offset, zone_abbr: zone_abbr} =
-             time_zone_period
+    assert %{
+             std_offset: std_offset,
+             utc_offset: utc_offset,
+             zone_abbr: zone_abbr,
+             wall_period: {since, until}
+           } = time_zone_period
 
     assert std_offset in [-3600, 0, 1200, 1800, 3600, 5400, 7200]
     assert utc_offset >= -57360 && utc_offset <= 54822
     assert String.length(zone_abbr) <= 6
+    assert since == :min || match?(%NaiveDateTime{}, since)
+    assert until == :max || match?(%NaiveDateTime{}, until)
   end
 
   # property generators

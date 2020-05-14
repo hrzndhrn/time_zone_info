@@ -8,11 +8,22 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
     test "get_transitions/1" do
       assert {:ok, zone_states} = DataStore.get_transitions("Pacific/Auckland")
 
-      assert Enum.take(zone_states, 3) == [
-               {64_241_906_400, {43200, "NZ", {:template, "NZ%sT"}}},
-               {64_226_181_600, {43200, 0, "NZST"}},
-               {64_209_852_000, {43200, 3600, "NZDT"}}
-             ]
+      expected = [
+        {
+          64_241_906_400,
+          {43200, "NZ", {:template, "NZ%sT"}}
+        },
+        {
+          64_226_181_600,
+          {43200, 0, "NZST", {~N[2035-04-01 02:00:00], ~N[2035-09-30 02:00:00]}}
+        },
+        {
+          64_209_852_000,
+          {43200, 3600, "NZDT", {~N[2034-09-24 03:00:00], ~N[2035-04-01 03:00:00]}}
+        }
+      ]
+
+      assert Enum.take(zone_states, 3) == expected
     end
 
     test "get_rules/1" do
@@ -38,7 +49,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
       assert DataStore.info() == %{
                count: 504,
                links: 86,
-               memory: 803_741,
+               memory: 8_879_985,
                time_zones: 387,
                version: "2019c"
              }
@@ -55,7 +66,15 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
             time_zone_period_from_utc_iso_days(
               ~N[2012-03-25 01:59:59],
               "Africa/Freetown"
-            ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
+            ) == {
+              :ok,
+              %{
+                std_offset: 0,
+                utc_offset: 0,
+                zone_abbr: "GMT",
+                wall_period: {~N[1912-01-01 00:16:08], :max}
+              }
+            }
     end
 
     describe "time_zone_periods_from_wall_datetime/2" do
@@ -69,7 +88,15 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
             time_zone_periods_from_wall_datetime(
               ~N[2012-03-25 01:59:59],
               "Africa/Freetown"
-            ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
+            ) == {
+              :ok,
+              %{
+                std_offset: 0,
+                utc_offset: 0,
+                zone_abbr: "GMT",
+                wall_period: {~N[1912-01-01 00:16:08], :max}
+              }
+            }
     end
 
     describe "time_zone_period_from_utc_iso_days/2 per decade/century:" do

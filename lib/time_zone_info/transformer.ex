@@ -61,11 +61,12 @@ defmodule TimeZoneInfo.Transformer do
           [TimeZoneInfo.rule_name()]
   def used_rules(time_zones) do
     time_zones
-    |> Enum.reduce([], fn {_time_zone, [{_at, zone_state} | _transitions]}, acc ->
-      case zone_state do
-        {_, rule_name, _} when is_binary(rule_name) -> [rule_name | acc]
-        _ -> acc
-      end
+    |> Enum.reduce([], fn
+      {_time_zone, [{_at, {_utc_offset, _std_offset, _zone_abbr, _wall}} | _transitions]}, acc ->
+        acc
+
+      {_time_zone, [{_at, {_, rule_name, _}} | _transitions]}, acc ->
+        [rule_name | acc]
     end)
     |> Enum.uniq()
   end

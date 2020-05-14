@@ -13,11 +13,11 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   @behaviour Calendar.TimeZoneDatabase
 
-  @compile {:inline, gap: 4, convert: 1, to_wall: 1, to_wall: 2}
+  @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2}
 
   @impl true
   def time_zone_periods_from_wall_datetime(_, "Etc/UTC"),
-    do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC"}}
+    do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC", wall_period: {:min, :max}}}
 
   def time_zone_periods_from_wall_datetime(naive_datetime, time_zone) do
     naive_datetime
@@ -27,7 +27,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   @impl true
   def time_zone_period_from_utc_iso_days(_, "Etc/UTC"),
-    do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC"}}
+    do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC", wall_period: {:min, :max}}}
 
   def time_zone_period_from_utc_iso_days(iso_days, time_zone) do
     iso_days
@@ -92,11 +92,24 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end
   end
 
-  defp to_period({utc_offset, std_offset, zone_abbr}, _),
-    do: {:ok, %{utc_offset: utc_offset, std_offset: std_offset, zone_abbr: zone_abbr}}
+  defp to_period({utc_offset, std_offset, zone_abbr, wall_period}, _) do
+    {:ok,
+     %{
+       utc_offset: utc_offset,
+       std_offset: std_offset,
+       zone_abbr: zone_abbr,
+       wall_period: wall_period
+     }}
+  end
 
-  defp to_periods({:none, {_at, {utc_offset, std_offset, zone_abbr}}, :none}, _, _) do
-    {:ok, %{utc_offset: utc_offset, std_offset: std_offset, zone_abbr: zone_abbr}}
+  defp to_periods({:none, {_at, {utc_offset, std_offset, zone_abbr, _wall_period}}, :none}, _, _) do
+    {:ok,
+     %{
+       utc_offset: utc_offset,
+       std_offset: std_offset,
+       zone_abbr: zone_abbr,
+       wall_period: {:min, :max}
+     }}
   end
 
   defp to_periods({:none, a, b}, at_wall, at_wall_datetime) do
@@ -125,7 +138,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
         {:ambiguous, convert(transition_a), convert(transition_b)}
 
       at_wall_ba <= at_wall && at_wall < at_wall_b ->
-        gap(transition_a, at_wall_ba, transition_b, at_wall_b)
+        gap(transition_a, transition_b)
 
       at_wall < at_wall_b ->
         {:ok, convert(transition_a)}
@@ -159,7 +172,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
         {:ok, convert(transition_c)}
 
       at_wall >= at_wall_cb ->
-        gap(transition_b, at_wall_cb, transition_c, at_wall_c)
+        gap(transition_b, transition_c)
 
       at_wall >= at_wall_b && at_wall < at_wall_ba ->
         {:ambiguous, convert(transition_a), convert(transition_b)}
@@ -168,7 +181,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
         {:ok, convert(transition_b)}
 
       at_wall >= at_wall_ba ->
-        gap(transition_a, at_wall_ba, transition_b, at_wall_b)
+        gap(transition_a, transition_b)
 
       at_wall >= at_wall_a ->
         {:ok, convert(transition_a)}
@@ -206,18 +219,47 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     |> Enum.sort_by(&elem(&1, 0))
   end
 
-  defp gap(transition_a, at_a, transition_b, at_b) do
-    limit_a = GregorianSeconds.to_naive(at_a)
-    limit_b = GregorianSeconds.to_naive(at_b)
-    {:gap, {convert(transition_a), limit_a}, {convert(transition_b), limit_b}}
+  defp gap(
+         {_, {utc_offset_a, std_offset_a, zone_abbr_a, {_, limit_a} = wall_period_a}},
+         {_, {utc_offset_b, std_offset_b, zone_abbr_b, {limit_b, _} = wall_period_b}}
+       ) do
+    {
+      :gap,
+      {
+        %{
+          utc_offset: utc_offset_a,
+          std_offset: std_offset_a,
+          zone_abbr: zone_abbr_a,
+          wall_period: wall_period_a
+        },
+        limit_a
+      },
+      {
+        %{
+          utc_offset: utc_offset_b,
+          std_offset: std_offset_b,
+          zone_abbr: zone_abbr_b,
+          wall_period: wall_period_b
+        },
+        limit_b
+      }
+    }
   end
 
-  defp to_wall({at, {utc_offset, std_offset, _}}),
+  defp to_wall({at, {utc_offset, std_offset, _zone_abbr, _wall_period}}),
     do: at + utc_offset + std_offset
 
-  defp to_wall({at, {_, _, _}}, {_, {utc_offset, std_offset, _}}),
-    do: at + utc_offset + std_offset
+  defp to_wall(
+         {at, {_, _, _, _}},
+         {_, {utc_offset, std_offset, _zone_abbr, _wall_period}}
+       ),
+       do: at + utc_offset + std_offset
 
-  defp convert({_, {utc_offset, std_offset, zone_abbr}}),
-    do: %{utc_offset: utc_offset, std_offset: std_offset, zone_abbr: zone_abbr}
+  defp convert({_, {utc_offset, std_offset, zone_abbr, wall_period}}),
+    do: %{
+      utc_offset: utc_offset,
+      std_offset: std_offset,
+      zone_abbr: zone_abbr,
+      wall_period: wall_period
+    }
 end

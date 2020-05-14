@@ -7,7 +7,15 @@ defmodule TimeZoneInfo.ApplicationTest do
     assert TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(
              ~N[2012-09-01 12:00:00],
              "Europe/London"
-           ) == {:ok, %{std_offset: 3600, utc_offset: 0, zone_abbr: "BST"}}
+           ) == {
+             :ok,
+             %{
+               std_offset: 3600,
+               utc_offset: 0,
+               zone_abbr: "BST",
+               wall_period: {~N[2012-03-25 02:00:00], ~N[2012-10-28 02:00:00]}
+             }
+           }
 
     assert TimeZoneInfo.state() == :ok
     assert TimeZoneInfo.update() == :ok

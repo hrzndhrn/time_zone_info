@@ -12,8 +12,9 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       binary = :erlang.term_to_binary(term, compressed: 9)
       {:ok, binary}
     end
-  rescue
-    _ -> {:error, :encode_fails}
+
+    # rescue
+    #  _ -> {:error, :encode_fails}
   end
 
   @doc """
@@ -57,17 +58,21 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     end
   end
 
-  defp validate(_term), do: ok(false, :invalid_data)
+  defp validate(_term), do: {:error, :invalid_data}
 
   defp validate(:keys, term) do
-    ok(term |> Map.keys() |> Enum.sort() == ~w(links rules time_zones version)a, :invalid_keys)
+    term
+    |> Map.keys()
+    |> Enum.sort()
+    |> Kernel.==(~w(links rules time_zones version)a)
+    |> check(:invalid_keys)
   end
 
   defp validate(:version, term) do
     term
     |> Map.get(:version)
     |> is_binary()
-    |> ok(:invalid_version)
+    |> check(:invalid_version)
   end
 
   defp validate(:links, term) do
@@ -77,7 +82,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       {from, to} when is_binary(from) and is_binary(to) -> true
       _ -> false
     end)
-    |> ok(:invalid_links)
+    |> check(:invalid_links)
   end
 
   defp validate(:time_zones, term) do
@@ -87,21 +92,31 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       {name, zone_states} when is_binary(name) -> validate(:zone_states, zone_states)
       _ -> false
     end)
-    |> ok(:invalid_time_zones)
+    |> check(:invalid_time_zones)
   end
 
   defp validate(:zone_states, zone_states) do
     Enum.all?(zone_states, fn
-      {at, zone_state} when at >= 0 -> validate(:zone_state, zone_state)
-      _ -> false
+      {at, {utc_offset, std_offset, zone_abbr, wall_period}} when at >= 0 ->
+        validate(:zone_state, {utc_offset, std_offset, zone_abbr, wall_period})
+
+      {at, zone_rule} when at >= 0 ->
+        validate(:zone_rule, zone_rule)
+
+      _ ->
+        false
     end)
   end
 
-  defp validate(:zone_state, {utc_offset, std_offset, zone_abbr})
-       when is_integer(utc_offset) and is_integer(std_offset) and is_binary(zone_abbr),
-       do: true
+  defp validate(:zone_state, {utc_offset, std_offset, zone_abbr, {since, until}}) do
+    zone_state = is_integer(utc_offset) && is_integer(std_offset) && is_binary(zone_abbr)
+    since = since == :min || match?(%NaiveDateTime{}, since)
+    until = until == :max || match?(%NaiveDateTime{}, until)
 
-  defp validate(:zone_state, {utc_offset, rules, format})
+    zone_state && since && until
+  end
+
+  defp validate(:zone_rule, {utc_offset, rules, format})
        when is_integer(utc_offset) and is_binary(rules) and is_tuple(format) do
     validate(:format, format)
   end
@@ -126,7 +141,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       {name, rule_set} when is_binary(name) -> validate(:rule_set, rule_set)
       _ -> false
     end)
-    |> ok(:invalid_rules)
+    |> check(:invalid_rules)
   end
 
   defp validate(:rule_set, rule_set) when is_list(rule_set) do
@@ -168,7 +183,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
 
   defp validate(:day, _), do: false
 
-  defp ok(true, _), do: :ok
+  defp check(true, _), do: :ok
 
-  defp ok(false, error), do: {:error, error}
+  defp check(false, error), do: {:error, error}
 end

@@ -116,7 +116,7 @@ defmodule TimeZoneInfo.DataConfig do
     end)
   end
 
-  defp split(list), do: Enum.map(list, &String.split(&1, @separator))
+  defp split(list), do: Enum.map(list, fn item -> String.split(item, @separator) end)
 
   defp join({time_zones_found, time_zones_missing}),
     do: {join(time_zones_found), join(time_zones_missing)}

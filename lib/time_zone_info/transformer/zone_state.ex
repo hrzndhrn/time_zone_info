@@ -23,7 +23,6 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     |> transform_zone_states(rule_sets)
     |> delete_duplicates()
     |> add_wall_period()
-    |> IO.inspect(label: :zone_states)
     |> add_max_rules(zone_states, data)
   end
 
@@ -143,7 +142,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   end
 
   defp add_rules(:no_max_rules, transitions), do: transitions
-  defp add_rules(rules, [{at, _, _} | transitions]), do: [{at, rules} | transitions]
+  defp add_rules(rules, [{at, _} | transitions]), do: [{at, rules} | transitions]
 
   defp rules(data, name) do
     with {:ok, name} <- rule_name(name) do
@@ -161,38 +160,41 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   defp rule_name(value) when is_integer(value), do: {:std_offset, value}
   defp rule_name(string), do: {:ok, string}
 
-  defp add_wall_period(transitions) do
+  def add_wall_period(transitions) do
     transitions
     |> Enum.reverse()
     |> add_wall_period([])
   end
 
-  defp add_wall_period([], _, acc), do: acc
+  defp add_wall_period([], acc), do: acc
 
-  defp add_wall_period([{seconds_a, {utc_offset_a, std_offset_a, _} = zone_state}], acc) do
-    wall_period = {to_wall(seconds_a, utc_offset_a, std_offset_a), :max}
-    [{seconds_a, zone_state, wall_period} | acc]
+  defp add_wall_period([{seconds, {utc_offset, std_offset, zone_abbr}}], acc) do
+    wall_period = {to_wall(seconds, utc_offset, std_offset), :max}
+    [{seconds, {utc_offset, std_offset, zone_abbr, wall_period}} | acc]
   end
 
-  defp add_wall_period([{0, {utc_offset_a, std_offset_a, _} = zone_state} | transitions], acc) do
-    {seconds_b, _} = hd(transitions)
+  defp add_wall_period([{0, {utc_offset, std_offset, zone_abbr}} | transitions], _acc) do
+    {seconds_b, _info} = hd(transitions)
 
-    wall_period = {:min, to_wall(seconds_b, utc_offset_a, std_offset_a)}
-    add_wall_period(transitions, [{0, zone_state, wall_period}])
+    wall_period = {:min, to_wall(seconds_b, utc_offset, std_offset)}
+    add_wall_period(transitions, [{0, {utc_offset, std_offset, zone_abbr, wall_period}}])
   end
 
   defp add_wall_period(
-         [{seconds_a, {utc_offset_a, std_offset_a, _} = zone_state} | transitions],
+         [{seconds_a, {utc_offset, std_offset, zone_abbr}} | transitions],
          acc
        ) do
-    {seconds_b, {utc_offset_b, std_offset_b, _}} = hd(transitions)
+    {seconds_b, _info} = hd(transitions)
 
     wall_period = {
-      to_wall(seconds_a, utc_offset_a, std_offset_a),
-      to_wall(seconds_b, utc_offset_a, std_offset_a)
+      to_wall(seconds_a, utc_offset, std_offset),
+      to_wall(seconds_b, utc_offset, std_offset)
     }
 
-    add_wall_period(transitions, [{seconds_a, zone_state, wall_period} | acc])
+    add_wall_period(
+      transitions,
+      [{seconds_a, {utc_offset, std_offset, zone_abbr, wall_period}} | acc]
+    )
   end
 
   defp to_wall(seconds, utc_offset, std_offset) do
