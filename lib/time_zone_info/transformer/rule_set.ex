@@ -26,7 +26,7 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
           [TimeZoneInfo.transition()]
         ) :: {
           [TimeZoneInfo.transition()],
-          GregorianSeconds.t(),
+          TimeZoneInfo.gregorian_seconds(),
           Calendar.std_offset()
         }
   def transitions(

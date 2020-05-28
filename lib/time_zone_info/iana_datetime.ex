@@ -5,10 +5,7 @@ defmodule TimeZoneInfo.IanaDateTime do
 
   alias Calendar.ISO
 
-  alias TimeZoneInfo.{
-    GregorianSeconds,
-    IanaParser
-  }
+  alias TimeZoneInfo.IanaParser
 
   @type time :: {Calendar.hour(), Calendar.minute(), Calendar.second()}
 
@@ -26,7 +23,7 @@ defmodule TimeZoneInfo.IanaDateTime do
   Computes the number of gregorian seconds starting with year 0 and ending at
   the specified `iana_datetime`.
   """
-  @spec to_gregorian_seconds(t()) :: GregorianSeconds.t()
+  @spec to_gregorian_seconds(t()) :: TimeZoneInfo.gregorian_seconds()
   def to_gregorian_seconds(iana_datetime) do
     case iana_datetime do
       {year} ->
@@ -50,7 +47,7 @@ defmodule TimeZoneInfo.IanaDateTime do
   end
 
   @spec to_gregorian_seconds(Calendar.year(), Calendar.month(), IanaParser.day(), time()) ::
-          GregorianSeconds.t()
+          TimeZoneInfo.gregorian_seconds()
   def to_gregorian_seconds(year, month, day, time) do
     day = to_day(year, month, day)
 

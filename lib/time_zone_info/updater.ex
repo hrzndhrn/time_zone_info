@@ -143,15 +143,20 @@ defmodule TimeZoneInfo.Updater do
       {:next, now + @seconds_per_day}
     else
       {:ok, :not_modified} ->
-        Listener.on_update(:up_to_date)
-        DataPersistence.put_last_update(now)
-        {:next, now + @seconds_per_day}
+        up_to_date(now)
 
       {:ok, :disabled} ->
         on_disabled
 
       error ->
         error
+    end
+  end
+
+  defp up_to_date(timestamp) do
+    with :ok <- DataPersistence.put_last_update(timestamp) do
+      Listener.on_update(:up_to_date)
+      {:next, timestamp + @seconds_per_day}
     end
   end
 

@@ -3,9 +3,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   # The transformer for time-zones.
 
-  alias TimeZoneInfo.GregorianSeconds
-  alias TimeZoneInfo.IanaDateTime
-  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.{IanaDateTime, IanaParser, GregorianSeconds}
   alias TimeZoneInfo.Transformer
   alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
 
@@ -29,7 +27,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   @doc """
   Returns the until datetime for the given `zone_state` and `std_offset`.
   """
-  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: GregorianSeconds.t()
+  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: TimeZoneInfo.gregorian_seconds()
   def until(zone_state, std_offset) do
     case zone_state[:until] do
       nil ->
