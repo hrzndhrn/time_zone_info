@@ -65,11 +65,11 @@ defmodule TimeZoneInfo do
   time zone period in wall time.
   """
   @type time_zone_period :: {
-    Calendar.utc_offset(),
-    Calendar.std_offset(),
-    Calendar.zone_abbr(),
-    wall_period
-  }
+          Calendar.utc_offset(),
+          Calendar.std_offset(),
+          Calendar.zone_abbr(),
+          wall_period
+        }
 
   @typedoc "A rule representation."
   @type rule :: {
