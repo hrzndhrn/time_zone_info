@@ -12,7 +12,7 @@ defmodule TimeZoneInfo.Listener do
   - `:force` an update is forced.
   - `:download` downloads data.
   - `:update` updating data.
-  - `{:error, reason}
+  - `{:error, reason}`
   """
   @callback on_update(step :: atom() | {:error, term()}) :: :ok | :undefined
 

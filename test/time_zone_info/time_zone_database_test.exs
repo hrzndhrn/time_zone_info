@@ -1,8 +1,6 @@
 defmodule TimeZoneInfo.TimeZoneDatabaseTest do
   use TimeZoneInfo.TimeZoneDatabaseCase
 
-  alias TimeZoneInfo.DataStore
-
   describe "time_zone_period_from_utc_iso_days/2" do
     prove "returns an error tuple for",
           time_zone_period_from_utc_iso_days(
@@ -10,47 +8,117 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Utopia/Foo"
           ) == {:error, :time_zone_not_found}
 
+    prove "the time zone Etc/UTC is always available:",
+          time_zone_period_from_utc_iso_days(
+            ~N[2012-03-25 01:59:59],
+            "Etc/UTC"
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 0,
+              zone_abbr: "UTC",
+              wall_period: {:min, :max}
+            }
+          }
+
     prove "follows a link",
           time_zone_period_from_utc_iso_days(
             ~N[2012-03-25 01:59:59],
             "Africa/Freetown"
-          ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 0,
+              zone_abbr: "GMT",
+              wall_period: {~N[1912-01-01 00:16:08], :max}
+            }
+          }
 
     prove "for zone_state.format choice",
           time_zone_period_from_utc_iso_days(
             ~N[2012-09-01 12:00:00],
             "Europe/London"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 0, zone_abbr: "BST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 0,
+              zone_abbr: "BST",
+              wall_period: {~N[2012-03-25 02:00:00], ~N[2012-10-28 02:00:00]}
+            }
+          }
 
     prove "for zone_state.format choice and letters in choice",
           time_zone_period_from_utc_iso_days(
             ~N[1960-12-05 01:28:14],
             "Europe/Dublin"
-          ) == {:ok, %{utc_offset: 0, zone_abbr: "GMT", std_offset: 0}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 0,
+              zone_abbr: "GMT",
+              wall_period: {~N[1960-10-02 02:00:00], ~N[1961-03-26 02:00:00]}
+            }
+          }
 
     prove "before zone-state becomes active",
           time_zone_period_from_utc_iso_days(
             ~N[2011-03-26 23:59:59],
             "Europe/Kaliningrad"
-          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 7200,
+              zone_abbr: "EET",
+              wall_period: {~N[2010-10-31 02:00:00], ~N[2011-03-27 02:00:00]}
+            }
+          }
 
     prove "when zone-state becomes active",
           time_zone_period_from_utc_iso_days(
             ~N[2011-03-27 00:00:00],
             "Europe/Kaliningrad"
-          ) == {:ok, %{std_offset: 0, utc_offset: 10800, zone_abbr: "+03"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 10800,
+              zone_abbr: "+03",
+              wall_period: {~N[2011-03-27 03:00:00], ~N[2014-10-26 02:00:00]}
+            }
+          }
 
     prove "on zone-state last active moment",
           time_zone_period_from_utc_iso_days(
             ~N[2014-10-25 22:59:59],
             "Europe/Kaliningrad"
-          ) == {:ok, %{std_offset: 0, utc_offset: 10800, zone_abbr: "+03"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 10800,
+              zone_abbr: "+03",
+              wall_period: {~N[2011-03-27 03:00:00], ~N[2014-10-26 02:00:00]}
+            }
+          }
 
     prove "after zone-state was active",
           time_zone_period_from_utc_iso_days(
             ~N[2014-10-25 23:00:00],
             "Europe/Kaliningrad"
-          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 7200,
+              zone_abbr: "EET",
+              wall_period: {~N[2014-10-26 01:00:00], :max}
+            }
+          }
 
     # test a zone-state with time-standard wall and next zone-state has a
     # std-offset in rules
@@ -58,55 +126,127 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_period_from_utc_iso_days(
             ~N[1931-07-23 22:15:35],
             "Europe/Chisinau"
-          ) == {:ok, %{std_offset: 0, utc_offset: 6264, zone_abbr: "BMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 6264,
+              zone_abbr: "BMT",
+              wall_period: {~N[1918-02-14 23:49:24], ~N[1931-07-24 00:00:00]}
+            }
+          }
 
     prove "when zone-state becomes active",
           time_zone_period_from_utc_iso_days(
             ~N[1931-07-23 22:15:36],
             "Europe/Chisinau"
-          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 7200,
+              zone_abbr: "EET",
+              wall_period: {~N[1931-07-24 00:15:36], ~N[1932-05-21 00:00:00]}
+            }
+          }
 
     prove "on zone-state last active moment",
           time_zone_period_from_utc_iso_days(
             ~N[1940-08-14 21:59:59],
             "Europe/Chisinau"
-          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 7200,
+              zone_abbr: "EET",
+              wall_period: {~N[1939-10-01 00:00:00], ~N[1940-08-15 00:00:00]}
+            }
+          }
 
     prove "after zone-state was active",
           time_zone_period_from_utc_iso_days(
             ~N[1940-08-14 22:00:00],
             "Europe/Chisinau"
-          ) == {:ok, %{utc_offset: 7200, std_offset: 3600, zone_abbr: "EEST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 7200,
+              zone_abbr: "EEST",
+              wall_period: {~N[1940-08-15 01:00:00], ~N[1941-07-17 00:00:00]}
+            }
+          }
 
     # test a zone-state with time-standard wall and a std-offset
     prove "before zone-state becomes active",
           time_zone_period_from_utc_iso_days(
             ~N[1981-12-23 05:59:59],
             "America/Cancun"
-          ) == {:ok, %{std_offset: 0, utc_offset: -21600, zone_abbr: "CST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: -21600,
+              zone_abbr: "CST",
+              wall_period: {~N[1922-01-01 00:00:00], ~N[1981-12-23 00:00:00]}
+            }
+          }
 
     prove "when zone-state becomes active",
           time_zone_period_from_utc_iso_days(
             ~N[1981-12-23 06:00:00],
             "America/Cancun"
-          ) == {:ok, %{std_offset: 0, utc_offset: -18000, zone_abbr: "EST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: -18000,
+              zone_abbr: "EST",
+              wall_period: {~N[1981-12-23 01:00:00], ~N[1996-04-07 02:00:00]}
+            }
+          }
 
     prove "on zone-states last active moment",
           time_zone_period_from_utc_iso_days(
             ~N[1998-08-02 05:59:59],
             "America/Cancun"
-          ) == {:ok, %{std_offset: 3600, utc_offset: -18000, zone_abbr: "EDT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: -18000,
+              zone_abbr: "EDT",
+              wall_period: {~N[1998-04-05 03:00:00], ~N[1998-08-02 02:00:00]}
+            }
+          }
 
     prove "after zone-state was active",
           time_zone_period_from_utc_iso_days(
             ~N[1998-08-02 06:00:00],
             "America/Cancun"
-          ) == {:ok, %{std_offset: 3600, utc_offset: -21600, zone_abbr: "CDT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: -21600,
+              zone_abbr: "CDT",
+              wall_period: {~N[1998-08-02 01:00:00], ~N[1998-10-25 02:00:00]}
+            }
+          }
 
     prove time_zone_period_from_utc_iso_days(
             ~N[2000-10-28 02:00:00],
             "Etc/GMT-2"
-          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "+02"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 7200,
+              zone_abbr: "+02",
+              wall_period: {~N[0000-01-01 02:00:00], :max}
+            }
+          }
 
     desc = "Calculate period from rules"
 
@@ -114,13 +254,29 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_period_from_utc_iso_days(
             ~N[2050-03-27 01:00:00],
             "Europe/Berlin"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 3600, zone_abbr: "CEST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 3600,
+              zone_abbr: "CEST",
+              wall_period: {~N[2050-03-27 03:00:00], ~N[2050-10-30 03:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_period_from_utc_iso_days(
             ~N[2050-03-27 00:59:59],
             "Europe/Berlin"
-          ) == {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "CET",
+              wall_period: {~N[2049-10-31 02:00:00], ~N[2050-03-27 02:00:00]}
+            }
+          }
 
     # ==========================================================================
     # Additional tests, , for some bugs I can't remember.
@@ -128,22 +284,54 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     prove time_zone_period_from_utc_iso_days(
             ~N[1998-08-02 06:00:00],
             "Europe/Istanbul"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 7200,
+              zone_abbr: "EEST",
+              wall_period: {~N[1998-03-29 02:00:00], ~N[1998-10-25 02:00:00]}
+            }
+          }
 
     prove time_zone_period_from_utc_iso_days(
             ~N[2025-12-20 15:00:00],
             "Pacific/Chatham"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 45900, zone_abbr: "+1345"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 45900,
+              zone_abbr: "+1345",
+              wall_period: {~N[2025-09-28 03:45:00], ~N[2026-04-05 03:45:00]}
+            }
+          }
 
     prove time_zone_period_from_utc_iso_days(
             ~N[1991-03-30 21:00:00],
             "Asia/Yekaterinburg"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 14400, zone_abbr: "+05"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 14400,
+              zone_abbr: "+05",
+              wall_period: {~N[1991-03-31 02:00:00], ~N[1991-09-29 03:00:00]}
+            }
+          }
 
     prove time_zone_period_from_utc_iso_days(
             ~N[1991-03-30 20:59:59],
             "Asia/Yekaterinburg"
-          ) == {:ok, %{std_offset: 0, utc_offset: 18000, zone_abbr: "+05"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 18000,
+              zone_abbr: "+05",
+              wall_period: {~N[1990-09-30 02:00:00], ~N[1991-03-31 02:00:00]}
+            }
+          }
 
     prove time_zone_period_from_utc_iso_days(
             ~N[1994-09-24 22:00:00],
@@ -153,14 +341,23 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             %{
               std_offset: 0,
               utc_offset: 14400,
-              zone_abbr: "+04"
+              zone_abbr: "+04",
+              wall_period: {~N[1994-09-25 01:00:00], ~N[1995-03-26 02:00:00]}
             }
           }
 
     prove time_zone_period_from_utc_iso_days(
             ~N[1996-02-07 22:15:45],
             "Europe/London"
-          ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 0,
+              zone_abbr: "GMT",
+              wall_period: {~N[1995-10-22 01:00:00], ~N[1996-03-31 01:00:00]}
+            }
+          }
   end
 
   describe "time_zone_period_from_utc_iso_days/2 per decade/century:" do
@@ -253,7 +450,15 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2012-03-25 01:59:59],
             "Africa/Freetown"
-          ) == {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 0,
+              zone_abbr: "GMT",
+              wall_period: {~N[1912-01-01 00:16:08], :max}
+            }
+          }
 
     # ==========================================================================
     # America/Adak
@@ -267,19 +472,40 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[1983-10-30 01:59:59],
             "America/Adak"
-          ) == {:ok, %{std_offset: 3600, utc_offset: -39600, zone_abbr: "BDT"}}
+          ) ==
+            {:ok,
+             %{
+               std_offset: 3600,
+               utc_offset: -39600,
+               zone_abbr: "BDT",
+               wall_period: {~N[1983-04-24 03:00:00], ~N[1983-10-30 02:00:00]}
+             }}
 
     prove desc,
           time_zone_periods_from_wall_datetime(
-            ~N[1983-10-30 02:59:59],
+            ~N[1983-10-30 02:00:00],
             "America/Adak"
-          ) == {:ok, %{std_offset: 0, utc_offset: -36000, zone_abbr: "AHST"}}
+          ) ==
+            {:ok,
+             %{
+               std_offset: 0,
+               utc_offset: -36000,
+               zone_abbr: "AHST",
+               wall_period: {~N[1983-10-30 02:00:00], ~N[1983-11-30 00:00:00]}
+             }}
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[1983-11-30 00:00:00],
             "America/Adak"
-          ) == {:ok, %{std_offset: 0, utc_offset: -36000, zone_abbr: "HST"}}
+          ) ==
+            {:ok,
+             %{
+               std_offset: 0,
+               utc_offset: -36000,
+               zone_abbr: "HST",
+               wall_period: {~N[1983-11-30 00:00:00], ~N[1984-04-29 02:00:00]}
+             }}
 
     # ==========================================================================
     desc = ":ok, :gap, and :ambiguous in"
@@ -288,7 +514,14 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2012-03-25 01:59:59],
             "Europe/Berlin"
-          ) == {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
+          ) ==
+            {:ok,
+             %{
+               std_offset: 0,
+               utc_offset: 3600,
+               zone_abbr: "CET",
+               wall_period: {~N[2011-10-30 02:00:00], ~N[2012-03-25 02:00:00]}
+             }}
 
     prove desc,
           time_zone_periods_from_wall_datetime(
@@ -297,8 +530,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           ) ==
             {
               :gap,
-              {%{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}, ~N[2012-03-25 02:00:00]},
-              {%{std_offset: 3600, utc_offset: 3600, zone_abbr: "CEST"}, ~N[2012-03-25 03:00:00]}
+              {
+                %{
+                  std_offset: 0,
+                  utc_offset: 3600,
+                  zone_abbr: "CET",
+                  wall_period: {~N[2011-10-30 02:00:00], ~N[2012-03-25 02:00:00]}
+                },
+                ~N[2012-03-25 02:00:00]
+              },
+              {
+                %{
+                  std_offset: 3600,
+                  utc_offset: 3600,
+                  zone_abbr: "CEST",
+                  wall_period: {~N[2012-03-25 03:00:00], ~N[2012-10-28 03:00:00]}
+                },
+                ~N[2012-03-25 03:00:00]
+              }
             }
 
     prove desc,
@@ -308,8 +557,18 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           ) ==
             {
               :ambiguous,
-              %{std_offset: 3600, utc_offset: 3600, zone_abbr: "CEST"},
-              %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}
+              %{
+                std_offset: 3600,
+                utc_offset: 3600,
+                zone_abbr: "CEST",
+                wall_period: {~N[2012-03-25 03:00:00], ~N[2012-10-28 03:00:00]}
+              },
+              %{
+                std_offset: 0,
+                utc_offset: 3600,
+                zone_abbr: "CET",
+                wall_period: {~N[2012-10-28 02:00:00], ~N[2013-03-31 02:00:00]}
+              }
             }
 
     # ==========================================================================
@@ -317,24 +576,51 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     prove time_zone_periods_from_wall_datetime(
             ~N[2000-10-28 02:00:00],
             "Etc/GMT-2"
-          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "+02"}}
+          ) == {
+            :ok,
+            %{std_offset: 0, utc_offset: 7200, zone_abbr: "+02", wall_period: {:min, :max}}
+          }
 
     # ==========================================================================
 
     prove time_zone_periods_from_wall_datetime(
             ~N[2021-10-18 00:26:23],
             "America/Chihuahua"
-          ) == {:ok, %{std_offset: 3600, utc_offset: -25200, zone_abbr: "MDT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: -25200,
+              zone_abbr: "MDT",
+              wall_period: {~N[2021-04-04 03:00:00], ~N[2021-10-31 02:00:00]}
+            }
+          }
 
     prove time_zone_periods_from_wall_datetime(
             ~N[1977-10-20 22:40:49],
             "Africa/Algiers"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 0, zone_abbr: "WEST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 0,
+              zone_abbr: "WEST",
+              wall_period: {~N[1977-05-06 01:00:00], ~N[1977-10-21 00:00:00]}
+            }
+          }
 
     prove time_zone_periods_from_wall_datetime(
             ~N[1997-03-29 22:01:09],
             "Asia/Tbilisi"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 14400, zone_abbr: "+05"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 14400,
+              zone_abbr: "+05",
+              wall_period: {~N[1996-03-31 01:00:00], ~N[1997-10-26 00:00:00]}
+            }
+          }
 
     # ==========================================================================
     # America/Winnipeg
@@ -362,19 +648,42 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2000-04-02 01:59:59],
             "America/Winnipeg"
-          ) == {:ok, %{utc_offset: -21600, std_offset: 0, zone_abbr: "CST"}}
+          ) ==
+            {:ok,
+             %{
+               std_offset: 0,
+               utc_offset: -21600,
+               zone_abbr: "CST",
+               wall_period: {~N[1999-10-31 02:00:00], ~N[2000-04-02 02:00:00]}
+             }}
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-03-26 01:59:59],
             "Asia/Novosibirsk"
-          ) == {:ok, %{utc_offset: 21600, std_offset: 0, zone_abbr: "+06"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 21600,
+              zone_abbr: "+06",
+              wall_period: {~N[1999-10-31 02:00:00], ~N[2000-03-26 02:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-03-26 00:59:59],
             "Europe/Dublin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: -3600, zone_abbr: "GMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: -3600,
+              utc_offset: 3600,
+              zone_abbr: "GMT",
+              wall_period: {~N[1999-10-31 01:00:00], ~N[2000-03-26 01:00:00]}
+            }
+          }
 
     # --------------------------------------------------------------------------
     desc = "at the start of a gap"
@@ -385,8 +694,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "America/Winnipeg"
           ) == {
             :gap,
-            {%{utc_offset: -21600, std_offset: 0, zone_abbr: "CST"}, ~N[2000-04-02 02:00:00]},
-            {%{utc_offset: -21600, std_offset: 3600, zone_abbr: "CDT"}, ~N[2000-04-02 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: -21600,
+                zone_abbr: "CST",
+                wall_period: {~N[1999-10-31 02:00:00], ~N[2000-04-02 02:00:00]}
+              },
+              ~N[2000-04-02 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: -21600,
+                zone_abbr: "CDT",
+                wall_period: {~N[2000-04-02 03:00:00], ~N[2000-10-29 03:00:00]}
+              },
+              ~N[2000-04-02 03:00:00]
+            }
           }
 
     prove desc,
@@ -395,8 +720,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Novosibirsk"
           ) == {
             :gap,
-            {%{utc_offset: 21600, std_offset: 0, zone_abbr: "+06"}, ~N[2000-03-26 02:00:00]},
-            {%{utc_offset: 21600, std_offset: 3600, zone_abbr: "+07"}, ~N[2000-03-26 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 21600,
+                zone_abbr: "+06",
+                wall_period: {~N[1999-10-31 02:00:00], ~N[2000-03-26 02:00:00]}
+              },
+              ~N[2000-03-26 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: 21600,
+                zone_abbr: "+07",
+                wall_period: {~N[2000-03-26 03:00:00], ~N[2000-10-29 03:00:00]}
+              },
+              ~N[2000-03-26 03:00:00]
+            }
           }
 
     prove desc,
@@ -405,8 +746,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Dublin"
           ) == {
             :gap,
-            {%{utc_offset: 3600, std_offset: -3600, zone_abbr: "GMT"}, ~N[2000-03-26 01:00:00]},
-            {%{utc_offset: 3600, std_offset: 0, zone_abbr: "IST"}, ~N[2000-03-26 02:00:00]}
+            {
+              %{
+                std_offset: -3600,
+                utc_offset: 3600,
+                zone_abbr: "GMT",
+                wall_period: {~N[1999-10-31 01:00:00], ~N[2000-03-26 01:00:00]}
+              },
+              ~N[2000-03-26 01:00:00]
+            },
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 3600,
+                zone_abbr: "IST",
+                wall_period: {~N[2000-03-26 02:00:00], ~N[2000-10-29 02:00:00]}
+              },
+              ~N[2000-03-26 02:00:00]
+            }
           }
 
     # --------------------------------------------------------------------------
@@ -418,8 +775,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "America/Winnipeg"
           ) == {
             :gap,
-            {%{utc_offset: -21600, std_offset: 0, zone_abbr: "CST"}, ~N[2000-04-02 02:00:00]},
-            {%{utc_offset: -21600, std_offset: 3600, zone_abbr: "CDT"}, ~N[2000-04-02 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: -21600,
+                zone_abbr: "CST",
+                wall_period: {~N[1999-10-31 02:00:00], ~N[2000-04-02 02:00:00]}
+              },
+              ~N[2000-04-02 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: -21600,
+                zone_abbr: "CDT",
+                wall_period: {~N[2000-04-02 03:00:00], ~N[2000-10-29 03:00:00]}
+              },
+              ~N[2000-04-02 03:00:00]
+            }
           }
 
     prove desc,
@@ -428,8 +801,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Novosibirsk"
           ) == {
             :gap,
-            {%{utc_offset: 21600, std_offset: 0, zone_abbr: "+06"}, ~N[2000-03-26 02:00:00]},
-            {%{utc_offset: 21600, std_offset: 3600, zone_abbr: "+07"}, ~N[2000-03-26 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 21600,
+                zone_abbr: "+06",
+                wall_period: {~N[1999-10-31 02:00:00], ~N[2000-03-26 02:00:00]}
+              },
+              ~N[2000-03-26 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: 21600,
+                zone_abbr: "+07",
+                wall_period: {~N[2000-03-26 03:00:00], ~N[2000-10-29 03:00:00]}
+              },
+              ~N[2000-03-26 03:00:00]
+            }
           }
 
     prove desc,
@@ -438,8 +827,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Dublin"
           ) == {
             :gap,
-            {%{utc_offset: 3600, std_offset: -3600, zone_abbr: "GMT"}, ~N[2000-03-26 01:00:00]},
-            {%{utc_offset: 3600, std_offset: 0, zone_abbr: "IST"}, ~N[2000-03-26 02:00:00]}
+            {
+              %{
+                std_offset: -3600,
+                utc_offset: 3600,
+                zone_abbr: "GMT",
+                wall_period: {~N[1999-10-31 01:00:00], ~N[2000-03-26 01:00:00]}
+              },
+              ~N[2000-03-26 01:00:00]
+            },
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 3600,
+                zone_abbr: "IST",
+                wall_period: {~N[2000-03-26 02:00:00], ~N[2000-10-29 02:00:00]}
+              },
+              ~N[2000-03-26 02:00:00]
+            }
           }
 
     # --------------------------------------------------------------------------
@@ -449,19 +854,43 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2000-04-02 03:00:00],
             "America/Winnipeg"
-          ) == {:ok, %{utc_offset: -21600, std_offset: 3600, zone_abbr: "CDT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: -21600,
+              zone_abbr: "CDT",
+              wall_period: {~N[2000-04-02 03:00:00], ~N[2000-10-29 03:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-03-26 03:00:00],
             "Asia/Novosibirsk"
-          ) == {:ok, %{utc_offset: 21600, std_offset: 3600, zone_abbr: "+07"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 21600,
+              zone_abbr: "+07",
+              wall_period: {~N[2000-03-26 03:00:00], ~N[2000-10-29 03:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-03-26 02:00:00],
             "Europe/Dublin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: 0, zone_abbr: "IST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "IST",
+              wall_period: {~N[2000-03-26 02:00:00], ~N[2000-10-29 02:00:00]}
+            }
+          }
 
     # --------------------------------------------------------------------------
     desc = "before an ambiguous time span"
@@ -470,19 +899,43 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 01:59:59],
             "America/Winnipeg"
-          ) == {:ok, %{utc_offset: -21600, std_offset: 3600, zone_abbr: "CDT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: -21600,
+              zone_abbr: "CDT",
+              wall_period: {~N[2000-04-02 03:00:00], ~N[2000-10-29 03:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 01:59:59],
             "Asia/Novosibirsk"
-          ) == {:ok, %{utc_offset: 21600, std_offset: 3600, zone_abbr: "+07"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 21600,
+              zone_abbr: "+07",
+              wall_period: {~N[2000-03-26 03:00:00], ~N[2000-10-29 03:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 00:59:59],
             "Europe/Dublin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: 0, zone_abbr: "IST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "IST",
+              wall_period: {~N[2000-03-26 02:00:00], ~N[2000-10-29 02:00:00]}
+            }
+          }
 
     # --------------------------------------------------------------------------
     desc = "at the start of an ambiguous time span"
@@ -491,34 +944,61 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 02:00:00],
             "America/Winnipeg"
-          ) ==
-            {
-              :ambiguous,
-              %{utc_offset: -21600, std_offset: 3600, zone_abbr: "CDT"},
-              %{utc_offset: -21600, std_offset: 0, zone_abbr: "CST"}
+          ) == {
+            :ambiguous,
+            %{
+              std_offset: 3600,
+              utc_offset: -21600,
+              zone_abbr: "CDT",
+              wall_period: {~N[2000-04-02 03:00:00], ~N[2000-10-29 03:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: -21600,
+              zone_abbr: "CST",
+              wall_period: {~N[2000-10-29 02:00:00], ~N[2001-04-01 02:00:00]}
             }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 02:00:00],
             "Asia/Novosibirsk"
-          ) ==
-            {
-              :ambiguous,
-              %{utc_offset: 21600, std_offset: 3600, zone_abbr: "+07"},
-              %{utc_offset: 21600, std_offset: 0, zone_abbr: "+06"}
+          ) == {
+            :ambiguous,
+            %{
+              std_offset: 3600,
+              utc_offset: 21600,
+              zone_abbr: "+07",
+              wall_period: {~N[2000-03-26 03:00:00], ~N[2000-10-29 03:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: 21600,
+              zone_abbr: "+06",
+              wall_period: {~N[2000-10-29 02:00:00], ~N[2001-03-25 02:00:00]}
             }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 01:00:00],
             "Europe/Dublin"
-          ) ==
-            {
-              :ambiguous,
-              %{utc_offset: 3600, std_offset: 0, zone_abbr: "IST"},
-              %{utc_offset: 3600, std_offset: -3600, zone_abbr: "GMT"}
+          ) == {
+            :ambiguous,
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "IST",
+              wall_period: {~N[2000-03-26 02:00:00], ~N[2000-10-29 02:00:00]}
+            },
+            %{
+              std_offset: -3600,
+              utc_offset: 3600,
+              zone_abbr: "GMT",
+              wall_period: {~N[2000-10-29 01:00:00], ~N[2001-03-25 01:00:00]}
             }
+          }
 
     # --------------------------------------------------------------------------
     desc = "at the end of an ambiguous time span"
@@ -527,34 +1007,61 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 02:59:59],
             "America/Winnipeg"
-          ) ==
-            {
-              :ambiguous,
-              %{utc_offset: -21600, std_offset: 3600, zone_abbr: "CDT"},
-              %{utc_offset: -21600, std_offset: 0, zone_abbr: "CST"}
+          ) == {
+            :ambiguous,
+            %{
+              std_offset: 3600,
+              utc_offset: -21600,
+              zone_abbr: "CDT",
+              wall_period: {~N[2000-04-02 03:00:00], ~N[2000-10-29 03:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: -21600,
+              zone_abbr: "CST",
+              wall_period: {~N[2000-10-29 02:00:00], ~N[2001-04-01 02:00:00]}
             }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 02:59:59],
             "Asia/Novosibirsk"
-          ) ==
-            {
-              :ambiguous,
-              %{utc_offset: 21600, std_offset: 3600, zone_abbr: "+07"},
-              %{utc_offset: 21600, std_offset: 0, zone_abbr: "+06"}
+          ) == {
+            :ambiguous,
+            %{
+              std_offset: 3600,
+              utc_offset: 21600,
+              zone_abbr: "+07",
+              wall_period: {~N[2000-03-26 03:00:00], ~N[2000-10-29 03:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: 21600,
+              zone_abbr: "+06",
+              wall_period: {~N[2000-10-29 02:00:00], ~N[2001-03-25 02:00:00]}
             }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 01:59:59],
             "Europe/Dublin"
-          ) ==
-            {
-              :ambiguous,
-              %{utc_offset: 3600, std_offset: 0, zone_abbr: "IST"},
-              %{utc_offset: 3600, std_offset: -3600, zone_abbr: "GMT"}
+          ) == {
+            :ambiguous,
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "IST",
+              wall_period: {~N[2000-03-26 02:00:00], ~N[2000-10-29 02:00:00]}
+            },
+            %{
+              std_offset: -3600,
+              utc_offset: 3600,
+              zone_abbr: "GMT",
+              wall_period: {~N[2000-10-29 01:00:00], ~N[2001-03-25 01:00:00]}
             }
+          }
 
     # --------------------------------------------------------------------------
     desc = "after an ambiguous time span"
@@ -563,19 +1070,43 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 03:00:00],
             "America/Winnipeg"
-          ) == {:ok, %{utc_offset: -21600, std_offset: 0, zone_abbr: "CST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: -21600,
+              zone_abbr: "CST",
+              wall_period: {~N[2000-10-29 02:00:00], ~N[2001-04-01 02:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 03:00:00],
             "Asia/Novosibirsk"
-          ) == {:ok, %{utc_offset: 21600, std_offset: 0, zone_abbr: "+06"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 21600,
+              zone_abbr: "+06",
+              wall_period: {~N[2000-10-29 02:00:00], ~N[2001-03-25 02:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[2000-10-29 02:00:00],
             "Europe/Dublin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: -3600, zone_abbr: "GMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: -3600,
+              utc_offset: 3600,
+              zone_abbr: "GMT",
+              wall_period: {~N[2000-10-29 01:00:00], ~N[2001-03-25 01:00:00]}
+            }
+          }
 
     # ==========================================================================
 
@@ -594,13 +1125,29 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[1947-03-13 23:53:07],
             "Asia/Riyadh"
-          ) == {:ok, %{utc_offset: 11212, std_offset: 0, zone_abbr: "LMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 11212,
+              zone_abbr: "LMT",
+              wall_period: {:min, ~N[1947-03-14 00:00:00]}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[1919-12-31 23:59:59],
             "Asia/Dubai"
-          ) == {:ok, %{utc_offset: 13272, std_offset: 0, zone_abbr: "LMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 13272,
+              zone_abbr: "LMT",
+              wall_period: {:min, ~N[1920-01-01 00:00:00]}
+            }
+          }
 
     # --------------------------------------------------------------------------
     desc = "in first transition"
@@ -611,8 +1158,18 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Riyadh"
           ) == {
             :ambiguous,
-            %{utc_offset: 11212, std_offset: 0, zone_abbr: "LMT"},
-            %{utc_offset: 10800, std_offset: 0, zone_abbr: "+03"}
+            %{
+              std_offset: 0,
+              utc_offset: 11212,
+              zone_abbr: "LMT",
+              wall_period: {:min, ~N[1947-03-14 00:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: 10800,
+              zone_abbr: "+03",
+              wall_period: {~N[1947-03-13 23:53:08], :max}
+            }
           }
 
     prove desc,
@@ -621,8 +1178,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Dubai"
           ) == {
             :gap,
-            {%{utc_offset: 13272, std_offset: 0, zone_abbr: "LMT"}, ~N[1920-01-01 00:00:00]},
-            {%{utc_offset: 14400, std_offset: 0, zone_abbr: "+04"}, ~N[1920-01-01 00:18:48]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 13272,
+                zone_abbr: "LMT",
+                wall_period: {:min, ~N[1920-01-01 00:00:00]}
+              },
+              ~N[1920-01-01 00:00:00]
+            },
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 14400,
+                zone_abbr: "+04",
+                wall_period: {~N[1920-01-01 00:18:48], :max}
+              },
+              ~N[1920-01-01 00:18:48]
+            }
           }
 
     # --------------------------------------------------------------------------
@@ -634,8 +1207,18 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Riyadh"
           ) == {
             :ambiguous,
-            %{utc_offset: 11212, std_offset: 0, zone_abbr: "LMT"},
-            %{utc_offset: 10800, std_offset: 0, zone_abbr: "+03"}
+            %{
+              std_offset: 0,
+              utc_offset: 11212,
+              zone_abbr: "LMT",
+              wall_period: {:min, ~N[1947-03-14 00:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: 10800,
+              zone_abbr: "+03",
+              wall_period: {~N[1947-03-13 23:53:08], :max}
+            }
           }
 
     prove desc,
@@ -644,8 +1227,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Dubai"
           ) == {
             :gap,
-            {%{utc_offset: 13272, std_offset: 0, zone_abbr: "LMT"}, ~N[1920-01-01 00:00:00]},
-            {%{utc_offset: 14400, std_offset: 0, zone_abbr: "+04"}, ~N[1920-01-01 00:18:48]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 13272,
+                zone_abbr: "LMT",
+                wall_period: {:min, ~N[1920-01-01 00:00:00]}
+              },
+              ~N[1920-01-01 00:00:00]
+            },
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 14400,
+                zone_abbr: "+04",
+                wall_period: {~N[1920-01-01 00:18:48], :max}
+              },
+              ~N[1920-01-01 00:18:48]
+            }
           }
 
     # --------------------------------------------------------------------------
@@ -655,13 +1254,29 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[1947-03-14 00:00:00],
             "Asia/Riyadh"
-          ) == {:ok, %{utc_offset: 10800, std_offset: 0, zone_abbr: "+03"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 10800,
+              zone_abbr: "+03",
+              wall_period: {~N[1947-03-13 23:53:08], :max}
+            }
+          }
 
     prove desc,
           time_zone_periods_from_wall_datetime(
             ~N[1920-01-01 00:18:48],
             "Asia/Dubai"
-          ) == {:ok, %{utc_offset: 14400, std_offset: 0, zone_abbr: "+04"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 14400,
+              zone_abbr: "+04",
+              wall_period: {~N[1920-01-01 00:18:48], :max}
+            }
+          }
 
     # ==========================================================================
     # Periods in the future will be calculate on the fly.
@@ -672,7 +1287,12 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {
             :ok,
-            %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "CET",
+              wall_period: {~N[2034-10-29 02:00:00], ~N[2035-03-25 02:00:00]}
+            }
           }
 
     prove "at the start of a gap in the future (first with calculation)",
@@ -681,15 +1301,39 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {
             :gap,
-            {%{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}, ~N[2035-03-25 02:00:00]},
-            {%{std_offset: 3600, utc_offset: 3600, zone_abbr: "CEST"}, ~N[2035-03-25 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 3600,
+                zone_abbr: "CET",
+                wall_period: {~N[2034-10-29 02:00:00], ~N[2035-03-25 02:00:00]}
+              },
+              ~N[2035-03-25 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: 3600,
+                zone_abbr: "CEST",
+                wall_period: {~N[2035-03-25 03:00:00], ~N[2035-10-28 03:00:00]}
+              },
+              ~N[2035-03-25 03:00:00]
+            }
           }
 
     prove "before an ambiguous time span in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2040-10-28 01:59:59],
             "Europe/Berlin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 3600,
+              zone_abbr: "CEST",
+              wall_period: {~N[2040-03-25 03:00:00], ~N[2040-10-28 03:00:00]}
+            }
+          }
 
     prove "at the start of an ambiguous time span in the future",
           time_zone_periods_from_wall_datetime(
@@ -697,8 +1341,18 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {
             :ambiguous,
-            %{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"},
-            %{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}
+            %{
+              std_offset: 3600,
+              utc_offset: 3600,
+              zone_abbr: "CEST",
+              wall_period: {~N[2040-03-25 03:00:00], ~N[2040-10-28 03:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "CET",
+              wall_period: {~N[2040-10-28 02:00:00], ~N[2041-03-31 02:00:00]}
+            }
           }
 
     prove "at the end of an ambiguous time span in the future",
@@ -707,21 +1361,47 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {
             :ambiguous,
-            %{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"},
-            %{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}
+            %{
+              std_offset: 3600,
+              utc_offset: 3600,
+              zone_abbr: "CEST",
+              wall_period: {~N[2040-03-25 03:00:00], ~N[2040-10-28 03:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "CET",
+              wall_period: {~N[2040-10-28 02:00:00], ~N[2041-03-31 02:00:00]}
+            }
           }
 
     prove "after an ambiguous time span in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2040-10-28 03:00:00],
             "Europe/Berlin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "CET",
+              wall_period: {~N[2040-10-28 02:00:00], ~N[2041-03-31 02:00:00]}
+            }
+          }
 
     prove "before a gap in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2041-03-31 01:59:59],
             "Europe/Berlin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 3600,
+              zone_abbr: "CET",
+              wall_period: {~N[2040-10-28 02:00:00], ~N[2041-03-31 02:00:00]}
+            }
+          }
 
     prove "at the start of a gap in the future",
           time_zone_periods_from_wall_datetime(
@@ -729,8 +1409,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {
             :gap,
-            {%{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}, ~N[2041-03-31 02:00:00]},
-            {%{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"}, ~N[2041-03-31 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 3600,
+                zone_abbr: "CET",
+                wall_period: {~N[2040-10-28 02:00:00], ~N[2041-03-31 02:00:00]}
+              },
+              ~N[2041-03-31 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: 3600,
+                zone_abbr: "CEST",
+                wall_period: {~N[2041-03-31 03:00:00], ~N[2041-10-27 03:00:00]}
+              },
+              ~N[2041-03-31 03:00:00]
+            }
           }
 
     prove "at the end of a gap in the future",
@@ -739,15 +1435,39 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Europe/Berlin"
           ) == {
             :gap,
-            {%{utc_offset: 3600, std_offset: 0, zone_abbr: "CET"}, ~N[2041-03-31 02:00:00]},
-            {%{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"}, ~N[2041-03-31 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 3600,
+                zone_abbr: "CET",
+                wall_period: {~N[2040-10-28 02:00:00], ~N[2041-03-31 02:00:00]}
+              },
+              ~N[2041-03-31 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: 3600,
+                zone_abbr: "CEST",
+                wall_period: {~N[2041-03-31 03:00:00], ~N[2041-10-27 03:00:00]}
+              },
+              ~N[2041-03-31 03:00:00]
+            }
           }
 
     prove "after a gap in the future",
           time_zone_periods_from_wall_datetime(
             ~N[2041-03-31 03:00:00],
             "Europe/Berlin"
-          ) == {:ok, %{utc_offset: 3600, std_offset: 3600, zone_abbr: "CEST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 3600,
+              zone_abbr: "CEST",
+              wall_period: {~N[2041-03-31 03:00:00], ~N[2041-10-27 03:00:00]}
+            }
+          }
 
     # time zone with time-standard wall rule
 
@@ -755,7 +1475,15 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2041-03-31 03:00:00],
             "America/Merida"
-          ) == {:ok, %{std_offset: 0, utc_offset: -21600, zone_abbr: "CST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: -21600,
+              zone_abbr: "CST",
+              wall_period: {~N[2040-10-28 01:00:00], ~N[2041-04-07 02:00:00]}
+            }
+          }
 
     prove "in the future with a gap",
           time_zone_periods_from_wall_datetime(
@@ -763,8 +1491,24 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "America/Merida"
           ) == {
             :gap,
-            {%{std_offset: 0, utc_offset: -21600, zone_abbr: "CST"}, ~N[2041-04-07 02:00:00]},
-            {%{std_offset: 3600, utc_offset: -21600, zone_abbr: "CDT"}, ~N[2041-04-07 03:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: -21600,
+                zone_abbr: "CST",
+                wall_period: {~N[2040-10-28 01:00:00], ~N[2041-04-07 02:00:00]}
+              },
+              ~N[2041-04-07 02:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: -21600,
+                zone_abbr: "CDT",
+                wall_period: {~N[2041-04-07 03:00:00], ~N[2041-10-27 02:00:00]}
+              },
+              ~N[2041-04-07 03:00:00]
+            }
           }
 
     # time zone with time-standard wall and standard rule
@@ -773,7 +1517,15 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[2041-03-28 23:59:59],
             "Asia/Amman"
-          ) == {:ok, %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 7200,
+              zone_abbr: "EET",
+              wall_period: {~N[2040-10-26 00:00:00], ~N[2041-03-29 00:00:00]}
+            }
+          }
 
     prove "in the future in a gap",
           time_zone_periods_from_wall_datetime(
@@ -781,15 +1533,39 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Amman"
           ) == {
             :gap,
-            {%{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}, ~N[2041-03-29 00:00:00]},
-            {%{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"}, ~N[2041-03-29 01:00:00]}
+            {
+              %{
+                std_offset: 0,
+                utc_offset: 7200,
+                zone_abbr: "EET",
+                wall_period: {~N[2040-10-26 00:00:00], ~N[2041-03-29 00:00:00]}
+              },
+              ~N[2041-03-29 00:00:00]
+            },
+            {
+              %{
+                std_offset: 3600,
+                utc_offset: 7200,
+                zone_abbr: "EEST",
+                wall_period: {~N[2041-03-29 01:00:00], ~N[2041-10-25 01:00:00]}
+              },
+              ~N[2041-03-29 01:00:00]
+            }
           }
 
     prove "in the future after a gap",
           time_zone_periods_from_wall_datetime(
             ~N[2041-03-29 01:00:00],
             "Asia/Amman"
-          ) == {:ok, %{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: 7200,
+              zone_abbr: "EEST",
+              wall_period: {~N[2041-03-29 01:00:00], ~N[2041-10-25 01:00:00]}
+            }
+          }
 
     prove "in the future in an ambiguous time span",
           time_zone_periods_from_wall_datetime(
@@ -797,8 +1573,18 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             "Asia/Amman"
           ) == {
             :ambiguous,
-            %{std_offset: 3600, utc_offset: 7200, zone_abbr: "EEST"},
-            %{std_offset: 0, utc_offset: 7200, zone_abbr: "EET"}
+            %{
+              std_offset: 3600,
+              utc_offset: 7200,
+              zone_abbr: "EEST",
+              wall_period: {~N[2041-03-29 01:00:00], ~N[2041-10-25 01:00:00]}
+            },
+            %{
+              std_offset: 0,
+              utc_offset: 7200,
+              zone_abbr: "EET",
+              wall_period: {~N[2041-10-25 00:00:00], ~N[2042-03-28 00:00:00]}
+            }
           }
 
     # ==========================================================================
@@ -807,7 +1593,15 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
           time_zone_periods_from_wall_datetime(
             ~N[-1111-03-31 03:00:00],
             "Europe/Berlin"
-          ) == {:ok, %{utc_offset: 3208, std_offset: 0, zone_abbr: "LMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: 3208,
+              zone_abbr: "LMT",
+              wall_period: {:min, ~N[1893-04-01 00:00:00]}
+            }
+          }
 
     # ==========================================================================
     # Issue: https://github.com/hrzndhrn/time_zone_info/issues/4
@@ -820,7 +1614,8 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             %{
               std_offset: 3600,
               utc_offset: 18000,
-              zone_abbr: "+06"
+              zone_abbr: "+06",
+              wall_period: {~N[1994-03-27 03:00:00], ~N[1994-09-25 03:00:00]}
             }
           }
 
@@ -829,23 +1624,54 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     prove time_zone_periods_from_wall_datetime(
             ~N[2006-04-13 06:58:29],
             "America/Indiana/Winamac"
-          ) == {:ok, %{std_offset: 3600, utc_offset: -21600, zone_abbr: "CDT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: -21600,
+              zone_abbr: "CDT",
+              wall_period: {~N[2006-04-02 02:00:00], ~N[2006-10-29 02:00:00]}
+            }
+          }
 
     prove time_zone_periods_from_wall_datetime(
             ~N[1942-06-22 09:10:49],
             "America/Montevideo"
-          ) == {:ok, %{std_offset: 1800, utc_offset: -12600, zone_abbr: "-03"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 1800,
+              utc_offset: -12600,
+              zone_abbr: "-03",
+              wall_period: {~N[1941-08-01 00:30:00], ~N[1942-12-14 00:00:00]}
+            }
+          }
 
     prove time_zone_periods_from_wall_datetime(
             ~N[1980-06-29 20:55:51],
             "America/Godthab"
-          ) == {:ok, %{std_offset: 3600, utc_offset: -10800, zone_abbr: "-02"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 3600,
+              utc_offset: -10800,
+              zone_abbr: "-02",
+              wall_period: {~N[1980-04-06 03:00:00], ~N[1980-09-27 23:00:00]}
+            }
+          }
 
-    @tag :only
     prove time_zone_periods_from_wall_datetime(
             ~N[1100-06-29 20:55:51],
             "America/Godthab"
-          ) == {:ok, %{std_offset: 0, utc_offset: -12416, zone_abbr: "LMT"}}
+          ) == {
+            :ok,
+            %{
+              std_offset: 0,
+              utc_offset: -12416,
+              zone_abbr: "LMT",
+              wall_period: {:min, ~N[1916-07-28 00:00:00]}
+            }
+          }
   end
 
   describe "time_zone_periods_from_wall_datetime/2 in the transition month:" do
@@ -937,11 +1763,5 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
     property_time_zone_periods_from_wall_datetime(time_zone: "Pacific/Fakaofo")
     # UTC+14
     property_time_zone_periods_from_wall_datetime(time_zone: "Pacific/Kiritimati")
-  end
-
-  describe "DataStore" do
-    test "info/0" do
-      assert DataStore.info() == :no_implementation_found
-    end
   end
 end

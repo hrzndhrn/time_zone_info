@@ -8,11 +8,13 @@ defmodule TimeZoneInfo.TransformerTest do
   setup_all do
     path = "test/fixtures/iana/2019c"
     files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
+    data = path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)
 
-    %{data: path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)}
+    %{data: data}
   end
 
   describe "transform/1 extract" do
+    @tag :only
     test "returns transformed data for time zone Africa/Algiers" do
       assert_time_zone("Africa/Algiers")
     end
@@ -1209,11 +1211,19 @@ defmodule TimeZoneInfo.TransformerTest do
   end
 
   defp to_naive(data) do
-    Enum.map(data, fn {ts, info} ->
-      {
-        ts |> :calendar.gregorian_seconds_to_datetime() |> NaiveDateTime.from_erl!(),
-        info
-      }
+    Enum.map(data, fn
+      {ts, {utc_offset, std_offset, zone_abbr, _wall}} ->
+        # the wall part will be tested in time_zone_database_test
+        {
+          ts |> :calendar.gregorian_seconds_to_datetime() |> NaiveDateTime.from_erl!(),
+          {utc_offset, std_offset, zone_abbr}
+        }
+
+      {ts, info} ->
+        {
+          ts |> :calendar.gregorian_seconds_to_datetime() |> NaiveDateTime.from_erl!(),
+          info
+        }
     end)
   end
 

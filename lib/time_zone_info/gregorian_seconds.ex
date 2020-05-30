@@ -3,7 +3,7 @@ defmodule TimeZoneInfo.GregorianSeconds do
 
   # An implementation for gregorian seconds.
 
-  @type t :: integer()
+  @typep t :: TimeZoneInfo.gregorian_seconds()
 
   @utc ~w(utc gmt zulu)a
 

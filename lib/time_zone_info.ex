@@ -14,7 +14,6 @@ defmodule TimeZoneInfo do
     DataStore,
     ExternalTermFormat,
     FileArchive,
-    GregorianSeconds,
     IanaParser,
     Transformer,
     Transformer.Abbr,
@@ -23,6 +22,9 @@ defmodule TimeZoneInfo do
 
   @default_lookahead 15
   @default_files ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
+
+  @typedoc "Seconds since year 0 in the gregorian calendar."
+  @type gregorian_seconds :: integer()
 
   @typedoc "The data structure containing all informations for `TimeZoneInfo`."
   @type data :: %{
@@ -39,7 +41,7 @@ defmodule TimeZoneInfo do
   A transition marks a point in time when one or more of the values `utc-offset`,
   `std_offset` or `zone-abbr` change.
   """
-  @type transition :: {GregorianSeconds.t() | NaiveDateTime.t(), zone_state}
+  @type transition :: {gregorian_seconds() | NaiveDateTime.t(), zone_state}
 
   @typedoc "The `zone_state` is either a `timezone_period` or a `rules_ref`."
   @type zone_state :: time_zone_period | rules_ref
@@ -53,12 +55,21 @@ defmodule TimeZoneInfo do
   @type rules_ref :: {Calendar.utc_offset(), rule_name(), Abbr.format()}
 
   @typedoc """
-  A period where a certain combination of UTC offset, standard offset and zone
-  abbreviation is in effect.
-
-  This is equivalent to `Calendar.TimeZoneDatabase.time_zone_period.t()`.
+  The wall time period represented in a tuple with two naive date times.
   """
-  @type time_zone_period :: {Calendar.utc_offset(), Calendar.std_offset(), Calendar.zone_abbr()}
+  @type wall_period :: {NaiveDateTime.t(), NaiveDateTime.t()}
+
+  @typedoc """
+  A period where a certain combination of UTC offset, standard offset and zone
+  abbreviation is in effect. The `wall_period` contains the start and end of the
+  time zone period in wall time.
+  """
+  @type time_zone_period :: {
+          Calendar.utc_offset(),
+          Calendar.std_offset(),
+          Calendar.zone_abbr(),
+          wall_period
+        }
 
   @typedoc "A rule representation."
   @type rule :: {

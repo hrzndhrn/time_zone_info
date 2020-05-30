@@ -3,10 +3,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   # The transformer for time-zones.
 
-  alias TimeZoneInfo.GregorianSeconds
-  alias TimeZoneInfo.IanaDateTime
-  alias TimeZoneInfo.IanaParser
-  alias TimeZoneInfo.Transformer
+  alias TimeZoneInfo.{GregorianSeconds, IanaDateTime, IanaParser, Transformer}
   alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
 
   @end_of_time GregorianSeconds.from_naive(~N[9999-12-31 00:00:00])
@@ -22,13 +19,14 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     zone_states
     |> transform_zone_states(rule_sets)
     |> delete_duplicates()
+    |> add_wall_period()
     |> add_max_rules(zone_states, data)
   end
 
   @doc """
   Returns the until datetime for the given `zone_state` and `std_offset`.
   """
-  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: GregorianSeconds.t()
+  @spec until(IanaParser.zone_state(), Calendar.std_offset()) :: TimeZoneInfo.gregorian_seconds()
   def until(zone_state, std_offset) do
     case zone_state[:until] do
       nil ->
@@ -158,4 +156,47 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   defp rule_name(nil), do: :none
   defp rule_name(value) when is_integer(value), do: {:std_offset, value}
   defp rule_name(string), do: {:ok, string}
+
+  def add_wall_period(transitions) do
+    transitions
+    |> Enum.reverse()
+    |> add_wall_period([])
+  end
+
+  defp add_wall_period([], acc), do: acc
+
+  defp add_wall_period([{seconds, {utc_offset, std_offset, zone_abbr}}], acc) do
+    wall_period = {to_wall(seconds, utc_offset, std_offset), :max}
+    [{seconds, {utc_offset, std_offset, zone_abbr, wall_period}} | acc]
+  end
+
+  defp add_wall_period([{0, {utc_offset, std_offset, zone_abbr}} | transitions], _acc) do
+    {seconds_b, _info} = hd(transitions)
+
+    wall_period = {:min, to_wall(seconds_b, utc_offset, std_offset)}
+    add_wall_period(transitions, [{0, {utc_offset, std_offset, zone_abbr, wall_period}}])
+  end
+
+  defp add_wall_period(
+         [{seconds_a, {utc_offset, std_offset, zone_abbr}} | transitions],
+         acc
+       ) do
+    {seconds_b, _info} = hd(transitions)
+
+    wall_period = {
+      to_wall(seconds_a, utc_offset, std_offset),
+      to_wall(seconds_b, utc_offset, std_offset)
+    }
+
+    add_wall_period(
+      transitions,
+      [{seconds_a, {utc_offset, std_offset, zone_abbr, wall_period}} | acc]
+    )
+  end
+
+  defp to_wall(seconds, utc_offset, std_offset) do
+    seconds
+    |> GregorianSeconds.to_naive()
+    |> NaiveDateTime.add(utc_offset + std_offset)
+  end
 end

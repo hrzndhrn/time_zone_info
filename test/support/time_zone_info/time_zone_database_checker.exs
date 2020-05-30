@@ -35,7 +35,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseChecker do
           TimeZoneDatabase
           |> apply(fun, args)
           |> strip()
-          |> check(expected)
+          |> check(strip(expected))
         rescue
           error ->
             {:invalid, {:error, error}}

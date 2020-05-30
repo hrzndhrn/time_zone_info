@@ -57,7 +57,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "tries to update old file and new config" do
-      update_env(files: ~w(europe))
+      update_env(files: ["europe"])
       touch_data(@path, now(sub: 2 * @seconds_per_day))
       checksum = checksum(@path)
 
@@ -140,7 +140,6 @@ defmodule TimeZoneInfo.UpdaterTest do
       refute DataStore.empty?()
     end
 
-    @tag :only
     test "server return 304 if data is unchanged and update forced" do
       update_env(
         files: ~w(africa),
@@ -211,8 +210,9 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
+    @tag :only
     test "updates data for europe and etcetera" do
-      update_env(files: ~w(europe etcetera))
+      update_env(files: ["europe", "etcetera"])
       touch_data(@path, now(sub: 2 * @seconds_per_day))
 
       assert_log(
@@ -222,20 +222,57 @@ defmodule TimeZoneInfo.UpdaterTest do
         [:initial, :check, :download, :update]
       )
 
-      assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") ==
-               {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
+      assert periods(~N[2012-03-25 01:59:59], "America/Cancun") == {:error, :time_zone_not_found}
+
+      # from initial setup (data/2019c/extract/africa/data.etf)
+      assert periods(~N[2012-03-25 01:59:59], "Africa/Lagos") == {
+               :ok,
+               %{
+                 std_offset: 0,
+                 utc_offset: 3600,
+                 wall_period: {~N[1919-09-01 00:46:24], :max},
+                 zone_abbr: "WAT"
+               }
+             }
+
+      assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") == {
+               :ok,
+               %{
+                 std_offset: 0,
+                 utc_offset: 3600,
+                 zone_abbr: "CET",
+                 wall_period: {~N[2011-10-30 02:00:00], ~N[2012-03-25 02:00:00]}
+               }
+             }
 
       assert periods(~N[2012-03-25 01:59:59], "Europe/London") == {
                :gap,
-               {%{std_offset: 0, utc_offset: 0, zone_abbr: "GMT"}, ~N[2012-03-25 01:00:00]},
-               {%{std_offset: 3600, utc_offset: 0, zone_abbr: "BST"}, ~N[2012-03-25 02:00:00]}
+               {
+                 %{
+                   std_offset: 0,
+                   utc_offset: 0,
+                   zone_abbr: "GMT",
+                   wall_period: {~N[2011-10-30 01:00:00], ~N[2012-03-25 01:00:00]}
+                 },
+                 ~N[2012-03-25 01:00:00]
+               },
+               {
+                 %{
+                   std_offset: 3600,
+                   utc_offset: 0,
+                   zone_abbr: "BST",
+                   wall_period: {~N[2012-03-25 02:00:00], ~N[2012-10-28 02:00:00]}
+                 },
+                 ~N[2012-03-25 02:00:00]
+               }
              }
 
       assert periods(~N[2012-03-25 01:59:59], "Etc/Zulu") ==
-               {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC"}}
+               {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC", wall_period: {:min, :max}}}
 
       assert periods(~N[2012-03-25 01:59:59], "Etc/GMT+4") ==
-               {:ok, %{std_offset: 0, utc_offset: -14400, zone_abbr: "-04"}}
+               {:ok,
+                %{std_offset: 0, utc_offset: -14400, zone_abbr: "-04", wall_period: {:min, :max}}}
     end
 
     test "updates data filtered by time_zones" do
@@ -433,8 +470,15 @@ defmodule TimeZoneInfo.UpdaterTest do
       refute DataStore.empty?()
       assert data_exists?(@path)
 
-      assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") ==
-               {:ok, %{std_offset: 0, utc_offset: 14400, zone_abbr: "+04"}}
+      assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") == {
+               :ok,
+               %{
+                 std_offset: 0,
+                 utc_offset: 14400,
+                 zone_abbr: "+04",
+                 wall_period: {~N[2009-03-29 01:00:00], :max}
+               }
+             }
     end
 
     test "downloads data from a web service" do
@@ -467,8 +511,15 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert Enum.member?(TimeZoneInfo.time_zones(), "Europe/Amsterdam")
       refute Enum.member?(TimeZoneInfo.time_zones(), "America/New_York")
 
-      assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") ==
-               {:ok, %{std_offset: 0, utc_offset: 3600, zone_abbr: "CET"}}
+      assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") == {
+               :ok,
+               %{
+                 std_offset: 0,
+                 utc_offset: 3600,
+                 zone_abbr: "CET",
+                 wall_period: {~N[2011-10-30 02:00:00], ~N[2012-03-25 02:00:00]}
+               }
+             }
     end
 
     test "gets an error if the data is not on the server" do
