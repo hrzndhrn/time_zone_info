@@ -176,7 +176,7 @@ defmodule TimeZoneInfo.Updater do
 
       case Downloader.download(opts) do
         {:ok, :iana, {200, data}} ->
-          transform(data)
+          transform(data, time_zones, lookahead)
 
         {:ok, mode, {200, data}} when mode in [:etf, :ws] ->
           ExternalTermFormat.decode(data)
@@ -193,11 +193,9 @@ defmodule TimeZoneInfo.Updater do
     end
   end
 
-  defp transform(data) do
+  defp transform(data, time_zones, lookahead) do
     with {:ok, version, content} <- extract(data),
-         {:ok, parsed} <- IanaParser.parse(content),
-         {:ok, time_zones} <- fetch_env(:time_zones),
-         {:ok, lookahead} <- fetch_env(:lookahead) do
+         {:ok, parsed} <- IanaParser.parse(content) do
       {:ok, Transformer.transform(parsed, version, lookahead: lookahead, time_zones: time_zones)}
     end
   end
