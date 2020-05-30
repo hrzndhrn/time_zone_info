@@ -85,27 +85,27 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap; text-align: right">2.49 K</td>
-    <td style="white-space: nowrap; text-align: right">402.22 μs</td>
-    <td style="white-space: nowrap; text-align: right">±14.47%</td>
-    <td style="white-space: nowrap; text-align: right">389 μs</td>
-    <td style="white-space: nowrap; text-align: right">595 μs</td>
+    <td style="white-space: nowrap; text-align: right">2.64 K</td>
+    <td style="white-space: nowrap; text-align: right">379.43 μs</td>
+    <td style="white-space: nowrap; text-align: right">±9.65%</td>
+    <td style="white-space: nowrap; text-align: right">367 μs</td>
+    <td style="white-space: nowrap; text-align: right">492.00 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">1.94 K</td>
-    <td style="white-space: nowrap; text-align: right">516.38 μs</td>
-    <td style="white-space: nowrap; text-align: right">±21.04%</td>
-    <td style="white-space: nowrap; text-align: right">494 μs</td>
-    <td style="white-space: nowrap; text-align: right">957 μs</td>
+    <td style="white-space: nowrap; text-align: right">1.87 K</td>
+    <td style="white-space: nowrap; text-align: right">534.14 μs</td>
+    <td style="white-space: nowrap; text-align: right">±7.85%</td>
+    <td style="white-space: nowrap; text-align: right">524 μs</td>
+    <td style="white-space: nowrap; text-align: right">675 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">0.0739 K</td>
-    <td style="white-space: nowrap; text-align: right">13540.14 μs</td>
-    <td style="white-space: nowrap; text-align: right">±3.11%</td>
-    <td style="white-space: nowrap; text-align: right">13441 μs</td>
-    <td style="white-space: nowrap; text-align: right">15366.00 μs</td>
+    <td style="white-space: nowrap; text-align: right">0.0770 K</td>
+    <td style="white-space: nowrap; text-align: right">12980.03 μs</td>
+    <td style="white-space: nowrap; text-align: right">±4.46%</td>
+    <td style="white-space: nowrap; text-align: right">12780 μs</td>
+    <td style="white-space: nowrap; text-align: right">15495.52 μs</td>
   </tr>
 </table>
 Comparison
@@ -116,18 +116,18 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap;text-align: right">2.49 K</td>
+    <td style="white-space: nowrap;text-align: right">2.64 K</td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">1.94 K</td>
-    <td style="white-space: nowrap; text-align: right">1.28x</td>
+    <td style="white-space: nowrap; text-align: right">1.87 K</td>
+    <td style="white-space: nowrap; text-align: right">1.41x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">0.0739 K</td>
-    <td style="white-space: nowrap; text-align: right">33.66x</td>
+    <td style="white-space: nowrap; text-align: right">0.0770 K</td>
+    <td style="white-space: nowrap; text-align: right">34.21x</td>
   </tr>
 </table>
 Memory Usage
@@ -169,27 +169,27 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap; text-align: right">2.45 K</td>
-    <td style="white-space: nowrap; text-align: right">407.71 μs</td>
-    <td style="white-space: nowrap; text-align: right">±10.60%</td>
-    <td style="white-space: nowrap; text-align: right">394 μs</td>
-    <td style="white-space: nowrap; text-align: right">567 μs</td>
+    <td style="white-space: nowrap; text-align: right">2.60 K</td>
+    <td style="white-space: nowrap; text-align: right">384.57 μs</td>
+    <td style="white-space: nowrap; text-align: right">±9.25%</td>
+    <td style="white-space: nowrap; text-align: right">371 μs</td>
+    <td style="white-space: nowrap; text-align: right">499.68 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">1.92 K</td>
-    <td style="white-space: nowrap; text-align: right">520.90 μs</td>
-    <td style="white-space: nowrap; text-align: right">±16.79%</td>
-    <td style="white-space: nowrap; text-align: right">497 μs</td>
-    <td style="white-space: nowrap; text-align: right">868.49 μs</td>
+    <td style="white-space: nowrap; text-align: right">1.86 K</td>
+    <td style="white-space: nowrap; text-align: right">538.14 μs</td>
+    <td style="white-space: nowrap; text-align: right">±10.10%</td>
+    <td style="white-space: nowrap; text-align: right">526 μs</td>
+    <td style="white-space: nowrap; text-align: right">693.53 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
     <td style="white-space: nowrap; text-align: right">0.0157 K</td>
-    <td style="white-space: nowrap; text-align: right">63498.37 μs</td>
-    <td style="white-space: nowrap; text-align: right">±3.59%</td>
-    <td style="white-space: nowrap; text-align: right">62897.50 μs</td>
-    <td style="white-space: nowrap; text-align: right">74624.63 μs</td>
+    <td style="white-space: nowrap; text-align: right">63892.15 μs</td>
+    <td style="white-space: nowrap; text-align: right">±1.24%</td>
+    <td style="white-space: nowrap; text-align: right">63784.00 μs</td>
+    <td style="white-space: nowrap; text-align: right">65902.72 μs</td>
   </tr>
 </table>
 Comparison
@@ -200,18 +200,18 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap;text-align: right">2.45 K</td>
+    <td style="white-space: nowrap;text-align: right">2.60 K</td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">1.92 K</td>
-    <td style="white-space: nowrap; text-align: right">1.28x</td>
+    <td style="white-space: nowrap; text-align: right">1.86 K</td>
+    <td style="white-space: nowrap; text-align: right">1.4x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
     <td style="white-space: nowrap; text-align: right">0.0157 K</td>
-    <td style="white-space: nowrap; text-align: right">155.74x</td>
+    <td style="white-space: nowrap; text-align: right">166.14x</td>
   </tr>
 </table>
 Memory Usage
@@ -253,27 +253,27 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap; text-align: right">2.54 K</td>
-    <td style="white-space: nowrap; text-align: right">394.20 μs</td>
-    <td style="white-space: nowrap; text-align: right">±12.08%</td>
-    <td style="white-space: nowrap; text-align: right">382 μs</td>
-    <td style="white-space: nowrap; text-align: right">578.06 μs</td>
+    <td style="white-space: nowrap; text-align: right">2.70 K</td>
+    <td style="white-space: nowrap; text-align: right">370.12 μs</td>
+    <td style="white-space: nowrap; text-align: right">±9.60%</td>
+    <td style="white-space: nowrap; text-align: right">359 μs</td>
+    <td style="white-space: nowrap; text-align: right">486 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">2.04 K</td>
-    <td style="white-space: nowrap; text-align: right">491.13 μs</td>
-    <td style="white-space: nowrap; text-align: right">±11.48%</td>
-    <td style="white-space: nowrap; text-align: right">484 μs</td>
-    <td style="white-space: nowrap; text-align: right">686 μs</td>
+    <td style="white-space: nowrap; text-align: right">1.92 K</td>
+    <td style="white-space: nowrap; text-align: right">519.50 μs</td>
+    <td style="white-space: nowrap; text-align: right">±9.35%</td>
+    <td style="white-space: nowrap; text-align: right">510 μs</td>
+    <td style="white-space: nowrap; text-align: right">678 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">0.0900 K</td>
-    <td style="white-space: nowrap; text-align: right">11105.76 μs</td>
-    <td style="white-space: nowrap; text-align: right">±3.72%</td>
-    <td style="white-space: nowrap; text-align: right">10986 μs</td>
-    <td style="white-space: nowrap; text-align: right">12703.36 μs</td>
+    <td style="white-space: nowrap; text-align: right">0.0931 K</td>
+    <td style="white-space: nowrap; text-align: right">10746.53 μs</td>
+    <td style="white-space: nowrap; text-align: right">±5.18%</td>
+    <td style="white-space: nowrap; text-align: right">10574 μs</td>
+    <td style="white-space: nowrap; text-align: right">12797.24 μs</td>
   </tr>
 </table>
 Comparison
@@ -284,18 +284,18 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap;text-align: right">2.54 K</td>
+    <td style="white-space: nowrap;text-align: right">2.70 K</td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">2.04 K</td>
-    <td style="white-space: nowrap; text-align: right">1.25x</td>
+    <td style="white-space: nowrap; text-align: right">1.92 K</td>
+    <td style="white-space: nowrap; text-align: right">1.4x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">0.0900 K</td>
-    <td style="white-space: nowrap; text-align: right">28.17x</td>
+    <td style="white-space: nowrap; text-align: right">0.0931 K</td>
+    <td style="white-space: nowrap; text-align: right">29.04x</td>
   </tr>
 </table>
 Memory Usage
@@ -337,27 +337,27 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap; text-align: right">144.81</td>
-    <td style="white-space: nowrap; text-align: right">6.91 ms</td>
-    <td style="white-space: nowrap; text-align: right">±7.13%</td>
-    <td style="white-space: nowrap; text-align: right">6.72 ms</td>
-    <td style="white-space: nowrap; text-align: right">8.66 ms</td>
+    <td style="white-space: nowrap; text-align: right">139.66</td>
+    <td style="white-space: nowrap; text-align: right">7.16 ms</td>
+    <td style="white-space: nowrap; text-align: right">±4.60%</td>
+    <td style="white-space: nowrap; text-align: right">7.06 ms</td>
+    <td style="white-space: nowrap; text-align: right">8.32 ms</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">109.40</td>
-    <td style="white-space: nowrap; text-align: right">9.14 ms</td>
-    <td style="white-space: nowrap; text-align: right">±6.99%</td>
-    <td style="white-space: nowrap; text-align: right">8.89 ms</td>
-    <td style="white-space: nowrap; text-align: right">11.24 ms</td>
+    <td style="white-space: nowrap; text-align: right">106.56</td>
+    <td style="white-space: nowrap; text-align: right">9.38 ms</td>
+    <td style="white-space: nowrap; text-align: right">±4.04%</td>
+    <td style="white-space: nowrap; text-align: right">9.27 ms</td>
+    <td style="white-space: nowrap; text-align: right">10.90 ms</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">93.96</td>
-    <td style="white-space: nowrap; text-align: right">10.64 ms</td>
-    <td style="white-space: nowrap; text-align: right">±5.69%</td>
-    <td style="white-space: nowrap; text-align: right">10.44 ms</td>
-    <td style="white-space: nowrap; text-align: right">12.80 ms</td>
+    <td style="white-space: nowrap; text-align: right">90.15</td>
+    <td style="white-space: nowrap; text-align: right">11.09 ms</td>
+    <td style="white-space: nowrap; text-align: right">±3.91%</td>
+    <td style="white-space: nowrap; text-align: right">10.96 ms</td>
+    <td style="white-space: nowrap; text-align: right">12.79 ms</td>
   </tr>
 </table>
 Comparison
@@ -368,18 +368,18 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap;text-align: right">144.81</td>
+    <td style="white-space: nowrap;text-align: right">139.66</td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">109.40</td>
-    <td style="white-space: nowrap; text-align: right">1.32x</td>
+    <td style="white-space: nowrap; text-align: right">106.56</td>
+    <td style="white-space: nowrap; text-align: right">1.31x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">93.96</td>
-    <td style="white-space: nowrap; text-align: right">1.54x</td>
+    <td style="white-space: nowrap; text-align: right">90.15</td>
+    <td style="white-space: nowrap; text-align: right">1.55x</td>
   </tr>
 </table>
 Memory Usage
@@ -421,27 +421,27 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap; text-align: right">107.56</td>
-    <td style="white-space: nowrap; text-align: right">9.30 ms</td>
-    <td style="white-space: nowrap; text-align: right">±7.98%</td>
-    <td style="white-space: nowrap; text-align: right">9.04 ms</td>
-    <td style="white-space: nowrap; text-align: right">11.81 ms</td>
+    <td style="white-space: nowrap; text-align: right">106.95</td>
+    <td style="white-space: nowrap; text-align: right">9.35 ms</td>
+    <td style="white-space: nowrap; text-align: right">±3.32%</td>
+    <td style="white-space: nowrap; text-align: right">9.27 ms</td>
+    <td style="white-space: nowrap; text-align: right">10.64 ms</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">84.34</td>
-    <td style="white-space: nowrap; text-align: right">11.86 ms</td>
-    <td style="white-space: nowrap; text-align: right">±5.18%</td>
-    <td style="white-space: nowrap; text-align: right">11.60 ms</td>
-    <td style="white-space: nowrap; text-align: right">13.89 ms</td>
+    <td style="white-space: nowrap; text-align: right">82.10</td>
+    <td style="white-space: nowrap; text-align: right">12.18 ms</td>
+    <td style="white-space: nowrap; text-align: right">±3.19%</td>
+    <td style="white-space: nowrap; text-align: right">12.04 ms</td>
+    <td style="white-space: nowrap; text-align: right">13.73 ms</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">17.37</td>
-    <td style="white-space: nowrap; text-align: right">57.58 ms</td>
-    <td style="white-space: nowrap; text-align: right">±4.18%</td>
-    <td style="white-space: nowrap; text-align: right">56.77 ms</td>
-    <td style="white-space: nowrap; text-align: right">65.41 ms</td>
+    <td style="white-space: nowrap; text-align: right">16.87</td>
+    <td style="white-space: nowrap; text-align: right">59.28 ms</td>
+    <td style="white-space: nowrap; text-align: right">±3.68%</td>
+    <td style="white-space: nowrap; text-align: right">58.60 ms</td>
+    <td style="white-space: nowrap; text-align: right">70.93 ms</td>
   </tr>
 </table>
 Comparison
@@ -452,18 +452,18 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap;text-align: right">107.56</td>
+    <td style="white-space: nowrap;text-align: right">106.95</td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">84.34</td>
-    <td style="white-space: nowrap; text-align: right">1.28x</td>
+    <td style="white-space: nowrap; text-align: right">82.10</td>
+    <td style="white-space: nowrap; text-align: right">1.3x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">17.37</td>
-    <td style="white-space: nowrap; text-align: right">6.19x</td>
+    <td style="white-space: nowrap; text-align: right">16.87</td>
+    <td style="white-space: nowrap; text-align: right">6.34x</td>
   </tr>
 </table>
 Memory Usage
@@ -505,27 +505,27 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap; text-align: right">2.57 K</td>
-    <td style="white-space: nowrap; text-align: right">388.51 μs</td>
-    <td style="white-space: nowrap; text-align: right">±11.15%</td>
-    <td style="white-space: nowrap; text-align: right">377 μs</td>
-    <td style="white-space: nowrap; text-align: right">554 μs</td>
+    <td style="white-space: nowrap; text-align: right">2.54 K</td>
+    <td style="white-space: nowrap; text-align: right">394.14 μs</td>
+    <td style="white-space: nowrap; text-align: right">±10.89%</td>
+    <td style="white-space: nowrap; text-align: right">379 μs</td>
+    <td style="white-space: nowrap; text-align: right">554.07 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">2.12 K</td>
-    <td style="white-space: nowrap; text-align: right">472.54 μs</td>
-    <td style="white-space: nowrap; text-align: right">±9.65%</td>
-    <td style="white-space: nowrap; text-align: right">470 μs</td>
-    <td style="white-space: nowrap; text-align: right">640 μs</td>
+    <td style="white-space: nowrap; text-align: right">1.97 K</td>
+    <td style="white-space: nowrap; text-align: right">506.80 μs</td>
+    <td style="white-space: nowrap; text-align: right">±10.71%</td>
+    <td style="white-space: nowrap; text-align: right">498 μs</td>
+    <td style="white-space: nowrap; text-align: right">669.23 μs</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">0.199 K</td>
-    <td style="white-space: nowrap; text-align: right">5013.75 μs</td>
-    <td style="white-space: nowrap; text-align: right">±6.79%</td>
-    <td style="white-space: nowrap; text-align: right">4895 μs</td>
-    <td style="white-space: nowrap; text-align: right">6387.96 μs</td>
+    <td style="white-space: nowrap; text-align: right">0.178 K</td>
+    <td style="white-space: nowrap; text-align: right">5614.33 μs</td>
+    <td style="white-space: nowrap; text-align: right">±4.68%</td>
+    <td style="white-space: nowrap; text-align: right">5536 μs</td>
+    <td style="white-space: nowrap; text-align: right">6735.38 μs</td>
   </tr>
 </table>
 Comparison
@@ -536,18 +536,18 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap;text-align: right">2.57 K</td>
+    <td style="white-space: nowrap;text-align: right">2.54 K</td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">2.12 K</td>
-    <td style="white-space: nowrap; text-align: right">1.22x</td>
+    <td style="white-space: nowrap; text-align: right">1.97 K</td>
+    <td style="white-space: nowrap; text-align: right">1.29x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">0.199 K</td>
-    <td style="white-space: nowrap; text-align: right">12.91x</td>
+    <td style="white-space: nowrap; text-align: right">0.178 K</td>
+    <td style="white-space: nowrap; text-align: right">14.24x</td>
   </tr>
 </table>
 Memory Usage
@@ -559,18 +559,18 @@ Memory Usage
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap">172.14 KB</td>
+    <td style="white-space: nowrap">172.02 KB</td>
       <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap">105.57 KB</td>
+    <td style="white-space: nowrap">105.79 KB</td>
     <td>0.61x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap">1307.93 KB</td>
-    <td>7.6x</td>
+    <td style="white-space: nowrap">1440.31 KB</td>
+    <td>8.37x</td>
   </tr>
 </table>
 <hr/>
@@ -589,27 +589,27 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap; text-align: right">513.06</td>
-    <td style="white-space: nowrap; text-align: right">1.95 ms</td>
-    <td style="white-space: nowrap; text-align: right">±7.97%</td>
-    <td style="white-space: nowrap; text-align: right">1.89 ms</td>
-    <td style="white-space: nowrap; text-align: right">2.58 ms</td>
+    <td style="white-space: nowrap; text-align: right">500.64</td>
+    <td style="white-space: nowrap; text-align: right">2.00 ms</td>
+    <td style="white-space: nowrap; text-align: right">±6.23%</td>
+    <td style="white-space: nowrap; text-align: right">1.97 ms</td>
+    <td style="white-space: nowrap; text-align: right">2.53 ms</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">425.02</td>
-    <td style="white-space: nowrap; text-align: right">2.35 ms</td>
-    <td style="white-space: nowrap; text-align: right">±7.72%</td>
-    <td style="white-space: nowrap; text-align: right">2.28 ms</td>
-    <td style="white-space: nowrap; text-align: right">3.13 ms</td>
+    <td style="white-space: nowrap; text-align: right">409.69</td>
+    <td style="white-space: nowrap; text-align: right">2.44 ms</td>
+    <td style="white-space: nowrap; text-align: right">±5.69%</td>
+    <td style="white-space: nowrap; text-align: right">2.42 ms</td>
+    <td style="white-space: nowrap; text-align: right">3.09 ms</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">181.32</td>
-    <td style="white-space: nowrap; text-align: right">5.52 ms</td>
-    <td style="white-space: nowrap; text-align: right">±7.40%</td>
-    <td style="white-space: nowrap; text-align: right">5.36 ms</td>
-    <td style="white-space: nowrap; text-align: right">7.23 ms</td>
+    <td style="white-space: nowrap; text-align: right">175.86</td>
+    <td style="white-space: nowrap; text-align: right">5.69 ms</td>
+    <td style="white-space: nowrap; text-align: right">±5.35%</td>
+    <td style="white-space: nowrap; text-align: right">5.61 ms</td>
+    <td style="white-space: nowrap; text-align: right">6.86 ms</td>
   </tr>
 </table>
 Comparison
@@ -620,18 +620,18 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
-    <td style="white-space: nowrap;text-align: right">513.06</td>
+    <td style="white-space: nowrap;text-align: right">500.64</td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
-    <td style="white-space: nowrap; text-align: right">425.02</td>
-    <td style="white-space: nowrap; text-align: right">1.21x</td>
+    <td style="white-space: nowrap; text-align: right">409.69</td>
+    <td style="white-space: nowrap; text-align: right">1.22x</td>
   </tr>
   <tr>
     <td style="white-space: nowrap">tzdata</td>
-    <td style="white-space: nowrap; text-align: right">181.32</td>
-    <td style="white-space: nowrap; text-align: right">2.83x</td>
+    <td style="white-space: nowrap; text-align: right">175.86</td>
+    <td style="white-space: nowrap; text-align: right">2.85x</td>
   </tr>
 </table>
 Memory Usage

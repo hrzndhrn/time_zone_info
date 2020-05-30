@@ -158,32 +158,29 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp to_periods({transition_a, transition_b, transition_c}, at_wall, _at_wall_datetime) do
-    at_wall_a = to_wall(transition_a)
     at_wall_ba = to_wall(transition_b, transition_a)
     at_wall_b = to_wall(transition_b)
     at_wall_cb = to_wall(transition_c, transition_b)
     at_wall_c = to_wall(transition_c)
 
     cond do
-      at_wall >= at_wall_c && at_wall < at_wall_cb ->
-        {:ambiguous, convert(transition_b), convert(transition_c)}
-
       at_wall >= at_wall_c ->
-        {:ok, convert(transition_c)}
+        if at_wall < at_wall_cb,
+          do: {:ambiguous, convert(transition_b), convert(transition_c)},
+          else: {:ok, convert(transition_c)}
 
       at_wall >= at_wall_cb ->
         gap(transition_b, transition_c)
 
-      at_wall >= at_wall_b && at_wall < at_wall_ba ->
-        {:ambiguous, convert(transition_a), convert(transition_b)}
-
       at_wall >= at_wall_b ->
-        {:ok, convert(transition_b)}
+        if at_wall < at_wall_ba,
+          do: {:ambiguous, convert(transition_a), convert(transition_b)},
+          else: {:ok, convert(transition_b)}
 
       at_wall >= at_wall_ba ->
         gap(transition_a, transition_b)
 
-      at_wall >= at_wall_a ->
+      true ->
         {:ok, convert(transition_a)}
     end
   end
