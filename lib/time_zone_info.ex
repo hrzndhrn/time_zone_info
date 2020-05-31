@@ -86,10 +86,21 @@ defmodule TimeZoneInfo do
   @typedoc "The time standards used by IANA."
   @type time_standard :: :wall | :standard | :gmt | :utc | :zulu
 
-  @typedoc "The configuration for data generation"
-  @type config :: [
+  @type time_zones :: :all | [Calendar.time_zone()]
+
+  @typedoc """
+  The configuration for data generation.
+
+  - `:files`: The list of files from the IANA DB download.
+  - `:time_zones`: The list of time zones that will be used. The atom `:all`
+    indicates that all time zones from the IANA DB will be used.
+  - `:lookahead`: Number of years for which data are precalculated.
+
+  See `Config` page for more information.
+  """
+  @type data_config :: [
           files: [String.t()],
-          time_zones: [Calendar.time_zone()],
+          time_zones: time_zones(),
           lookahead: non_neg_integer()
         ]
 
@@ -157,14 +168,14 @@ defmodule TimeZoneInfo do
   @doc """
   Generates `TimeZoneInfo.data` from the given `iana_data_archive`.
   """
-  @spec data(binary(), config()) :: {:ok, binary() | data(), String.t()} | {:error, term()}
+  @spec data(binary(), data_config()) :: {:ok, binary() | data(), String.t()} | {:error, term()}
   def data(iana_data_archive, config \\ []) do
     with {:ok, config} <- validate(config),
          {:ok, files} <- FileArchive.extract(iana_data_archive, config[:files]),
          {:ok, version, content} <- content(files),
          {:ok, parsed} <- IanaParser.parse(content),
          data <- Transformer.transform(parsed, version, config),
-         {:ok, data} <- DataConfig.update(data, config),
+         {:ok, data} <- DataConfig.update_time_zones(data, config[:time_zones]),
          {:ok, checksum} <- ExternalTermFormat.checksum(data),
          {:ok, data} <- encode(data, config[:encode]) do
       {:ok, data, checksum}

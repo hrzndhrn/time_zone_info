@@ -56,7 +56,7 @@ defmodule TimeZoneInfo.Updater do
 
     with {:ok, data} <- DataPersistence.fetch(),
          {:ok, time_zones} <- fetch_env(:time_zones),
-         {:ok, data} <- DataConfig.update(data, time_zones: time_zones),
+         {:ok, data} <- DataConfig.update_time_zones(data, time_zones),
          :ok <- DataStore.put(data) do
       do_update(:check)
     else
@@ -125,7 +125,7 @@ defmodule TimeZoneInfo.Updater do
     Listener.on_update(:update)
 
     with {:ok, time_zones} <- fetch_env(:time_zones),
-         {:ok, data} <- DataConfig.update(data, time_zones: time_zones),
+         {:ok, data} <- DataConfig.update_time_zones(data, time_zones),
          :ok <- DataStore.put(data),
          :ok <- DataPersistence.put(data) do
       :ok
@@ -257,13 +257,24 @@ defmodule TimeZoneInfo.Updater do
   end
 
   defp fetch_env(:time_zones) do
-    value = Application.get_env(:time_zone_info, :time_zones, [])
-    valid = is_list(value) && Enum.all?(value, &is_binary/1)
+    case Application.get_env(:time_zone_info, :time_zones, :all) do
+      :all ->
+        {:ok, :all}
 
-    case {valid, value} do
-      {true, []} -> {:ok, :all}
-      {true, time_zones} -> {:ok, time_zones}
-      _ -> {:error, {:invalid_config, [time_zones: value]}}
+      [] ->
+        {:error, {:invalid_config, [time_zones: []]}}
+
+      list when is_list(list) ->
+        case Enum.all?(list, fn item -> is_binary(item) end) do
+          true ->
+            {:ok, list}
+
+          false ->
+            {:error, {:invalid_config, [time_zones: list]}}
+        end
+
+      value ->
+        {:error, {:invalid_config, [time_zones: value]}}
     end
   end
 end

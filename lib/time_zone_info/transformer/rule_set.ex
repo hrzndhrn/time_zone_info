@@ -3,12 +3,11 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
 
   # A rule set is a set of IANA rules with one entry per rule execution.
 
-  alias TimeZoneInfo.GregorianSeconds
-  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.{GregorianSeconds, IanaParser}
   alias TimeZoneInfo.Transformer.{Abbr, ZoneState}
 
   @type rule :: {
-          GregorianSeconds.t(),
+          TimeZoneInfo.gregorian_seconds,
           {TimeZoneInfo.time_standard(), Calendar.std_offset(), Abbr.letters()}
         }
   @type t :: [rule()]
@@ -18,7 +17,7 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
   """
   @spec transitions(
           t(),
-          GregorianSeconds.t(),
+          TimeZoneInfo.gregorian_seconds(),
           IanaParser.zone_state(),
           Calendar.utc_offset(),
           Calendar.std_offset(),

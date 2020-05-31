@@ -1,26 +1,20 @@
 defmodule TimeZoneInfo.DataConfig do
   @moduledoc false
 
-  # This module applies the configuration to the transition tables.
-
   alias TimeZoneInfo.Transformer
-
-  @type config :: [time_zones: :all | [String.t()]]
 
   @separator "/"
 
   @doc """
-  Returns the data updated by the configuration.
+  Returns the data updated by the given time_zones.
   """
-  @spec update(TimeZoneInfo.data(), config()) ::
+  @spec update_time_zones(TimeZoneInfo.data(), TimeZoneInfo.time_zones()) ::
           {:ok, TimeZoneInfo.data()} | {:error, {:time_zones_not_found, [String.t()]}}
-  def update(data, config), do: update(:time_zones, data, config[:time_zones])
+  def update_time_zones(data, :all), do: {:ok, data}
 
-  defp update(:time_zones, data, nil), do: {:ok, data}
+  def update_time_zones(data, nil), do: {:ok, data}
 
-  defp update(:time_zones, data, :all), do: {:ok, data}
-
-  defp update(:time_zones, data, time_zones) when is_list(time_zones) do
+  def update_time_zones(data, time_zones) when is_list(time_zones) do
     data
     |> filter(time_zones)
     |> case do

@@ -45,6 +45,7 @@ defmodule TimeZoneInfo.MixProject do
         "northamerica",
         "southamerica"
       ],
+      time_zones: :all,
       lookahead: 15,
       data_store: :detect,
       update: :disabled,

@@ -17,19 +17,19 @@ defmodule TimeZoneInfo.DataConfigTest do
 
   describe "update/2" do
     test "returns unchanged data if time_zones: :all", %{data: data} do
-      assert DataConfig.update(data, time_zones: :all) == {:ok, data}
+      assert DataConfig.update_time_zones(data, :all) == {:ok, data}
     end
 
     test "returns an error for an invalid time zone", %{data: data} do
       time_zones = ["Europe/London", "Indian", "America/Indiana", "Foo"]
 
-      assert DataConfig.update(data, time_zones: time_zones) ==
+      assert DataConfig.update_time_zones(data, time_zones) ==
                {:error, {:time_zones_not_found, ["Foo"]}}
     end
 
     test "returns time zones for configured link", %{data: data} do
       time_zones = ["Europe/Jersey"]
-      assert {:ok, data} = DataConfig.update(data, time_zones: time_zones)
+      assert {:ok, data} = DataConfig.update_time_zones(data, time_zones)
       assert Map.keys(data.time_zones) == ["Europe/London"]
       assert Map.keys(data.rules) == ["EU"]
 
@@ -42,7 +42,7 @@ defmodule TimeZoneInfo.DataConfigTest do
 
     test "returns configured time zones", %{data: data} do
       time_zones = ["Europe/London", "Indian", "America/Indiana"]
-      assert {:ok, data} = DataConfig.update(data, time_zones: time_zones)
+      assert {:ok, data} = DataConfig.update_time_zones(data, time_zones)
 
       assert Map.keys(data.time_zones) == [
                "America/Indiana/Indianapolis",
