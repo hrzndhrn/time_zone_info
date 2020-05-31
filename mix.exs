@@ -131,7 +131,7 @@ defmodule TimeZoneInfo.MixProject do
       {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
-      {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
+      {:hackney, "~> 1.16", only: [:test, :dev], runtime: false},
       {:mint, "~> 1.0", optional: true},
       {:mox, "~> 0.5", only: :test},
       {:nimble_parsec, "~> 0.5", runtime: false},
