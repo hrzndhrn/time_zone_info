@@ -7,7 +7,7 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
   alias TimeZoneInfo.Transformer.{Abbr, ZoneState}
 
   @type rule :: {
-          TimeZoneInfo.gregorian_seconds,
+          TimeZoneInfo.gregorian_seconds(),
           {TimeZoneInfo.time_standard(), Calendar.std_offset(), Abbr.letters()}
         }
   @type t :: [rule()]
