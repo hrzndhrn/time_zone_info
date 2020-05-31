@@ -210,7 +210,6 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
-    @tag :only
     test "updates data for europe and etcetera" do
       update_env(files: ["europe", "etcetera"])
       touch_data(@path, now(sub: 2 * @seconds_per_day))
@@ -299,6 +298,44 @@ defmodule TimeZoneInfo.UpdaterTest do
              ]
 
       assert TimeZoneInfo.time_zones(links: :only) == []
+    end
+
+    test "returns error for unknown time zones" do
+      update_env(
+        files: ~w(europe africa),
+        time_zones: ["Europe/Berlin", "Utopia/Metropolis"]
+      )
+
+      touch_data(@path, now())
+
+      assert_log(
+        fn ->
+          assert  {
+              :error,
+              {:time_zones_not_found, ["Utopia/Metropolis"]}
+            } = Updater.update()
+        end,
+        [:initial, :force, :download, :update, :error]
+      )
+
+      assert TimeZoneInfo.time_zones(links: :ignore) == [ "Etc/UTC" ]
+
+      assert TimeZoneInfo.time_zones(links: :only) == []
+    end
+
+    @tag :only
+    test "updates data with new IANA file" do
+      update_env( files: ~w(europe))
+
+      assert_log(
+        fn ->
+          assert {:next, _timestamp} = Updater.update()
+        end,
+        [:initial, :check, :no_update]
+      )
+
+      refute Enum.member?(TimeZoneInfo.time_zones(), "Africa/Lagos")
+      assert Enum.member?(TimeZoneInfo.time_zones(), "Europe/Berlin")
     end
 
     test "updates data filtered by time_zones (forced update)" do
@@ -637,6 +674,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         check: "TimeZoneInfo: Checking for update.",
         download: "TimeZoneInfo: Downloading data.",
         update: "TimeZoneInfo: Updating data.",
+        no_update: "TimeZoneInfo: No update required.",
         up_to_date: "TimeZoneInfo: No update available.",
         force: "TimeZoneInfo: Force update.",
         error: "TimeZoneInfo: Update failed!"

@@ -53,6 +53,7 @@ defmodule TimeZoneInfo.Updater do
 
   defp do_update(:initial) do
     Listener.on_update(:initial)
+    IO.inspect(:initial)
 
     with {:ok, data} <- DataPersistence.fetch(),
          {:ok, time_zones} <- fetch_env(:time_zones),
@@ -76,12 +77,14 @@ defmodule TimeZoneInfo.Updater do
   defp do_update(:check) do
     Listener.on_update(:check)
 
+    IO.inspect(:check)
     with {:ok, interval} <- fetch_env(:update), do: do_update(interval)
   end
 
   defp do_update(:disabled), do: :ok
 
   defp do_update(:daily) do
+    IO.inspect(:daily)
     with {:ok, last_update} <- DataPersistence.fetch_last_update() do
       now = UtcDateTime.now(:unix)
 
