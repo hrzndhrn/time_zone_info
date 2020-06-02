@@ -17,6 +17,10 @@ defmodule TimeZoneInfo.Listener.Logger do
     Logger.info("TimeZoneInfo: Checking for update.")
   end
 
+  def on_update(:config_changed) do
+    Logger.info("TimeZoneInfo: Config changed.")
+  end
+
   def on_update(:download) do
     Logger.info("TimeZoneInfo: Downloading data.")
   end

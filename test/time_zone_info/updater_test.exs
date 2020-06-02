@@ -45,6 +45,33 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert checksum(@path) == checksum
     end
 
+    @tag :only
+    test "updates old file" do
+      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      checksum = checksum(@path)
+
+      update_env(
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/fixtures/iana/tzdata2020a.tar.gz",
+          mode: :iana
+        ]
+      )
+
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+        end,
+        [:initial, :check, :download, :update]
+      )
+
+      refute DataStore.empty?()
+      assert checksum(@path) != checksum
+    end
+
     test "force with disabled updater" do
       update_env(update: :disabled)
 
@@ -68,7 +95,7 @@ defmodule TimeZoneInfo.UpdaterTest do
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
         end,
-        [:initial, :check, :download, :update]
+        [:initial, :config_changed, :force, :download, :update]
       )
 
       refute DataStore.empty?()
@@ -76,25 +103,6 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "tries to update with an actual file" do
-      touch_data(@path, now(sub: @seconds_per_hour))
-      checksum = checksum(@path)
-
-      assert DataStore.empty?()
-
-      assert_log(
-        fn ->
-          assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: 23 * @seconds_per_hour), @delta_seconds)
-        end,
-        [:initial, :check, :no_update]
-      )
-
-      refute DataStore.empty?()
-      assert checksum(@path) == checksum
-    end
-
-    test "tries to update with an actual file and new config" do
-      update_env(files: ~w(europe)a)
       touch_data(@path, now(sub: @seconds_per_hour))
       checksum = checksum(@path)
 
@@ -218,21 +226,13 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert {:next, _timestamp} = Updater.update()
         end,
-        [:initial, :check, :download, :update]
+        [:initial, :config_changed, :force, :download, :update]
       )
 
       assert periods(~N[2012-03-25 01:59:59], "America/Cancun") == {:error, :time_zone_not_found}
 
       # from initial setup (data/2019c/extract/africa/data.etf)
-      assert periods(~N[2012-03-25 01:59:59], "Africa/Lagos") == {
-               :ok,
-               %{
-                 std_offset: 0,
-                 utc_offset: 3600,
-                 wall_period: {~N[1919-09-01 00:46:24], :max},
-                 zone_abbr: "WAT"
-               }
-             }
+      assert periods(~N[2012-03-25 01:59:59], "Africa/Lagos") == {:error, :time_zone_not_found}
 
       assert periods(~N[2012-03-25 01:59:59], "Europe/Berlin") == {
                :ok,
@@ -274,7 +274,6 @@ defmodule TimeZoneInfo.UpdaterTest do
                 %{std_offset: 0, utc_offset: -14400, zone_abbr: "-04", wall_period: {:min, :max}}}
     end
 
-    @tag :only
     test "updates data filtered by time_zones" do
       update_env(
         files: ["africa", "europe"],
@@ -324,8 +323,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert TimeZoneInfo.time_zones(links: :only) == []
     end
 
-    # TODO new test
-    @tag :skip
+    @tag :only
     test "updates data with new IANA file" do
       update_env(files: ~w(europe))
 
@@ -333,7 +331,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert {:next, _timestamp} = Updater.update()
         end,
-        [:initial, :check, :no_update]
+        [:initial, :config_changed, :force, :download, :update]
       )
 
       refute Enum.member?(TimeZoneInfo.time_zones(), "Africa/Lagos")
@@ -369,7 +367,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert :ok = Updater.update()
         end,
-        [:initial, :check]
+        [:initial, :config_changed, :force]
       )
 
       assert TimeZoneInfo.time_zones(links: :ignore) == [
@@ -674,6 +672,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       %{
         initial: "TimeZoneInfo: Initializing data.",
         check: "TimeZoneInfo: Checking for update.",
+        config_changed: "TimeZoneInfo: Config changed.",
         download: "TimeZoneInfo: Downloading data.",
         update: "TimeZoneInfo: Updating data.",
         no_update: "TimeZoneInfo: No update required.",

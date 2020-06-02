@@ -55,13 +55,11 @@ defmodule TimeZoneInfo.Updater do
     Listener.on_update(:initial)
 
     with {:ok, data} <- DataPersistence.fetch(),
-         {:ok, time_zones} <- fetch_env(:time_zones),
-         {:ok, data} <- DataConfig.update_time_zones(data, time_zones),
-         :ok <- DataStore.put(data) do
-      do_update(:check)
+         {:ok, data_config} <- fetch_data_config(),
+         {:ok, data} <- DataConfig.update_time_zones(data, data_config[:time_zones]) do
+      do_update({:initial, data, DataConfig.equal?(data, data_config)})
     else
       {:error, {:time_zones_not_found, _}} = error ->
-        # TODO should be obsolete when PR #23 is finished
         force_update(error)
 
       {:error, :enoent} = error ->
@@ -69,6 +67,20 @@ defmodule TimeZoneInfo.Updater do
 
       error ->
         error
+    end
+  end
+
+  defp do_update({:initial, data, true}) do
+    with :ok <- DataStore.put(data) do
+      do_update(:check)
+    end
+  end
+
+  defp do_update({:initial, data, false}) do
+    Listener.on_update(:config_changed)
+
+    with :disabled <- force_update(:disabled) do
+      DataStore.put(data)
     end
   end
 
@@ -225,6 +237,14 @@ defmodule TimeZoneInfo.Updater do
   defp files do
     with {:ok, files} <- fetch_env(:files) do
       {:ok, ["version" | files]}
+    end
+  end
+
+  defp fetch_data_config do
+    with {:ok, time_zones} <- fetch_env(:time_zones),
+         {:ok, lookahead} <- fetch_env(:lookahead),
+         {:ok, files} <- fetch_env(:files) do
+      {:ok, [time_zones: time_zones, lookahead: lookahead, files: files]}
     end
   end
 
