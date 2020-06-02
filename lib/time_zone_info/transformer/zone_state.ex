@@ -13,8 +13,8 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   """
   @spec transform([IanaParser.zone_state()], IanaParser.output(), Transformer.opts()) ::
           [TimeZoneInfo.transition()]
-  def transform(zone_states, data, opts) do
-    rule_sets = Rule.to_rule_sets(data[:rules], opts[:lookahead])
+  def transform(zone_states, data, opts) when is_list(opts) do
+    rule_sets = Rule.to_rule_sets(data[:rules], Keyword.fetch!(opts, :lookahead))
 
     zone_states
     |> transform_zone_states(rule_sets)

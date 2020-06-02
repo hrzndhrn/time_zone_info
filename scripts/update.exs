@@ -55,7 +55,7 @@ defmodule TimeZoneInfo.Scripts.Update do
 
   defp transform(:data, data, version) do
     info("Version: #{version}")
-    Transformer.transform(data, version)
+    Transformer.transform(data, version, config())
   end
 
   defp extract(data, files) do
@@ -69,7 +69,18 @@ defmodule TimeZoneInfo.Scripts.Update do
     files |> Enum.map(fn {_name, content} -> content end) |> Enum.join("\n")
   end
 
+  defp config,
+    do: [
+      files: files(),
+      lookahead: lookahead(),
+      time_zones: time_zones()
+    ]
+
   defp files, do: Application.get_env(:time_zone_info, :files)
+
+  defp lookahead, do: Application.get_env(:time_zone_info, :lookahead)
+
+  defp time_zones, do: Application.get_env(:time_zone_info, :time_zones)
 
   defp uri, do: Application.get_env(:time_zone_info, :downloader)[:uri]
 

@@ -35,7 +35,7 @@ defmodule TimeZoneInfo.DataConfig do
     rules = rules(data, time_zones)
     links = links(data, time_zones)
 
-    {:ok, %{time_zones: time_zones, rules: rules, links: links, version: data.version}}
+    {:ok, Map.merge(data, %{time_zones: time_zones, rules: rules, links: links})}
   end
 
   defp rules(data, time_zones) do

@@ -116,7 +116,7 @@ defmodule TimeZoneInfo.MixProject do
     [
       "tzi.update": ["run scripts/update.exs"],
       test: ["test --no-start"],
-      carp: ["test --no-start --max-failures 1"]
+      carp: ["test --no-start --seed 0 --max-failures 1"]
     ]
   end
 

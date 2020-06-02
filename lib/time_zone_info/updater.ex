@@ -62,7 +62,6 @@ defmodule TimeZoneInfo.Updater do
     else
       {:error, {:time_zones_not_found, _}} = error ->
         # TODO should be obsolete when PR #23 is finished
-        IO.inspect("initial -> force", label: :updater)
         force_update(error)
 
       {:error, :enoent} = error ->
@@ -178,7 +177,7 @@ defmodule TimeZoneInfo.Updater do
 
       case Downloader.download(opts) do
         {:ok, :iana, {200, data}} ->
-          transform(data, time_zones, lookahead)
+          transform(data, opts)
 
         {:ok, mode, {200, data}} when mode in [:etf, :ws] ->
           ExternalTermFormat.decode(data)
@@ -195,10 +194,10 @@ defmodule TimeZoneInfo.Updater do
     end
   end
 
-  defp transform(data, time_zones, lookahead) do
+  defp transform(data, opts) do
     with {:ok, version, content} <- extract(data),
          {:ok, parsed} <- IanaParser.parse(content) do
-      {:ok, Transformer.transform(parsed, version, lookahead: lookahead, time_zones: time_zones)}
+      {:ok, Transformer.transform(parsed, version, opts)}
     end
   end
 

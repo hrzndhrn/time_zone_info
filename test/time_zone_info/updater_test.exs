@@ -86,7 +86,7 @@ defmodule TimeZoneInfo.UpdaterTest do
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: 23 * @seconds_per_hour), @delta_seconds)
         end,
-        [:initial, :check]
+        [:initial, :check, :no_update]
       )
 
       refute DataStore.empty?()
@@ -105,7 +105,7 @@ defmodule TimeZoneInfo.UpdaterTest do
           assert {:next, timestamp} = Updater.update()
           assert_in_delta(timestamp, now(add: 23 * @seconds_per_hour), @delta_seconds)
         end,
-        [:initial, :check]
+        [:initial, :check, :no_update]
       )
 
       refute DataStore.empty?()
@@ -274,9 +274,10 @@ defmodule TimeZoneInfo.UpdaterTest do
                 %{std_offset: 0, utc_offset: -14400, zone_abbr: "-04", wall_period: {:min, :max}}}
     end
 
+    @tag :only
     test "updates data filtered by time_zones" do
       update_env(
-        files: ~w(africa europe),
+        files: ["africa", "europe"],
         time_zones: ["Europe/Berlin", "Indian"]
       )
 
@@ -310,22 +311,23 @@ defmodule TimeZoneInfo.UpdaterTest do
 
       assert_log(
         fn ->
-          assert  {
-              :error,
-              {:time_zones_not_found, ["Utopia/Metropolis"]}
-            } = Updater.update()
+          assert {
+                   :error,
+                   {:time_zones_not_found, ["Utopia/Metropolis"]}
+                 } = Updater.update()
         end,
         [:initial, :force, :download, :update, :error]
       )
 
-      assert TimeZoneInfo.time_zones(links: :ignore) == [ "Etc/UTC" ]
+      assert TimeZoneInfo.time_zones(links: :ignore) == ["Etc/UTC"]
 
       assert TimeZoneInfo.time_zones(links: :only) == []
     end
 
-    @tag :only
+    # TODO new test
+    @tag :skip
     test "updates data with new IANA file" do
-      update_env( files: ~w(europe))
+      update_env(files: ~w(europe))
 
       assert_log(
         fn ->
@@ -396,14 +398,14 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert {:next, timestamp} = Updater.update()
         end,
-        [:initial, :check]
+        [:initial, :check, :no_update]
       )
 
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
         end,
-        :check
+        [:check, :no_update]
       )
     end
 
@@ -421,7 +423,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert {:next, timestamp} = Updater.update()
         end,
-        [:check]
+        [:check, :no_update]
       )
     end
   end
@@ -682,10 +684,10 @@ defmodule TimeZoneInfo.UpdaterTest do
       fn {step, info} ->
         case Enum.member?(steps, step) do
           true ->
-            assert log =~ info, ~s(assert log: "#{info}\nfound logs: #{log}")
+            assert log =~ info, ~s(assert log: "#{info}\nstep: #{step}\nfound logs: #{log}")
 
           false ->
-            refute log =~ info, ~s(refute log: "#{info}\nfound logs: #{log}")
+            refute log =~ info, ~s(refute log: "#{info}\nstep: #{step}\nfound logs: #{log}")
         end
       end
     )
