@@ -1,8 +1,11 @@
 # Changelog
 
-## 0.4.0-dev.0 - 2020/05
+## 0.5.0 - 2020/06
 
 - Increasing speed of `TimeZoneDatabase.time_zone_periods_from_wall_datetime/2`.
+- Adding `wall_time` to `time_zone_period`.
+- Refactoring `updater` to fix some unexpected behaviours when changing configs.
+- Updating docs structure.
 
 ## 0.4.0 - 2020/04/25
 
