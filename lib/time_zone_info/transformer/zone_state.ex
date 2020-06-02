@@ -3,7 +3,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   # The transformer for time-zones.
 
-  alias TimeZoneInfo.{GregorianSeconds, IanaDateTime, IanaParser, Transformer}
+  alias TimeZoneInfo.{GregorianSeconds, IanaDateTime, IanaParser}
   alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
 
   @end_of_time GregorianSeconds.from_naive(~N[9999-12-31 00:00:00])
