@@ -11,7 +11,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   @doc """
   Transforms the `IanaPraser.zone` data in a list of `TimeZoneInfo.transition`.
   """
-  @spec transform([IanaParser.zone_state()], IanaParser.output(), Transformer.opts()) ::
+  @spec transform([IanaParser.zone_state()], IanaParser.output(), TimeZoneInfo.data_config()) ::
           [TimeZoneInfo.transition()]
   def transform(zone_states, data, opts) when is_list(opts) do
     rule_sets = Rule.to_rule_sets(data[:rules], Keyword.fetch!(opts, :lookahead))

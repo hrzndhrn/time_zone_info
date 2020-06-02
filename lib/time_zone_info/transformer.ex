@@ -42,7 +42,7 @@ defmodule TimeZoneInfo.Transformer do
   end
 
   # Transform IANA zone to TimeZoneInfo time-zones.
-  @spec zones(IanaParser.output(), TimeZondeInfo.data_config()) ::
+  @spec zones(IanaParser.output(), TimeZoneInfo.data_config()) ::
           %{Calendar.time_zone() => [TimeZoneInfo.transition()]}
   defp zones(iana_data, config) do
     iana_data
