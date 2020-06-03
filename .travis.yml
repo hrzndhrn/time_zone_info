@@ -24,13 +24,19 @@ jobs:
 before_script:
   - mix do deps.get, deps.compile
   - MIX_ENV=test mix compile --warnings-as-errors
-  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then travis_wait mix dialyzer --plt ;fi
+  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* AND "TRAVIS_OTP_RELEASE" == "23"* ]]; then
+      then travis_wait mix dialyzer --plt
+    ;fi
 
 script:
-  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix format --check-formatted ;fi
+  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* AND "TRAVIS_OTP_RELEASE" == "23"* ]]; then
+      mix format --check-formatted
+    ;fi
   - mix credo --strict
   - mix coveralls.travis
-  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix dialyzer ;fi
+  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* AND "TRAVIS_OTP_RELEASE" == "23"* ]]; then
+      mix dialyzer
+    ;fi
 
 
 cache:
