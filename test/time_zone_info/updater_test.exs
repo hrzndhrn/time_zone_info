@@ -120,6 +120,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert checksum(@path) == checksum
     end
 
+    @tag :only
     test "server return 304 if data is unchanged" do
       touch_data(@path, now(sub: @seconds_per_day * 2))
 
