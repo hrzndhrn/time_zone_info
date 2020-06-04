@@ -26,6 +26,23 @@ defmodule TimeZoneInfo.DataConfig do
     end
   end
 
+  @spec equal?(TimeZoneInfo.data(), TimeZoneInfo.data_config()) :: boolean
+  def equal?(data, data_config) do
+    data_config = [
+      lookahead: Keyword.fetch!(data_config, :lookahead),
+      files: data_config |> Keyword.fetch!(:files) |> Enum.sort(),
+      time_zones:
+        case Keyword.fetch!(data_config, :time_zones) do
+          :all -> :all
+          time_zones when is_list(time_zones) -> Enum.sort(time_zones)
+        end
+    ]
+
+    data
+    |> Map.fetch!(:config)
+    |> Keyword.equal?(data_config)
+  end
+
   defp select(data, time_zones) do
     time_zones =
       data.time_zones
@@ -35,7 +52,7 @@ defmodule TimeZoneInfo.DataConfig do
     rules = rules(data, time_zones)
     links = links(data, time_zones)
 
-    {:ok, %{time_zones: time_zones, rules: rules, links: links, version: data.version}}
+    {:ok, Map.merge(data, %{time_zones: time_zones, rules: rules, links: links})}
   end
 
   defp rules(data, time_zones) do

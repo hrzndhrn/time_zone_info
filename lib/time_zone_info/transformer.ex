@@ -10,30 +10,45 @@ defmodule TimeZoneInfo.Transformer do
     Transformer.ZoneState
   }
 
-  @type opts :: [lookahead: non_neg_integer()]
-
-  @default_opts [lookahead: 15]
+  @type version :: String.t()
 
   @doc """
   Transforms the `iana_data` into a map of type `TimeZoneInfo.data()`.
   """
-  @spec transform(IanaParser.output(), version :: String.t(), opts()) :: TimeZoneInfo.data()
-  def transform(iana_data, version, opts \\ @default_opts) do
-    time_zones = zones(iana_data, opts)
+  @spec transform(IanaParser.output(), version(), TimeZoneInfo.data_config()) ::
+          TimeZoneInfo.data()
+  def transform(iana_data, version, config) do
+    time_zones = zones(iana_data, config)
     rules = rules(iana_data, time_zones)
     links = links(iana_data, time_zones)
 
-    %{time_zones: time_zones, rules: rules, links: links, version: version}
+    config = [
+      lookahead: Keyword.fetch!(config, :lookahead),
+      files: config |> Keyword.fetch!(:files) |> List.delete("version") |> Enum.sort(),
+      time_zones:
+        case Keyword.fetch!(config, :time_zones) do
+          :all -> :all
+          list -> Enum.sort(list)
+        end
+    ]
+
+    %{
+      time_zones: time_zones,
+      rules: rules,
+      links: links,
+      version: version,
+      config: config
+    }
   end
 
   # Transform IANA zone to TimeZoneInfo time-zones.
-  @spec zones(IanaParser.output(), opts()) ::
+  @spec zones(IanaParser.output(), TimeZoneInfo.data_config()) ::
           %{Calendar.time_zone() => [TimeZoneInfo.transition()]}
-  defp zones(iana_data, opts) do
+  defp zones(iana_data, config) do
     iana_data
     |> Map.get(:zones, %{})
     |> Enum.into(%{}, fn {name, zone_states} ->
-      {name, ZoneState.transform(zone_states, iana_data, opts)}
+      {name, ZoneState.transform(zone_states, iana_data, config)}
     end)
   end
 

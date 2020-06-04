@@ -5,31 +5,32 @@ dist: trusty
 language: elixir
 
 elixir:
-  - 1.8.2
+  - 1.10.3
   - 1.9.2
-  - 1.10.2
+  - 1.8.2
 
 otp_release:
-  - 20.3
-  - 21.3
+  - 23.0
   - 22.2
+  - 21.3
 
 jobs:
   exclude:
-    - elixir: 1.10.2
-      otp_release: 20.3
+    - elixir: 1.9.2
+      otp_release: 23.0
+    - elixir: 1.8.2
+      otp_release: 23.0
 
 before_script:
   - mix do deps.get, deps.compile
   - MIX_ENV=test mix compile --warnings-as-errors
-  # - travis_wait mix dialyzer --plt
+  - travis_wait mix dialyzer --plt
 
 script:
-  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix format --check-formatted ;fi
+  - if [[ "$TRAVIS_ELIXIR_VERSION" == "1.10"* ]]; then mix format --check-formatted; fi
   - mix credo --strict
   - mix coveralls.travis
-  # - mix dialyzer --halt-exit-status
-
+  - mix dialyzer
 
 cache:
   directories:

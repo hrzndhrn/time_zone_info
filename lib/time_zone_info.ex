@@ -20,9 +20,6 @@ defmodule TimeZoneInfo do
     Worker
   }
 
-  @default_lookahead 15
-  @default_files ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
-
   @typedoc "Seconds since year 0 in the gregorian calendar."
   @type gregorian_seconds :: integer()
 
@@ -31,7 +28,8 @@ defmodule TimeZoneInfo do
           required(:version) => String.t(),
           required(:time_zones) => %{Calendar.time_zone() => [transition()]},
           required(:rules) => %{TimeZoneInfo.rule_name() => [rule()]},
-          required(:links) => %{Calendar.time_zone() => Calendar.time_zone()}
+          required(:links) => %{Calendar.time_zone() => Calendar.time_zone()},
+          required(:config) => data_config()
         }
 
   @typedoc "The name of a rule set that can be found in the IANA data."
@@ -199,13 +197,22 @@ defmodule TimeZoneInfo do
 
   defp validate(config) do
     with {:ok, config} <- validate(:lookahead, config),
+         {:ok, config} <- validate(:time_zones, config),
          {:ok, config} <- validate(:files, config),
-         {:ok, config} <- validate(:version, config) do
+         {:ok, config} <- validate(:version_file, config) do
       {:ok, config}
     end
   end
 
-  defp validate(:version, config) do
+  defp validate(:time_zones, config) do
+    case config[:time_zones] do
+      nil -> {:ok, Keyword.put(config, :time_zones, :all)}
+      time_zones when is_list(time_zones) -> {:ok, config}
+      value -> {:error, {:invalid_config, [time_zones: value]}}
+    end
+  end
+
+  defp validate(:version_file, config) do
     files = config[:files]
 
     case Enum.member?(files, "version") do
@@ -216,7 +223,7 @@ defmodule TimeZoneInfo do
 
   defp validate(:files, config) do
     case config[:files] do
-      nil -> {:ok, Keyword.put(config, :files, @default_files)}
+      nil -> {:ok, Keyword.put(config, :files, files())}
       files when is_list(files) -> {:ok, config}
       value -> {:error, {:invalid_config, [files: value]}}
     end
@@ -224,9 +231,13 @@ defmodule TimeZoneInfo do
 
   defp validate(:lookahead, config) do
     case config[:lookahead] do
-      nil -> {:ok, Keyword.put(config, :lookahead, @default_lookahead)}
+      nil -> {:ok, Keyword.put(config, :lookahead, lookahead())}
       years when is_integer(years) -> {:ok, config}
       value -> {:error, {:invalid_config, [lookahead: value]}}
     end
   end
+
+  defp lookahead, do: Application.get_env(:time_zone_info, :lookahead)
+
+  defp files, do: Application.get_env(:time_zone_info, :files)
 end

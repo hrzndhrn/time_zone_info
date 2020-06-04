@@ -8,13 +8,13 @@ defmodule TimeZoneInfo.TransformerTest do
   setup_all do
     path = "test/fixtures/iana/2019c"
     files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
-    data = path |> parse(files) |> Transformer.transform("2019c", lookahead: 1)
+    config = [lookahead: 1, files: files, time_zones: :all]
+    data = path |> parse(files) |> Transformer.transform("2019c", config)
 
     %{data: data}
   end
 
   describe "transform/1 extract" do
-    @tag :only
     test "returns transformed data for time zone Africa/Algiers" do
       assert_time_zone("Africa/Algiers")
     end
@@ -129,6 +129,31 @@ defmodule TimeZoneInfo.TransformerTest do
   end
 
   describe "transform/1 world" do
+    test "keys", %{data: data} do
+      assert Map.keys(data) |> Enum.sort() == [:config, :links, :rules, :time_zones, :version]
+    end
+
+    test "version", %{data: data} do
+      assert Map.get(data, :version) == "2019c"
+    end
+
+    test "config", %{data: data} do
+      assert config = Map.get(data, :config)
+      assert config[:lookahead] == 1
+      assert config[:time_zones] == :all
+
+      assert config[:files] == [
+               "africa",
+               "antarctica",
+               "asia",
+               "australasia",
+               "etcetera",
+               "europe",
+               "northamerica",
+               "southamerica"
+             ]
+    end
+
     test "links", %{data: data} do
       assert Map.get(data.links, "Antarctica/McMurdo") == "Pacific/Auckland"
     end
@@ -1230,7 +1255,7 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zone) do
     time_zone
     |> parse_extract()
-    |> Transformer.transform("extract_2019c", lookahead: 1)
+    |> Transformer.transform("extract_2019c", lookahead: 1, files: ["extract"], time_zones: :all)
     |> assert_time_zone(time_zone)
   end
 

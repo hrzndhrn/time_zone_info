@@ -15,7 +15,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
   """
   @spec to_rule_sets(%{String.t() => [TimeZoneInfo.rule()]}, non_neg_integer()) ::
           %{String.t() => RuleSet.t()}
-  def to_rule_sets(rules, lookahead) do
+  def to_rule_sets(rules, lookahead) when is_integer(lookahead) do
     Enum.into(rules, %{}, fn {name, rules} ->
       {name, to_rule_set(rules, lookahead)}
     end)
@@ -25,7 +25,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
   Returns a rule-set for the given `rules`.
   """
   @spec to_rule_set([TimeZoneInfo.rule()], non_neg_integer) :: RuleSet.t()
-  def to_rule_set(rules, lookahead) do
+  def to_rule_set(rules, lookahead) when is_integer(lookahead) do
     now = UtcDateTime.now()
 
     rule_set =

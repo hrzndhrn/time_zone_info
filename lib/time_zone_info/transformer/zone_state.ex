@@ -3,7 +3,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   # The transformer for time-zones.
 
-  alias TimeZoneInfo.{GregorianSeconds, IanaDateTime, IanaParser, Transformer}
+  alias TimeZoneInfo.{GregorianSeconds, IanaDateTime, IanaParser}
   alias TimeZoneInfo.Transformer.{Abbr, Rule, RuleSet}
 
   @end_of_time GregorianSeconds.from_naive(~N[9999-12-31 00:00:00])
@@ -11,10 +11,10 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   @doc """
   Transforms the `IanaPraser.zone` data in a list of `TimeZoneInfo.transition`.
   """
-  @spec transform([IanaParser.zone_state()], IanaParser.output(), Transformer.opts()) ::
+  @spec transform([IanaParser.zone_state()], IanaParser.output(), TimeZoneInfo.data_config()) ::
           [TimeZoneInfo.transition()]
-  def transform(zone_states, data, opts) do
-    rule_sets = Rule.to_rule_sets(data[:rules], opts[:lookahead])
+  def transform(zone_states, data, opts) when is_list(opts) do
+    rule_sets = Rule.to_rule_sets(data[:rules], Keyword.fetch!(opts, :lookahead))
 
     zone_states
     |> transform_zone_states(rule_sets)

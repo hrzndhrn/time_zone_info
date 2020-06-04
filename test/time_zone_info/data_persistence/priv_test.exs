@@ -9,12 +9,19 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
   @path "test/data.etf"
   @fixture "data/2019c/extract/africa/data.etf"
 
+  @london "test/fixtures/iana/2019c/extract/Europe/London"
+  @config [
+    files: ["london"],
+    time_zones: :all,
+    lookahead: 15
+  ]
+
   setup_all do
-    content = File.read!("test/fixtures/iana/2019c/extract/Europe/London")
+    content = File.read!(@london)
 
     data =
       with {:ok, parsed} <- IanaParser.parse(content) do
-        Transformer.transform(parsed, "2019c")
+        Transformer.transform(parsed, "2019c", @config)
       end
 
     %{data: data}

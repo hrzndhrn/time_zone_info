@@ -19,13 +19,36 @@ defmodule TimeZoneInfoTest do
     )
 
     path = "test/fixtures/iana/2019c"
-    files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
 
-    with {:ok, data} <- IanaParser.parse(path, files) do
+    config = [
+      files: [
+        "africa",
+        "antarctica",
+        "asia",
+        "australasia",
+        "etcetera",
+        "europe",
+        "northamerica",
+        "southamerica"
+      ],
+      lookahead: 10,
+      time_zones: :all
+    ]
+
+    with {:ok, data} <- IanaParser.parse(path, config[:files]) do
       data
-      |> Transformer.transform("2019c", lookahead: 10)
+      |> Transformer.transform("2019c", config)
       |> DataStore.put()
     end
+
+    put_env(
+      data_store: Server,
+      data_persistence: Priv,
+      priv: [path: "data.etf"],
+      files: config[:files],
+      lookahead: config[:lookahead],
+      time_zones: config[:time_zones]
+    )
 
     on_exit(&delete_env/0)
 
@@ -66,28 +89,48 @@ defmodule TimeZoneInfoTest do
              } = iana |> File.read!() |> TimeZoneInfo.data()
 
       assert version == "2019c"
-      assert checksum == "BCCDD4C110F37C0DD9FB1CE732A42C10"
+      assert checksum == "601B6BDA86F3078BDBEC88638D4664FC"
       assert map_size(links) == 86
       assert map_size(rules) == 29
       assert map_size(time_zones) == 387
       refute time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
     end
 
+    @tag :only
     test "tzdata2020a" do
       iana = "test/fixtures/iana/tzdata2020a.tar.gz"
 
       assert {
                :ok,
-               %{links: links, rules: rules, time_zones: time_zones, version: version},
+               %{
+                 links: links,
+                 rules: rules,
+                 time_zones: time_zones,
+                 version: version,
+                 config: config
+               },
                checksum
              } = iana |> File.read!() |> TimeZoneInfo.data()
 
       assert version == "2020a"
-      assert checksum == "B3CC9137D5E6C155A38294B59755F587"
+      assert checksum == "606A03F6E361895F9F46D126FA2C335A"
       assert map_size(links) == 86
       assert map_size(rules) == 29
       assert map_size(time_zones) == 387
       assert time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
+      assert config[:time_zones] == :all
+      assert config[:lookahead] == 10
+
+      assert config[:files] == [
+               "africa",
+               "antarctica",
+               "asia",
+               "australasia",
+               "etcetera",
+               "europe",
+               "northamerica",
+               "southamerica"
+             ]
     end
   end
 end

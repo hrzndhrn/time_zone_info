@@ -15,7 +15,7 @@ defmodule TestPlug do
           false ->
             conn
             |> put_resp_content_type("text/plain")
-            |> send_resp(304, "Not Modified")
+            |> send_resp(304, "")
 
           true ->
             conn

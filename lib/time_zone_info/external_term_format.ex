@@ -52,6 +52,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     with :ok <- validate(:keys, term),
          :ok <- validate(:links, term),
          :ok <- validate(:version, term),
+         :ok <- validate(:config, term),
          :ok <- validate(:rules, term),
          :ok <- validate(:time_zones, term) do
       {:ok, term}
@@ -64,7 +65,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     term
     |> Map.keys()
     |> Enum.sort()
-    |> Kernel.==(~w(links rules time_zones version)a)
+    |> Kernel.==([:config, :links, :rules, :time_zones, :version])
     |> check(:invalid_keys)
   end
 
@@ -74,6 +75,37 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     |> is_binary()
     |> check(:invalid_version)
   end
+
+  defp validate(:config, %{config: config}) do
+    with :ok <- validate(:config_time_zones, config[:time_zones]),
+         :ok <- validate(:config_lookahead, config[:lookahead]),
+         :ok <- validate(:config_files, config[:files]) do
+      :ok
+    end
+  end
+
+  defp validate(:config_time_zones, :all), do: :ok
+
+  defp validate(:config_time_zones, list) when is_list(list) do
+    list
+    |> Enum.all?(fn time_zone -> is_binary(time_zone) end)
+    |> check({:invalid_config, [time_zones: list]})
+  end
+
+  defp validate(:config_time_zones, value), do: {:error, {:invalid_config, [time_zones: value]}}
+
+  defp validate(:config_lookahead, lookahead) when is_integer(lookahead) and lookahead > 0,
+    do: :ok
+
+  defp validate(:config_lookahead, value), do: {:error, {:invalid_config, [lookahead: value]}}
+
+  defp validate(:config_files, list) when is_list(list) do
+    list
+    |> Enum.all?(fn time_zone -> is_binary(time_zone) end)
+    |> check({:invalid_config, [files: list]})
+  end
+
+  defp validate(:config_files, value), do: {:error, {:invalid_config, [files: value]}}
 
   defp validate(:links, term) do
     term
