@@ -14,10 +14,20 @@ defmodule TransformBench do
 
   job transform do
     path = "test/fixtures/iana/2019c"
-    files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
+
+    files = [
+      "africa",
+      "antarctica",
+      "asia",
+      "australasia",
+      "etcetera",
+      "europe",
+      "northamerica",
+      "southamerica"
+    ]
 
     with {:ok, data} <- IanaParser.parse(path, files) do
-      Transformer.transform(data, "2019c", lookahead: 15)
+      Transformer.transform(data, "2019c", lookahead: 15, files: files, time_zones: :all)
     end
   end
 end

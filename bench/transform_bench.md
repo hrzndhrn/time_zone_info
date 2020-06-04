@@ -22,10 +22,10 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.10.2</td>
+    <td style="white-space: nowrap">1.10.3</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">22.3</td>
+    <td style="white-space: nowrap">23.0</td>
   </tr>
 </table>
 
@@ -60,11 +60,11 @@ Run Time
   </tr>
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap; text-align: right">0.24</td>
-    <td style="white-space: nowrap; text-align: right">4.19 s</td>
-    <td style="white-space: nowrap; text-align: right">±0.74%</td>
-    <td style="white-space: nowrap; text-align: right">4.18 s</td>
-    <td style="white-space: nowrap; text-align: right">4.24 s</td>
+    <td style="white-space: nowrap; text-align: right">0.130</td>
+    <td style="white-space: nowrap; text-align: right">7.67 s</td>
+    <td style="white-space: nowrap; text-align: right">±1.43%</td>
+    <td style="white-space: nowrap; text-align: right">7.69 s</td>
+    <td style="white-space: nowrap; text-align: right">7.82 s</td>
   </tr>
 </table>
 Memory Usage
