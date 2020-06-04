@@ -22,8 +22,8 @@ The inputs for every benchmark run:
 - **berlin_ambiguous_2020**: 333 ambiguous date time in the time zone
   `Europe/Berlin` in 2020.
 
-The inputs **ok**, **gap**, and **ambiguous** containing random time zones
-and date times between 1900 and 2050.
+The inputs **world_ok**, **world_gap**, and **world_ambiguous** containing
+random time zones and date times between 1900 and 2050.
 
 ## System
 
