@@ -6,6 +6,7 @@
 - Adding `wall_time` to `time_zone_period`.
 - Refactoring `updater` to fix some unexpected behaviours when changing configs.
 - Updating docs structure.
+- Adding `backward` to the default `files`.
 
 ## 0.4.0 - 2020/04/25
 

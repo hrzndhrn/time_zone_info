@@ -45,7 +45,6 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert checksum(@path) == checksum
     end
 
-    @tag :only
     test "updates old file" do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
       checksum = checksum(@path)
@@ -658,6 +657,45 @@ defmodule TimeZoneInfo.UpdaterTest do
         end,
         [:initial, :error]
       )
+    end
+
+    @tag :only
+    test "updates version 2020a and file backward" do
+      touch_data(@path, now(sub: 2 * @seconds_per_day))
+
+      update_env(
+        files: ["europe", "backward"],
+        time_zones: :all,
+        downloader: [
+          module: TimeZoneInfo.Downloader.Mint,
+          uri: "http://localhost:1234/fixtures/iana/tzdata2020a.tar.gz",
+          mode: :iana
+        ]
+      )
+
+      assert DataStore.empty?()
+
+      assert_log(
+        fn ->
+          assert {:next, timestamp} = Updater.update()
+          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+        end,
+        [:initial, :config_changed, :force, :download, :update]
+      )
+
+      # from the file backward
+      assert periods(~N[2012-06-25 01:59:59], "America/Godthab") == {
+               :ok,
+               %{
+                 std_offset: 3600,
+                 utc_offset: -10800,
+                 wall_period: {
+                   ~N[2012-03-24 23:00:00],
+                   ~N[2012-10-27 23:00:00]
+                 },
+                 zone_abbr: "-02"
+               }
+             }
     end
   end
 

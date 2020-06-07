@@ -40,6 +40,7 @@ defmodule TimeZoneInfo.MixProject do
         "antarctica",
         "asia",
         "australasia",
+        "backward",
         "etcetera",
         "europe",
         "northamerica",

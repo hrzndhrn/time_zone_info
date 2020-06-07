@@ -47,9 +47,9 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
 
     test "info/0" do
       assert DataStore.info() == %{
-               count: 504,
-               links: 86,
-               memory: 8_879_985,
+               count: 623,
+               links: 205,
+               memory: 8_891_831,
                time_zones: 387,
                version: "2019c"
              }

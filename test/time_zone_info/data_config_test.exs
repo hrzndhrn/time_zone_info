@@ -34,9 +34,12 @@ defmodule TimeZoneInfo.DataConfigTest do
       assert Map.keys(data.rules) == ["EU"]
 
       assert Map.keys(data.links) == [
+               "Europe/Belfast",
                "Europe/Guernsey",
                "Europe/Isle_of_Man",
-               "Europe/Jersey"
+               "Europe/Jersey",
+               "GB",
+               "GB-Eire"
              ]
     end
 
@@ -67,9 +70,17 @@ defmodule TimeZoneInfo.DataConfigTest do
       assert Map.keys(data.rules) == ["EU", "US"]
 
       assert Map.keys(data.links) == [
+               "America/Fort_Wayne",
+               "America/Indianapolis",
+               "America/Knox_IN",
+               "Europe/Belfast",
                "Europe/Guernsey",
                "Europe/Isle_of_Man",
-               "Europe/Jersey"
+               "Europe/Jersey",
+               "GB",
+               "GB-Eire",
+               "US/East-Indiana",
+               "US/Indiana-Starke"
              ]
     end
   end
