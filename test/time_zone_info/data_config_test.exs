@@ -66,6 +66,7 @@ defmodule TimeZoneInfo.DataConfigTest do
       assert data.links |> Map.keys() |> Enum.sort() == [
                "Africa/Addis_Ababa",
                "Africa/Asmara",
+               "Africa/Asmera",
                "Africa/Bamako",
                "Africa/Bangui",
                "Africa/Banjul",
@@ -95,7 +96,8 @@ defmodule TimeZoneInfo.DataConfigTest do
                "Africa/Niamey",
                "Africa/Nouakchott",
                "Africa/Ouagadougou",
-               "Africa/Porto-Novo"
+               "Africa/Porto-Novo",
+               "Africa/Timbuktu"
              ]
 
       assert Map.keys(data.rules) == ["EU"]

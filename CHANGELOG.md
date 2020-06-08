@@ -6,6 +6,7 @@
 - Adding `wall_time` to `time_zone_period`.
 - Refactoring `updater` to fix some unexpected behaviours when changing configs.
 - Updating docs structure.
+- Adding `backward` to the default `files`.
 - Refactoring `time_zones` configuration behaviour.
   See [Time zone maniputlation](time_zone_info/config.html#time-zone-manipulation).
 

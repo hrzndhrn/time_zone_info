@@ -78,13 +78,13 @@ config :time_zone_info,
 ```
 
 `files:`\
-Default: `["africa", "antarctica", "asia", "australasia", "etcetera", "europe",
-"northamerica", "southamerica")`\
+Default: `["africa", "antarctica", "asia", "australasia", "backward",
+"etcetera", "europe", "northamerica", "southamerica")`\
 This option specifies which files are parsed from the IANA data. The files
 `europe`, `asia`, etc are self-explanatory. The file `ecetera` contains time
-zones like `Etc/UTC`, `Etc/Zulu`, `Etc/GMT+1`, etc.\
-**Note:** The default file list doesn't contain the file Backward. In case you
-need backward compatibility, you have to add it to the list.
+zones like `Etc/UTC`, `Etc/Zulu`, `Etc/GMT+1`, etc. The `backward` file contains
+obsolete time zones. If you do not need the obsolete time zones, configure a
+list without the `backward` file.
 **Note:** The configuration `:files` takes no effect if `update: :disabled` is
 set.
 
