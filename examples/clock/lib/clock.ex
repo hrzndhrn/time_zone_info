@@ -49,5 +49,5 @@ defmodule Clock do
     end
   end
 
-  def get_time_zone, do: Agent.get(__MODULE__, & &1)
+  def get_time_zone, do: Agent.get(__MODULE__, fn time_zone -> time_zone end)
 end

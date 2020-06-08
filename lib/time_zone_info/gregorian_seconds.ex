@@ -5,7 +5,7 @@ defmodule TimeZoneInfo.GregorianSeconds do
 
   @typep t :: TimeZoneInfo.gregorian_seconds()
 
-  @utc ~w(utc gmt zulu)a
+  @utc [:utc, :gmt, :zulu]
 
   @doc """
   Converts seconds to UTC seconds.

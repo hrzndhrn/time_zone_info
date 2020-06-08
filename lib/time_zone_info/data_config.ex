@@ -14,9 +14,9 @@ defmodule TimeZoneInfo.DataConfig do
 
   def update_time_zones(data, nil), do: {:ok, data}
 
-  def update_time_zones(data, time_zones) when is_list(time_zones) do
+  def update_time_zones(data, select_time_zones) when is_list(select_time_zones) do
     data
-    |> filter(time_zones)
+    |> filter(select_time_zones)
     |> case do
       {time_zones, []} ->
         select(data, time_zones)
@@ -43,14 +43,14 @@ defmodule TimeZoneInfo.DataConfig do
     |> Keyword.equal?(data_config)
   end
 
-  defp select(data, time_zones) do
+  defp select(data, selected_time_zones) do
     time_zones =
       data.time_zones
-      |> Enum.filter(fn {name, _} -> Enum.member?(time_zones, name) end)
+      |> Enum.filter(fn {name, _} -> Enum.member?(selected_time_zones, name) end)
       |> Enum.into(%{})
 
     rules = rules(data, time_zones)
-    links = links(data, time_zones)
+    links = links(data, selected_time_zones)
 
     {:ok, Map.merge(data, %{time_zones: time_zones, rules: rules, links: links})}
   end
@@ -63,23 +63,38 @@ defmodule TimeZoneInfo.DataConfig do
     |> Enum.into(%{})
   end
 
-  defp links(data, time_zones) do
-    names = Map.keys(time_zones)
-
+  defp links(data, selected_time_zones) do
     data
     |> Map.get(:links, %{})
-    |> Enum.filter(fn {_, name} -> Enum.member?(names, name) end)
+    |> Enum.filter(fn {from, to} ->
+      Enum.member?(selected_time_zones, from) && Enum.member?(selected_time_zones, to)
+    end)
     |> Enum.into(%{})
   end
 
   defp filter(data, select) do
-    time_zones = data |> Map.fetch!(:time_zones) |> Map.keys() |> split()
-    select = split(select)
+    links = Map.fetch!(data, :links)
 
-    {[], []}
-    |> filter_time_zones(time_zones, select)
-    |> filter_links(data.links)
-    |> join()
+    select = split(select)
+    time_zones = data |> Map.fetch!(:time_zones) |> Map.keys() |> split()
+    time_zone_links = links |> Map.keys() |> split()
+
+    all_time_zones = time_zones |> Enum.concat(time_zone_links) |> Enum.uniq()
+
+    {found, missing} =
+      {[], []}
+      |> filter_time_zones(all_time_zones, select)
+      |> join()
+
+    linked =
+      Enum.reduce(found, [], fn time_zone, acc ->
+        case Map.fetch(links, time_zone) do
+          {:ok, to} -> [to | acc]
+          :error -> acc
+        end
+      end)
+
+    {Enum.concat(found, linked), missing}
   end
 
   defp filter_time_zones(acc, _time_zones, []), do: acc
@@ -89,33 +104,6 @@ defmodule TimeZoneInfo.DataConfig do
       [] -> filter_time_zones({found, [time_zone | missing]}, all, select)
       time_zones -> filter_time_zones({time_zones ++ found, missing}, all, select)
     end
-  end
-
-  defp filter_links({found, missing}, links) do
-    links =
-      Enum.map(links, fn {from, to} ->
-        {String.split(from, @separator), String.split(to, @separator)}
-      end)
-
-    filter_links({found, []}, links, missing)
-  end
-
-  defp filter_links(acc, _links, []), do: acc
-
-  defp filter_links({found, missing}, links, [time_zone | select]) do
-    case link_members(links, time_zone) do
-      [] -> filter_links({found, [time_zone | missing]}, links, select)
-      time_zones -> filter_links({time_zones ++ found, missing}, links, select)
-    end
-  end
-
-  defp link_members(links, member) do
-    Enum.reduce(links, [], fn {from, to}, acc ->
-      case List.starts_with?(from, member) do
-        true -> [to | acc]
-        false -> acc
-      end
-    end)
   end
 
   defp time_zone_members(time_zones, member) do
@@ -132,6 +120,9 @@ defmodule TimeZoneInfo.DataConfig do
   defp join({time_zones_found, time_zones_missing}),
     do: {join(time_zones_found), join(time_zones_missing)}
 
-  defp join(time_zones),
-    do: Enum.map(time_zones, &Enum.join(&1, @separator))
+  defp join(time_zones) do
+    time_zones
+    |> Enum.map(fn time_zone -> Enum.join(time_zone, @separator) end)
+    |> Enum.uniq()
+  end
 end

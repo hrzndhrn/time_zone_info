@@ -7,7 +7,18 @@ defmodule TimeZoneInfo.TransformerTest do
 
   setup_all do
     path = "test/fixtures/iana/2019c"
-    files = ~w(africa antarctica asia australasia etcetera europe northamerica southamerica)
+
+    files = [
+      "africa",
+      "antarctica",
+      "asia",
+      "australasia",
+      "etcetera",
+      "europe",
+      "northamerica",
+      "southamerica"
+    ]
+
     config = [lookahead: 1, files: files, time_zones: :all]
     data = path |> parse(files) |> Transformer.transform("2019c", config)
 

@@ -1,17 +1,6 @@
-~w(
-  test_plug.exs
-  time_zone_info/checker.exs
-  time_zone_info/data_store/server.exs
-  time_zone_info/perl_checker.exs
-  time_zone_info/test_utils.exs
-  time_zone_info/time_zone_database_case.exs
-  time_zone_info/time_zone_database_checker.exs
-  time_zone_info/tz_checker.exs
-  time_zone_info/tzdata_checker.exs
-)
-|> Enum.each(fn file ->
-  "support" |> Path.join(file) |> Code.require_file(__DIR__)
-end)
+"test/support/**/*.exs"
+|> Path.wildcard()
+|> Enum.each(&Code.require_file/1)
 
 Mox.defmock(TimeZoneInfo.DataPersistenceMock, for: TimeZoneInfo.DataPersistence)
 Mox.defmock(TimeZoneInfo.DataStoreMock, for: TimeZoneInfo.DataStore)

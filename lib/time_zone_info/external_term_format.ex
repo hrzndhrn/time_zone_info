@@ -183,7 +183,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
   defp validate(:rule_set, _), do: false
 
   defp validate(:rule, {at, time_standard, utc_offset, letters})
-       when is_tuple(at) and time_standard in ~w(wall standard gmt utc zulu)a and
+       when is_tuple(at) and time_standard in [:wall, :standard, :gmt, :utc, :zulu] and
               is_integer(utc_offset) and (is_binary(letters) or is_nil(letters)) do
     validate(:at, at)
   end

@@ -30,7 +30,7 @@ defmodule TimeZoneInfo.Downloader do
 
   @type download :: {:ok, mode(), {status_code(), binary()}}
 
-  @mode ~w(iana etf ws)a
+  @mode [:iana, :etf, :ws]
 
   @callback download(uri :: URI.t(), opts :: opts) :: download() | {:error, term()}
 
