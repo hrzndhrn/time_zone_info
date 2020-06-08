@@ -119,12 +119,11 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert checksum(@path) == checksum
     end
 
-    @tag :only
     test "server return 304 if data is unchanged" do
       touch_data(@path, now(sub: @seconds_per_day * 2))
 
       update_env(
-        files: ~w(africa),
+        files: ["africa"],
         downloader: [
           module: TimeZoneInfo.Downloader.Mint,
           uri: "http://localhost:1234/api/time_zone_info",
@@ -150,7 +149,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
     test "server return 304 if data is unchanged and update forced" do
       update_env(
-        files: ~w(africa),
+        files: ["africa"],
         downloader: [
           module: TimeZoneInfo.Downloader.Mint,
           uri: "http://localhost:1234/api/time_zone_info",
@@ -290,6 +289,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       assert TimeZoneInfo.time_zones(links: :ignore) == [
+               "Africa/Nairobi",
                "Etc/UTC",
                "Europe/Berlin",
                "Indian/Mahe",
@@ -297,12 +297,16 @@ defmodule TimeZoneInfo.UpdaterTest do
                "Indian/Reunion"
              ]
 
-      assert TimeZoneInfo.time_zones(links: :only) == []
+      assert TimeZoneInfo.time_zones(links: :only) == [
+               "Indian/Antananarivo",
+               "Indian/Comoro",
+               "Indian/Mayotte"
+             ]
     end
 
     test "returns error for unknown time zones" do
       update_env(
-        files: ~w(europe africa),
+        files: ["europe", "africa"],
         time_zones: ["Europe/Berlin", "Utopia/Metropolis"]
       )
 
@@ -323,9 +327,8 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert TimeZoneInfo.time_zones(links: :only) == []
     end
 
-    @tag :only
     test "updates data with new IANA file" do
-      update_env(files: ~w(europe))
+      update_env(files: ["europe"])
 
       assert_log(
         fn ->
@@ -340,7 +343,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
     test "updates data filtered by time_zones (forced update)" do
       update_env(
-        files: ~w(europe asia),
+        files: ["europe", "asia"],
         time_zones: ["Europe/Berlin", "Indian"]
       )
 
@@ -372,23 +375,15 @@ defmodule TimeZoneInfo.UpdaterTest do
 
       assert TimeZoneInfo.time_zones(links: :ignore) == [
                "Africa/Lagos",
+               "Africa/Nairobi",
                "Etc/UTC",
                "Indian/Mahe",
                "Indian/Mauritius",
                "Indian/Reunion"
              ]
 
-      assert TimeZoneInfo.time_zones(links: :only) == [
-               "Africa/Bangui",
-               "Africa/Brazzaville",
-               "Africa/Douala",
-               "Africa/Kinshasa",
-               "Africa/Libreville",
-               "Africa/Luanda",
-               "Africa/Malabo",
-               "Africa/Niamey",
-               "Africa/Porto-Novo"
-             ]
+      assert TimeZoneInfo.time_zones(links: :only) ==
+               ["Indian/Antananarivo", "Indian/Comoro", "Indian/Mayotte"]
     end
 
     test "runs initial update once" do
@@ -520,7 +515,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
     test "downloads data from a web service" do
       update_env(
-        files: ~w(europe),
+        files: ["europe"],
         downloader: [
           module: TimeZoneInfo.Downloader.Mint,
           uri: "http://localhost:1234/api/time_zone_info",
@@ -732,25 +727,18 @@ defmodule TimeZoneInfo.UpdaterTest do
   end
 
   defp put_test_env(data_store) do
-    # The commented out lines show the default value of the configuration entry.
     put_env(
       lookahead: 1,
-      # files: ~w(africa antarctica asia australasia etcetera europe northamerica southamerica),
-      files: ~w(africa),
+      files: ["africa"],
       downloader: [
         module: TimeZoneInfo.Downloader.Mint,
-        # uri: "https://data.iana.org/time-zones/tzdata-latest.tar.gz",
         uri: "http://localhost:1234/fixtures/iana/tzdata2019c.tar.gz",
         mode: :iana
       ],
-      # update: :disabled,
       update: :daily,
-      # data_store: :auto,
       data_store: data_store,
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
-      # priv: [path: "data.etf"]
       priv: [path: @path],
-      # none default config
       listener: TimeZoneInfo.Listener.Logger
     )
   end

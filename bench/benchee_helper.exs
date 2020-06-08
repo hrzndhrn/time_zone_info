@@ -14,13 +14,7 @@ DataStore.Server.put(data)
 
 BencheeDsl.config(
   before_each_benchmark: fn benchmark ->
-    file_name =
-      case benchmark.module do
-        TimeZoneDatabaseBench -> "README.md"
-        module -> Macro.underscore(module) <> ".md"
-      end
-
-    file = Path.join(benchmark.dir, file_name)
+    file = Path.join(benchmark.dir, Macro.underscore(benchmark.module) <> ".md")
 
     Benchmark.update(benchmark, [:config, :formatters], fn formatters ->
       formatter = {

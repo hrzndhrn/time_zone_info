@@ -10,12 +10,12 @@ defmodule TimeZoneInfo.FileArchiveTest do
 
   describe "extract/2" do
     test "reads version file", %{archive: archive} do
-      assert FileArchive.extract(archive, ~w(version)) ==
+      assert FileArchive.extract(archive, ["version"]) ==
                {:ok, %{"version" => "2019c\n"}}
     end
 
     test "reads files", %{archive: archive} do
-      file_names = ~w(asia europe southamerica)
+      file_names = ["asia", "europe", "southamerica"]
       assert {:ok, files} = FileArchive.extract(archive, file_names)
       assert files |> Map.keys() |> Enum.sort() == file_names
       assert Regex.match?(~r/^Zone.*Europe.Berlin/m, Map.get(files, "europe"))
@@ -24,12 +24,12 @@ defmodule TimeZoneInfo.FileArchiveTest do
     end
 
     test "returns error for invalid archive" do
-      assert FileArchive.extract("invalid", ~w(version)) == {:error, :eof}
+      assert FileArchive.extract("invalid", ["version"]) == {:error, :eof}
     end
 
     test "returns error if files are not available", %{archive: archive} do
-      assert FileArchive.extract(archive, ~w(version foo bar)) ==
-               {:error, {:not_found, ~w(foo bar)}}
+      assert FileArchive.extract(archive, ["version", "foo", "bar"]) ==
+               {:error, {:not_found, ["foo", "bar"]}}
     end
   end
 end

@@ -213,7 +213,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
         {at, {time_standard, std_offset, letters}}
       end)
     end)
-    |> Enum.sort_by(&elem(&1, 0))
+    |> Enum.sort_by(fn {at, _} -> at end)
   end
 
   defp gap(

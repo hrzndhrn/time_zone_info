@@ -24,5 +24,5 @@ defmodule FakeUtcDateTime do
 
   defp put_offset(offset), do: Agent.update(__MODULE__, fn _ -> offset end)
 
-  defp get_offset, do: Agent.get(__MODULE__, & &1)
+  defp get_offset, do: Agent.get(__MODULE__, fn offset -> offset end)
 end

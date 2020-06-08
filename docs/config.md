@@ -93,8 +93,11 @@ Default: `:all`\
 With `time_zones:` you can determine which time zones should be used. This
 configuration expected a list of time zone names and/or areas like
 `["Asia", "Europe/Berlin"]`. In this example all time zones in the area Asia and
-the time zone "Europe/Berlin" are available. The `links` that points to the
-available time zones will be also available.
+the time zone "Europe/Berlin" are available.
+If a time zone link matches the `time_zones` configuration, the linked time zone
+will be also be available. For example, if you set `time_zones: ["Europe/Jersey"]`
+then the time zone `Europe/London` is also available because `Europe/Jersey`
+links this time zone.
 
 `lookahead:`\
 Default: `5`\

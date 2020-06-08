@@ -68,7 +68,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
     @impl true
     def delete! do
       :persistent_term.get()
-      |> Enum.map(&elem(&1, 0))
+      |> Enum.map(fn {key, _value} -> key end)
       |> Enum.filter(fn
         key when is_tuple(key) -> elem(key, 0) == @app
         _ -> false
