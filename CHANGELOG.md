@@ -8,7 +8,7 @@
 - Updating docs structure.
 - Adding `backward` to the default `files`.
 - Refactoring `time_zones` configuration behaviour.
-  See [Time zone maniputlation](time_zone_info/config.html#time-zone-manipulation).
+  See [Time zone maniputlation](https://hexdocs.pm/time_zone_info/config.html#time-zone-manipulation).
 
 ## 0.4.0 - 2020/04/25
 
