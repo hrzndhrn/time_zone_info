@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.0 - 2020/06
+## 0.5.0 - 2020/06/08
 
 - Increasing speed of `TimeZoneDatabase.time_zone_periods_from_wall_datetime/2`.
 - Adding `wall_time` to `time_zone_period`.
