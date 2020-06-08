@@ -8,7 +8,8 @@ defmodule TimeZoneDatabaseBench do
   @description """
   This benchmark compares `TimeZoneInfo` with
   [`Tzdata`](https://github.com/lau/tzdata) and
-  [`Tz`](https://github.com/mathieuprog/tz).
+  [`Tz`](https://github.com/mathieuprog/tz). `TimeZoneInfo` is using
+  `DataStore.PersistentTerm` in this benchmark.
 
   All testees have an implementation for `TimeZoneDatabas`. For the benchmark,
   each of them calls the function
