@@ -1,4 +1,4 @@
 %{
-  "nimble_parsec": {:hex, :nimble_parsec, "0.5.3", "def21c10a9ed70ce22754fdeea0810dafd53c2db3219a0cd54cf5526377af1c6", [:mix], [], "hexpm", "589b5af56f4afca65217a1f3eb3fee7e79b09c40c742fddc1c312b3ac0b3399f"},
-  "time_zone_info": {:hex, :time_zone_info, "0.2.0", "c9f1c5b4b10771bcf0b47a159e272f047c1c91d851d8fec683e8911bb73a849e", [:mix], [{:castore, "~> 0.1", [hex: :castore, repo: "hexpm", optional: true]}, {:mint, "~> 1.0", [hex: :mint, repo: "hexpm", optional: true]}, {:nimble_parsec, "~> 0.5", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm", "75dd9a476835078c793a28085dc43e44fe4ef385bb29584534fa9c2204555a1b"},
+  "nimble_parsec": {:hex, :nimble_parsec, "0.6.0", "32111b3bf39137144abd7ba1cce0914533b2d16ef35e8abc5ec8be6122944263", [:mix], [], "hexpm", "27eac315a94909d4dc68bc07a4a83e06c8379237c5ea528a9acff4ca1c873c52"},
+  "time_zone_info": {:hex, :time_zone_info, "0.5.0", "45f0a92f7d33c67498d5d8980ca951a55f16c602e082dd1f94371eda7941060f", [:mix], [{:castore, "~> 0.1", [hex: :castore, repo: "hexpm", optional: true]}, {:mint, "~> 1.0", [hex: :mint, repo: "hexpm", optional: true]}, {:nimble_parsec, "~> 0.5", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm", "4883552111bb89c24c9031cf2bc1160cd37d05666f30f649056003cbd427112b"},
 }
