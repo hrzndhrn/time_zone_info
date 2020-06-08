@@ -6,6 +6,8 @@
 - Adding `wall_time` to `time_zone_period`.
 - Refactoring `updater` to fix some unexpected behaviours when changing configs.
 - Updating docs structure.
+- Refactoring `time_zones` configuration behaviour.
+  See [Time zone maniputlation](time_zone_info/config.html#time-zone-manipulation).
 
 ## 0.4.0 - 2020/04/25
 
