@@ -39,6 +39,12 @@ defmodule Clock do
     |> IO.puts()
   end
 
+  def now do
+    FakeUtcDateTime.now()
+    |> DateTime.truncate(:second)
+    |> DateTime.shift_zone!(get_time_zone())
+  end
+
   def put_time_zone(time_zone) do
     case TimeZoneInfo.time_zones() |> Enum.member?(time_zone) do
       true ->
