@@ -19,10 +19,19 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   def time_zone_periods_from_wall_datetime(_, "Etc/UTC"),
     do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC", wall_period: {:min, :max}}}
 
-  def time_zone_periods_from_wall_datetime(naive_datetime, time_zone) do
+  def time_zone_periods_from_wall_datetime(
+        %NaiveDateTime{calendar: Calendar.ISO} = naive_datetime,
+        time_zone
+      ) do
     naive_datetime
     |> GregorianSeconds.from_naive()
     |> periods_from_wall_gregorian_seconds(time_zone, naive_datetime)
+  end
+
+  def time_zone_periods_from_wall_datetime(%NaiveDateTime{} = naive_datetime, time_zone) do
+    naive_datetime
+    |> NaiveDateTime.convert!(Calendar.ISO)
+    |> time_zone_periods_from_wall_datetime(time_zone)
   end
 
   @impl true

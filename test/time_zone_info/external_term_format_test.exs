@@ -65,7 +65,6 @@ defmodule TimeZoneInfo.ExternalTermFormatTest do
             0, 107, 56, 150, 181>>
 
   describe "encode/1" do
-    @tag :only
     test "encodes data" do
       assert ExternalTermFormat.encode(@term) == {:ok, @binary}
     end

@@ -30,9 +30,9 @@ defmodule TimeZoneInfo.GregorianSeconds do
   the specified `naive_datetime`.
   """
   @spec from_naive(NaiveDateTime.t()) :: t()
-  def from_naive(%NaiveDateTime{year: year}) when year < 0, do: 0
+  def from_naive(%NaiveDateTime{calendar: Calendar.ISO, year: year}) when year < 0, do: 0
 
-  def from_naive(naive_datetime) do
+  def from_naive(%NaiveDateTime{calendar: Calendar.ISO} = naive_datetime) do
     naive_datetime
     |> NaiveDateTime.to_erl()
     |> :calendar.datetime_to_gregorian_seconds()

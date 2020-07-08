@@ -654,7 +654,6 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
     end
 
-    @tag :only
     test "updates version 2020a and file backward" do
       touch_data(@path, now(sub: 2 * @seconds_per_day))
 

@@ -1,6 +1,8 @@
 defmodule TimeZoneInfo.TimeZoneDatabaseTest do
   use TimeZoneInfo.TimeZoneDatabaseCase
 
+  alias TimeZoneInfo.TimeZoneDatabase
+
   describe "time_zone_period_from_utc_iso_days/2" do
     prove "returns an error tuple for",
           time_zone_period_from_utc_iso_days(
@@ -1672,6 +1674,34 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
               wall_period: {:min, ~N[1916-07-28 00:00:00]}
             }
           }
+
+    test "with different calendar" do
+      naive_datetime = %NaiveDateTime{
+        calendar: Cldr.Calendar.Coptic,
+        day: 19,
+        hour: 2,
+        microsecond: {860_034, 6},
+        minute: 31,
+        month: 7,
+        second: 28,
+        year: 1944
+      }
+
+      assert TimeZoneDatabase.time_zone_periods_from_wall_datetime(naive_datetime, "CET") ==
+               {:gap,
+                {%{
+                   std_offset: 0,
+                   utc_offset: 3600,
+                   wall_period: {~N[2227-10-28 02:00:00], ~N[2228-03-30 02:00:00]},
+                   zone_abbr: "CET"
+                 }, ~N[2228-03-30 02:00:00]},
+                {%{
+                   std_offset: 3600,
+                   utc_offset: 3600,
+                   wall_period: {~N[2228-03-30 03:00:00], ~N[2228-10-26 03:00:00]},
+                   zone_abbr: "CEST"
+                 }, ~N[2228-03-30 03:00:00]}}
+    end
   end
 
   describe "time_zone_periods_from_wall_datetime/2 in the transition month:" do

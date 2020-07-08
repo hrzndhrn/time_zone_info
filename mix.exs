@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.5.0",
+      version: "0.5.1",
       elixir: "~> 1.8",
       name: "TimeZoneInfo",
       description: description(),
@@ -81,7 +81,8 @@ defmodule TimeZoneInfo.MixProject do
       main: "readme",
       extras: [
         "README.md",
-        "docs/config.md"
+        "docs/config.md",
+        "CHANGELOG.md"
       ],
       groups_for_modules: [
         Behaviours: [
@@ -130,8 +131,9 @@ defmodule TimeZoneInfo.MixProject do
       {:castore, "~> 0.1", optional: true},
       {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.10", only: :test, runtime: false},
+      {:ex_cldr_calendars_coptic, "~> 0.2", only: [:dev, :test]},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
       {:mint, "~> 1.0", optional: true},
       {:mox, "~> 0.5", only: :test},

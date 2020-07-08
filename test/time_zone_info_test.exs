@@ -96,7 +96,6 @@ defmodule TimeZoneInfoTest do
       refute time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
     end
 
-    @tag :only
     test "tzdata2020a" do
       iana = "test/fixtures/iana/tzdata2020a.tar.gz"
 

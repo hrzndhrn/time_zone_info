@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 - 2020/07/08
+
+- Supporting different calendars.
+
 ## 0.5.0 - 2020/06/08
 
 - Increasing speed of `TimeZoneDatabase.time_zone_periods_from_wall_datetime/2`.

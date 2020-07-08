@@ -27,7 +27,6 @@ defmodule TimeZoneInfo.DataConfigTest do
                {:error, {:time_zones_not_found, ["Foo"]}}
     end
 
-    @tag :only
     test "returns time zones for configured link", %{data: data} do
       time_zones = ["Europe/Jersey"]
       assert {:ok, data} = DataConfig.update_time_zones(data, time_zones)
