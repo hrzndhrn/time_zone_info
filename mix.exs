@@ -125,8 +125,7 @@ defmodule TimeZoneInfo.MixProject do
   defp deps do
     [
       {:benchee, "~> 1.0", only: :dev},
-      # {:benchee_dsl, path: "../benchee_dsl", only: :dev},
-      {:benchee_dsl, github: "hrzndhrn/benchee_dsl", only: :dev},
+      {:benchee_dsl, "~> 0.1", only: :dev},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
       {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
@@ -138,7 +137,7 @@ defmodule TimeZoneInfo.MixProject do
       {:mint, "~> 1.0", optional: true},
       {:mox, "~> 0.5", only: :test},
       {:nimble_parsec, "~> 0.5", runtime: false},
-      {:plug_cowboy, "2.2.1", only: [:dev, :test]},
+      {:plug_cowboy, "~> 2.3", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true}
