@@ -39,6 +39,10 @@ defmodule TimeZoneDatabaseBench do
 
   inputs Data.inputs()
 
+  formatter Benchee.Formatters.Markdown,
+    file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    description: @description
+
   job time_zone_info(data) do
     Enum.each(data, fn {datetime, time_zone} ->
       TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)

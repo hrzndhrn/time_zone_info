@@ -37,6 +37,10 @@ defmodule StoresBench do
   and date times between 1900 and 2050.
   """
 
+  formatter Benchee.Formatters.Markdown,
+    file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    description: @description
+
   inputs Data.inputs()
 
   job time_zone_info_ets(data) do

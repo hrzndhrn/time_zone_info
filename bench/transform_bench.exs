@@ -10,6 +10,10 @@ defmodule TransformBench do
   raw IANA data to the data structure used by `TimeZoneInfo`.
   """
 
+  formatter Benchee.Formatters.Markdown,
+    file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    description: @description
+
   config time: 60
 
   job transform do
