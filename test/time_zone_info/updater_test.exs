@@ -139,7 +139,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
       assert_log(
         fn ->
-          assert {:next, timestamp} = Updater.update()
+          assert {:next, _timestamp} = Updater.update()
         end,
         [:initial, :check, :download, :up_to_date]
       )
@@ -389,14 +389,14 @@ defmodule TimeZoneInfo.UpdaterTest do
     test "runs initial update once" do
       assert_log(
         fn ->
-          assert {:next, timestamp} = Updater.update()
+          assert {:next, _timestamp} = Updater.update()
         end,
         [:initial, :check, :no_update]
       )
 
       assert_log(
         fn ->
-          assert {:next, timestamp} = Updater.update()
+          assert {:next, _timestamp} = Updater.update()
         end,
         [:check, :no_update]
       )
@@ -407,14 +407,14 @@ defmodule TimeZoneInfo.UpdaterTest do
 
       assert_log(
         fn ->
-          assert {:next, timestamp} = Updater.update()
+          assert {:next, _timestamp} = Updater.update()
         end,
         [:initial, :check, :download, :up_to_date]
       )
 
       assert_log(
         fn ->
-          assert {:next, timestamp} = Updater.update()
+          assert {:next, _timestamp} = Updater.update()
         end,
         [:check, :no_update]
       )
