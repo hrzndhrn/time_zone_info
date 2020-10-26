@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 - 2020/10/26
+
+- Updating `priv/data.etf` with IANA tzdata version 2020d.
+
 ## 0.5.1 - 2020/07/08
 
 - Supporting different calendars.
