@@ -1,6 +1,6 @@
 # TimeZoneInfo
 [![Hex.pm](https://img.shields.io/hexpm/v/time_zone_info.svg)](https://hex.pm/packages/time_zone_info)
-[![Build Status](https://travis-ci.org/hrzndhrn/time_zone_info.svg?branch=master)](https://travis-ci.org/hrzndhrn/time_zone_info)
+![CI](https://github.com/hrzndhrn/time_zone_info/workflows/CI/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/hrzndhrn/time_zone_info/badge.svg)](https://coveralls.io/github/hrzndhrn/time_zone_info)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
