@@ -15,9 +15,7 @@ defmodule TimeZoneInfo.DataConfig do
   def update_time_zones(data, nil), do: {:ok, data}
 
   def update_time_zones(data, select_time_zones) when is_list(select_time_zones) do
-    data
-    |> filter(select_time_zones)
-    |> case do
+    case filter(data, select_time_zones) do
       {time_zones, []} ->
         select(data, time_zones)
 
