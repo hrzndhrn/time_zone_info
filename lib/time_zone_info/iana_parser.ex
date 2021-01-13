@@ -6,6 +6,9 @@ defmodule TimeZoneInfo.IanaParser do
   # The format of the IANA data explains the article [How to Read the tz Database
   # Source Files](https://data.iana.org/time-zones/tz-how-to.html)
 
+  import NimbleParsec
+  import TimeZoneInfo.IanaParser.Helper
+
   alias TimeZoneInfo.Transformer.Abbr
 
   @typedoc "The raw IANA data."
@@ -55,9 +58,6 @@ defmodule TimeZoneInfo.IanaParser do
              Calendar.second()}
 
   @type op :: :ge | :le
-
-  import NimbleParsec
-  import TimeZoneInfo.IanaParser.Helper
 
   empty_line =
     whitespace()

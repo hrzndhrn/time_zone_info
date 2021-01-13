@@ -29,7 +29,7 @@ defmodule TimeZoneInfo.UtcDateTimeTest do
       )
     end
 
-    test "returns now as unic" do
+    test "returns now as unix" do
       now = DateTime.utc_now()
       assert_in_delta(DateTime.to_unix(now), UtcDateTime.now(:unix), 1)
     end

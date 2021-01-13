@@ -5,7 +5,7 @@
 Mox.defmock(TimeZoneInfo.DataPersistenceMock, for: TimeZoneInfo.DataPersistence)
 Mox.defmock(TimeZoneInfo.DataStoreMock, for: TimeZoneInfo.DataStore)
 Mox.defmock(TimeZoneInfo.DownloaderMock, for: TimeZoneInfo.Downloader)
-Mox.defmock(TimeZoneInfo.UpdaterMock, for: TimeZoneInfo.Updater.Interface)
+Mox.defmock(TimeZoneInfo.UpdaterMock, for: TimeZoneInfo.Updater)
 
 Application.ensure_all_started(:mox)
 

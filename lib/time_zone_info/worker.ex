@@ -6,7 +6,7 @@ defmodule TimeZoneInfo.Worker do
 
   use GenServer
 
-  alias TimeZoneInfo.Updater.Interface, as: Updater
+  alias TimeZoneInfo.Updater
   alias TimeZoneInfo.UtcDateTime
 
   @timeout 3 * 60 * 1_000

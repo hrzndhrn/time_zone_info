@@ -3,6 +3,8 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   Implementation of the `Calendar.TimeZoneDatabase` behaviour.
   """
 
+  @behaviour Calendar.TimeZoneDatabase
+
   alias TimeZoneInfo.{
     DataStore,
     GregorianSeconds,
@@ -10,8 +12,6 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     IsoDays,
     Transformer.RuleSet
   }
-
-  @behaviour Calendar.TimeZoneDatabase
 
   @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2}
 

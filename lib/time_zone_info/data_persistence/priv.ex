@@ -4,10 +4,10 @@ defmodule TimeZoneInfo.DataPersistence.Priv do
   data in the `priv` dir.
   """
 
+  @behaviour TimeZoneInfo.DataPersistence
+
   alias File.Stat
   alias TimeZoneInfo.ExternalTermFormat
-
-  @behaviour TimeZoneInfo.DataPersistence
 
   @impl true
   def put(data) do

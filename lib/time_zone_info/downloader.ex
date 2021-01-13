@@ -79,16 +79,14 @@ defmodule TimeZoneInfo.Downloader do
 
   defp prepare_query(config) do
     config
-    |> prepare_query(:time_zones)
-    |> prepare_query(:files)
+    |> prepare_query(:time_zones, :"time_zones[]")
+    |> prepare_query(:files, :"files[]")
   end
 
-  defp prepare_query(config, key) do
-    name = Atom.to_string(key)
-
+  defp prepare_query(config, key, query_key) do
     case Keyword.pop(config, key) do
       {[_ | _] = values, config} ->
-        Enum.into(values, config, fn value -> {:"#{name}[]", value} end)
+        Enum.into(values, config, fn value -> {query_key, value} end)
 
       {_, config} ->
         config

@@ -128,7 +128,7 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee_dsl, "~> 0.1", only: :dev},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
-      {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
       {:ex_cldr_calendars_coptic, "~> 0.2", only: [:dev, :test]},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},

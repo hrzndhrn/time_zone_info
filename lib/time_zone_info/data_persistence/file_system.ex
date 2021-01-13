@@ -4,10 +4,10 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
   data in the file system.
   """
 
+  @behaviour TimeZoneInfo.DataPersistence
+
   alias File.Stat
   alias TimeZoneInfo.ExternalTermFormat
-
-  @behaviour TimeZoneInfo.DataPersistence
 
   @impl true
   def put(data) do

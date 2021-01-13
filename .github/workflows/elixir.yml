@@ -12,13 +12,13 @@ jobs:
 
     strategy:
       matrix:
-        elixir_version: ['1.8.2', '1.9.4', '1.10.3', '1.11.1']
-        otp_version: ['21.3', '22.3', '23.1']
+        elixir_version: ['1.8.2', '1.9.4', '1.10.3', '1.11.2']
+        otp_version: ['21.3', '22.3', '23.2']
         exclude:
           - elixir_version: '1.8.2'
-            otp_version: '23.1'
+            otp_version: '23.2'
           - elixir_version: '1.9.4'
-            otp_version: '23.1'
+            otp_version: '23.2'
 
     steps:
       - name: Checkout

@@ -55,7 +55,7 @@
       # If you want to enforce a style guide and need a more traditional linting
       # experience, you can change `strict` to `true` below:
       #
-      strict: false,
+      strict: true,
       #
       # To modify the timeout for parsing files, change this value:
       #
@@ -129,11 +129,10 @@
         {Credo.Check.Refactor.CyclomaticComplexity, [max_complexity: 10]},
         {Credo.Check.Refactor.FunctionArity, [max_arity: 10]},
         {Credo.Check.Refactor.LongQuoteBlocks, []},
-        {Credo.Check.Refactor.MapInto, false},
+        # {Credo.Check.Refactor.MapInto, []},
         {Credo.Check.Refactor.MatchInCondition, []},
         {Credo.Check.Refactor.NegatedConditionsInUnless, []},
         {Credo.Check.Refactor.NegatedConditionsWithElse, []},
-        # {Credo.Check.Refactor.Nesting, []},
         {Credo.Check.Refactor.Nesting, [max_nesting: 3]},
         {Credo.Check.Refactor.UnlessWithElse, []},
         {Credo.Check.Refactor.WithClauses, []},
@@ -141,11 +140,12 @@
         #
         ## Warnings
         #
+        {Credo.Check.Warning.ApplicationConfigInModuleAttribute, []},
         {Credo.Check.Warning.BoolOperationOnSameValues, []},
         {Credo.Check.Warning.ExpensiveEmptyEnumCheck, []},
         {Credo.Check.Warning.IExPry, []},
         {Credo.Check.Warning.IoInspect, []},
-        {Credo.Check.Warning.LazyLogging, false},
+        # {Credo.Check.Warning.LazyLogging, []},
         {Credo.Check.Warning.MixEnv, false},
         {Credo.Check.Warning.OperationOnSameValues, []},
         {Credo.Check.Warning.OperationWithConstantResult, []},
@@ -161,19 +161,19 @@
         {Credo.Check.Warning.UnsafeExec, []},
 
         #
-        # Checks scheduled for next check update (opt-in for now, just replace `false` with `[]`)
-
-        #
         # Controversial and experimental checks (opt-in, just replace `false` with `[]`)
         #
-        {Credo.Check.Readability.StrictModuleLayout, false},
         {Credo.Check.Consistency.MultiAliasImportRequireUse, false},
         {Credo.Check.Consistency.UnusedVariableNames, false},
         {Credo.Check.Design.DuplicatedCode, false},
-        {Credo.Check.Readability.AliasAs, false},
+        {Credo.Check.Readability.AliasAs, []},
+        {Credo.Check.Readability.BlockPipe, false},
+        {Credo.Check.Readability.ImplTrue, false},
         {Credo.Check.Readability.MultiAlias, false},
-        {Credo.Check.Readability.Specs, false},
+        {Credo.Check.Readability.SeparateAliasRequire, false},
         {Credo.Check.Readability.SinglePipe, false},
+        {Credo.Check.Readability.Specs, false},
+        {Credo.Check.Readability.StrictModuleLayout, []},
         {Credo.Check.Readability.WithCustomTaggedTuple, false},
         {Credo.Check.Refactor.ABCSize, false},
         {Credo.Check.Refactor.AppendSingleItem, false},
@@ -182,13 +182,9 @@
         {Credo.Check.Refactor.NegatedIsNil, false},
         {Credo.Check.Refactor.PipeChainStart, false},
         {Credo.Check.Refactor.VariableRebinding, false},
+        {Credo.Check.Warning.LeakyEnvironment, false},
         {Credo.Check.Warning.MapGetUnsafePass, false},
-        {Credo.Check.Warning.UnsafeToAtom, false},
-        {Credo.Check.Warning.LeakyEnvironment, false}
-
-        #
-        # Custom checks can be created using `mix credo.gen.check`.
-        #
+        {Credo.Check.Warning.UnsafeToAtom, []}
       ]
     }
   ]

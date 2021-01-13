@@ -1,9 +1,9 @@
 defmodule TimeZoneInfo.DataStore.Server do
+  @behaviour TimeZoneInfo.DataStore
+
   use GenServer
 
   @compile {:inline, get_transitions: 3, get_rules: 2}
-
-  @behaviour TimeZoneInfo.DataStore
 
   @impl true
   def init(_), do: {:ok, :empty}

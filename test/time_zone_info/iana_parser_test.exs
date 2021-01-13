@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.IanaParserTest do
   use ExUnit.Case
 
-  alias TimeZoneInfo.IanaParser, as: Parser
+  alias TimeZoneInfo.IanaParser
 
   @empty %{}
 
@@ -9,13 +9,13 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "sign" do
       data = "#\n"
 
-      assert Parser.parse(data) == {:ok, @empty}
+      assert IanaParser.parse(data) == {:ok, @empty}
     end
 
     test "single line" do
       data = "# comment"
 
-      assert Parser.parse(data) == {:ok, @empty}
+      assert IanaParser.parse(data) == {:ok, @empty}
     end
 
     test "multiple lines" do
@@ -25,13 +25,13 @@ defmodule TimeZoneInfo.IanaParserTest do
       # comment 2
       """
 
-      assert Parser.parse(data) == {:ok, @empty}
+      assert IanaParser.parse(data) == {:ok, @empty}
     end
 
     test "multiple lines with \\r\\n" do
       data = "# comment 1 \r\n\r\n# comment 2"
 
-      assert Parser.parse(data) == {:ok, @empty}
+      assert IanaParser.parse(data) == {:ok, @empty}
     end
   end
 
@@ -39,7 +39,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "rule error" do
       data = "Rule 1 1 1 error"
 
-      assert Parser.parse(data) == {:error, "Rule 1 1 1 error", 1, 0}
+      assert IanaParser.parse(data) == {:error, "Rule 1 1 1 error", 1, 0}
     end
   end
 
@@ -143,7 +143,7 @@ defmodule TimeZoneInfo.IanaParserTest do
         ]
       ]
 
-      assert {:ok, %{rules: rules}} = Parser.parse(data)
+      assert {:ok, %{rules: rules}} = IanaParser.parse(data)
       assert Map.get(rules, "Germany") == expected
     end
 
@@ -221,7 +221,7 @@ defmodule TimeZoneInfo.IanaParserTest do
         ]
       ]
 
-      assert {:ok, %{rules: rules}} = Parser.parse(data)
+      assert {:ok, %{rules: rules}} = IanaParser.parse(data)
       assert Map.get(rules, "EU") == expected
     end
   end
@@ -240,7 +240,7 @@ defmodule TimeZoneInfo.IanaParserTest do
         "Utopia/Erlson" => "Utopia/Elixus"
       }
 
-      assert {:ok, %{links: links}} = Parser.parse(data)
+      assert {:ok, %{links: links}} = IanaParser.parse(data)
       assert links == expected
     end
   end
@@ -284,7 +284,7 @@ defmodule TimeZoneInfo.IanaParserTest do
         ]
       }
 
-      assert {:ok, %{zones: zones}} = Parser.parse(data)
+      assert {:ok, %{zones: zones}} = IanaParser.parse(data)
       assert zones == expected
     end
 
@@ -363,7 +363,7 @@ defmodule TimeZoneInfo.IanaParserTest do
         ]
       ]
 
-      assert {:ok, %{zones: zones}} = Parser.parse(data)
+      assert {:ok, %{zones: zones}} = IanaParser.parse(data)
       assert Map.get(zones, "Europe/Berlin") == berlin
       assert Map.get(zones, "Utopia/Elixium") == elexium
     end
@@ -388,7 +388,7 @@ defmodule TimeZoneInfo.IanaParserTest do
       			2:00	EU	EE%sT
       """
 
-      assert {:ok, %{zones: zones}} = Parser.parse(data)
+      assert {:ok, %{zones: zones}} = IanaParser.parse(data)
       assert zones = Map.get(zones, "Europe/Riga")
 
       assert Enum.at(zones, 1) ==
@@ -409,7 +409,7 @@ defmodule TimeZoneInfo.IanaParserTest do
       			2:00	Lex	L%sT	2019 Jun Sun>=7
       """
 
-      assert {:ok, %{zones: zones}} = Parser.parse(data)
+      assert {:ok, %{zones: zones}} = IanaParser.parse(data)
       assert zones = Map.get(zones, "Utopia/Lex")
 
       assert zones == [
@@ -455,7 +455,7 @@ defmodule TimeZoneInfo.IanaParserTest do
       			3:00	-	+03
       """
 
-      assert {:ok, %{zones: zones}} = Parser.parse(data)
+      assert {:ok, %{zones: zones}} = IanaParser.parse(data)
       assert zones = Map.get(zones, "Europe/Istanbul")
 
       assert Enum.at(zones, 3) == [
@@ -484,7 +484,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "africa", %{path: path} do
       data = path |> Path.join("africa") |> File.read!()
 
-      assert {:ok, parsed} = Parser.parse(data)
+      assert {:ok, parsed} = IanaParser.parse(data)
 
       assert map_size(parsed.zones) == 23
       assert map_size(parsed.rules) == 10
@@ -496,7 +496,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "antarctica", %{path: path} do
       data = path |> Path.join("antarctica") |> File.read!()
 
-      assert {:ok, parsed} = Parser.parse(data)
+      assert {:ok, parsed} = IanaParser.parse(data)
 
       assert map_size(parsed.zones) == 9
       assert map_size(parsed.rules) == 1
@@ -508,7 +508,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "asia", %{path: path} do
       data = path |> Path.join("asia") |> File.read!()
 
-      assert {:ok, parsed} = Parser.parse(data)
+      assert {:ok, parsed} = IanaParser.parse(data)
 
       assert map_size(parsed.zones) == 61
       assert map_size(parsed.links) == 7
@@ -520,7 +520,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "australasia", %{path: path} do
       data = path |> Path.join("australasia") |> File.read!()
 
-      assert {:ok, parsed} = Parser.parse(data)
+      assert {:ok, parsed} = IanaParser.parse(data)
 
       assert map_size(parsed.zones) == 48
       assert map_size(parsed.links) == 3
@@ -532,7 +532,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "europe", %{path: path} do
       data = path |> Path.join("europe") |> File.read!()
 
-      assert {:ok, parsed} = Parser.parse(data)
+      assert {:ok, parsed} = IanaParser.parse(data)
 
       assert map_size(parsed.zones) == 78
       assert map_size(parsed.links) == 16
@@ -544,7 +544,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "northamerica", %{path: path} do
       data = path |> Path.join("northamerica") |> File.read!()
 
-      assert {:ok, parsed} = Parser.parse(data)
+      assert {:ok, parsed} = IanaParser.parse(data)
 
       assert map_size(parsed.zones) == 93
       assert map_size(parsed.links) == 1
@@ -556,7 +556,7 @@ defmodule TimeZoneInfo.IanaParserTest do
     test "southamerica", %{path: path} do
       data = path |> Path.join("southamerica") |> File.read!()
 
-      assert {:ok, parsed} = Parser.parse(data)
+      assert {:ok, parsed} = IanaParser.parse(data)
 
       assert map_size(parsed.zones) == 47
       assert map_size(parsed.links) == 16
