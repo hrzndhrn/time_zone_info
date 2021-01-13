@@ -12,11 +12,9 @@ jobs:
 
     strategy:
       matrix:
-        elixir_version: ['1.8.2', '1.9.4', '1.10.3', '1.11.2']
+        elixir_version: ['1.9.4', '1.10.3', '1.11.3']
         otp_version: ['21.3', '22.3', '23.2']
         exclude:
-          - elixir_version: '1.8.2'
-            otp_version: '23.2'
           - elixir_version: '1.9.4'
             otp_version: '23.2'
 
@@ -28,6 +26,7 @@ jobs:
         with:
           elixir-version: ${{ matrix.elixir_version }}
           otp-version: ${{ matrix.otp_version }}
+          experimental-otp: true
       - name: Restore deps and _build
         uses: actions/cache@v2
         with:
