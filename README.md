@@ -25,7 +25,7 @@ end
 After installation, `TimeZoneInfo` can be used as follows.
 ```
 iex> TimeZoneInfo.iana_version
-"2020d"
+"2020f"
 iex> TimeZoneInfo.time_zones() |> Enum.take(3)
 ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa"]
 iex> TimeZoneInfo.period_from_utc(~N[2020-03-29 01:30:00], "Europe/Berlin")
@@ -59,7 +59,7 @@ enable automated updates, filter time zones, and add custom `behaviour`s.
 ## Default Time Zone Data
 
 The default configuration of `TimeZoneInfo` is `updater: :disabled`. In this
-case, the IANA database in version `2020d` with a `lookahead` of 15 years is in
+case, the IANA database in version `2020f` with a `lookahead` of 15 years is in
 use.
 
 If a time zone has continuation rules, the periods after the lookahead are
