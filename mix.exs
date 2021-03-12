@@ -22,7 +22,7 @@ defmodule TimeZoneInfo.MixProject do
   end
 
   def description do
-    "Time zone support for Elixir by using the IANA Time Zone Database."
+    "Time zone support for Elixir by using the IANA tz database."
   end
 
   def application do
@@ -129,7 +129,7 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:castore, "~> 0.1", optional: true},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:ex_cldr_calendars_coptic, "~> 0.2", only: [:dev, :test]},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
