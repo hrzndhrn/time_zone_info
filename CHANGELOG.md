@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.5.3 - 2021/dev
+## 0.5.3 - 2021/03/13
+
+- Updating `priv/data.etf` with IANA tzdata version 2021a.
+
+## 0.5.3 - 2021/01/13
 
 - Updating `priv/data.etf` with IANA tzdata version 2020f.
 
