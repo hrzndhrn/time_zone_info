@@ -170,16 +170,12 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
     <td style="white-space: nowrap">0.145 MB</td>
-
-      <td>&nbsp;</td>
-
+    <td>&nbsp;</td>
   </tr>
 
   <tr>
@@ -289,7 +285,6 @@ Comparison
     <td style="white-space: nowrap; text-align: right">9.72</td>
     <td style="white-space: nowrap; text-align: right">132.17x</td>
   </tr>
-
 </table>
 
 
@@ -300,16 +295,12 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
     <td style="white-space: nowrap">0.22 MB</td>
-
-      <td>&nbsp;</td>
-
+    <td>&nbsp;</td>
   </tr>
 
   <tr>
@@ -329,7 +320,6 @@ Memory Usage
     <td style="white-space: nowrap">43.51 MB</td>
     <td>196.24x</td>
   </tr>
-
 </table>
 
 
@@ -430,16 +420,12 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
     <td style="white-space: nowrap">130.47 KB</td>
-
-      <td>&nbsp;</td>
-
+    <td>&nbsp;</td>
   </tr>
 
   <tr>
@@ -560,16 +546,12 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
     <td style="white-space: nowrap">1.10 MB</td>
-
-      <td>&nbsp;</td>
-
+    <td>&nbsp;</td>
   </tr>
 
   <tr>
@@ -690,16 +672,12 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
     <td style="white-space: nowrap">1.74 MB</td>
-
-      <td>&nbsp;</td>
-
+    <td>&nbsp;</td>
   </tr>
 
   <tr>
@@ -820,9 +798,7 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">tz</td>
@@ -950,9 +926,7 @@ Memory Usage
   <tr>
     <th>Name</th>
     <th style="text-align: right">Memory</th>
-
-      <th style="text-align: right">Factor</th>
-
+    <th style="text-align: right">Factor</th>
   </tr>
   <tr>
     <td style="white-space: nowrap">time_zone_info</td>
