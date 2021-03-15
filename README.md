@@ -52,9 +52,15 @@ specify the following entry in the configuration.
 config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 ```
 
+## Config
+
+`TimeZoneInfo` has several configuration options:
++ Enable automated updates from the IANA tzdb
++ Setup for how many years rules will be precalculated
++ Selection of supported time zones
+
 For more information how to configure `TimeZoneInfo` see
-[Config](https://hexdocs.pm/time_zone_info/config.html). The site shows how to
-enable automated updates, filter time zones, and add custom `behaviour`s.
+[Config](https://hexdocs.pm/time_zone_info/config.html).
 
 ## Default Time Zone Data
 
@@ -71,16 +77,15 @@ the determination of periods inside the prepared time span.
 The benchmarks can be executed with `mix bench`.
 
 Benchmarks:
-+ A [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/time_zone_database_bench.md)
-  to compare `TimeZoneInfo` with `Tzdata` and `Tz`
-  for the execution of `TimeZoneDatabase.time_zone_periods_from_wall_datetime/2`.
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/time_zone_database_bench.md)
+  compares `TimeZoneInfo` with `Tzdata`, `Tz` and `Zoneinfo`.
 
-+ A [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/stores_bench.md)
-  to compare different `TimeZoneInfo.DataStore`s.
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/stores_bench.md)
+  compares the different `TimeZoneInfo.DataStore`s.
 
-+ A [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/transform_bench.md)
-  to measure the speed of the transformation
-  of the raw IANA data to the required data in runtime.
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/transform_bench.md)
+  measures the speed of transforming the raw IANA data to the required format at
+  runtime.
 
 ## Differences to Tzdata and Tz
 
@@ -112,6 +117,8 @@ Other Elixir implementations:
 - [tzdata](https://github.com/lau/tzdata) - Tzdata is a parser and library for
   the tz database.
 - [tz](https://github.com/mathieuprog/tz) - Time zone support for Elixir
+- [zoneinfo](https://github.com/smartrent/zoneinfo) - Elixir time zone support
+  for your OS-supplied zoneinfo files
 
 Other implementations:
 - [DateTime::TimeZone](https://github.com/houseabsolute/DateTime-TimeZone) - Perl

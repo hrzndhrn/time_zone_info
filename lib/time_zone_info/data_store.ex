@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.DataStore do
-  @moduledoc false
-
-  # A behaviour to store data and serve them later on.
+  @moduledoc """
+  A behaviour to store data and serve them later on.
+  """
 
   @default_time_zone "Etc/UTC"
 

@@ -60,4 +60,10 @@ defmodule TimeZoneDatabaseBench do
       Tzdata.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
     end)
   end
+
+  job zoneinfo(data) do
+    Enum.each(data, fn {datetime, time_zone} ->
+      Zoneinfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
+    end)
+  end
 end

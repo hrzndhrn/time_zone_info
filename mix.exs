@@ -84,9 +84,13 @@ defmodule TimeZoneInfo.MixProject do
         "docs/config.md",
         "CHANGELOG.md"
       ],
+      skip_undefined_reference_warnings_on: [
+        "CHANGELOG.md"
+      ],
       groups_for_modules: [
         Behaviours: [
           TimeZoneInfo.DataPersistence,
+          TimeZoneInfo.DataStore,
           TimeZoneInfo.Downloader,
           TimeZoneInfo.Listener
         ],
@@ -94,12 +98,24 @@ defmodule TimeZoneInfo.MixProject do
           TimeZoneInfo.DataPersistence.Priv,
           TimeZoneInfo.DataPersistence.FileSystem
         ],
+        DataStore: [
+          TimeZoneInfo.DataStore.ErlangTermStorage,
+          TimeZoneInfo.DataStore.PersistentTerm
+        ],
         Downlaoder: [
           TimeZoneInfo.Downloader.Mint
         ],
         Listener: [
           TimeZoneInfo.Listener.ErrorLogger,
           TimeZoneInfo.Listener.Logger
+        ],
+        "Parser/Transformer": [
+          TimeZoneInfo.IanaParser,
+          TimeZoneInfo.Transformer,
+          TimeZoneInfo.Transformer.Abbr,
+          TimeZoneInfo.Transformer.Rule,
+          TimeZoneInfo.Transformer.RuleSet,
+          TimeZoneInfo.Transformer.ZoneState
         ]
       ]
     ]
@@ -124,23 +140,27 @@ defmodule TimeZoneInfo.MixProject do
 
   defp deps do
     [
+      {:nimble_parsec, "~> 0.5 or ~> 1.0", runtime: false},
+      # optional
+      {:castore, "~> 0.1", optional: true},
+      {:mint, "~> 1.0", optional: true},
+      # dev and test
       {:benchee, "~> 1.0", only: :dev},
       {:benchee_dsl, "~> 0.1", only: :dev},
       {:benchee_markdown, "~> 0.1", only: :dev},
-      {:castore, "~> 0.1", optional: true},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:ex_cldr_calendars_coptic, "~> 0.2", only: [:dev, :test]},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
-      {:mint, "~> 1.0", optional: true},
       {:mox, "~> 1.0", only: :test},
-      {:nimble_parsec, "~> 0.5 or ~> 1.0", runtime: false},
+      {:nerves_time_zones, "~> 0.1.2", only: [:dev]},
       {:plug_cowboy, "~> 2.3", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
-      {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true}
+      {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
+      {:zoneinfo, "~> 0.1.3", only: [:test, :dev]}
     ]
   end
 

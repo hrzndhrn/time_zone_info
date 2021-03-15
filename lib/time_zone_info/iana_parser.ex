@@ -1,10 +1,10 @@
 defmodule TimeZoneInfo.IanaParser do
-  @moduledoc false
+  @moduledoc """
+  The IANA-Parser builds the data structure for `TimeZoneInfo`.
 
-  # The IANA-Parser builds the data structure for `TimeZoneInfo`.
-  #
-  # The format of the IANA data explains the article [How to Read the tz Database
-  # Source Files](https://data.iana.org/time-zones/tz-how-to.html)
+  The format of the IANA data explains the article [How to Read the tz Database
+  Source Files](https://data.iana.org/time-zones/tz-how-to.html)
+  """
 
   import NimbleParsec
   import TimeZoneInfo.IanaParser.Helper

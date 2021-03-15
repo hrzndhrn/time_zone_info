@@ -1,8 +1,8 @@
 defmodule TimeZoneInfo.Transformer do
-  @moduledoc false
-
-  # The `Transformer` transfers the parsed IANA data into the required format for
-  # `TimeZoneInfo`.
+  @moduledoc """
+  The `Transformer` transfers the parsed IANA data into the required format for
+  `TimeZoneInfo`.
+  """
 
   alias TimeZoneInfo.{
     IanaParser,
