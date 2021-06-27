@@ -40,33 +40,30 @@ defmodule TimeZoneDatabaseBench do
     Application.put_env(:time_zone_info, :data_store, DataStore.PersistentTerm)
   end
 
-  inputs Data.inputs()
+  inputs %{
+    "Europe/Berlin 2020-03-29 02:00:01 (gap)" => {~N[2020-03-29 02:00:01], "Europe/Berlin"},
+    "Europe/Berlin 2020-10-25 02:00:01 (ambiguous)" => {~N[2020-10-25 02:00:01], "Europe/Berlin"},
+    "Europe/Berlin 2020-06-01 00:00:00" => {~N[2020-06-06 00:00:00], "Europe/Berlin"},
+    "Europe/Paris 1944-08-26 13:00:00" => {~N[1944-08-26 13:00:00], "Europe/Paris"}
+  }
 
   formatter Benchee.Formatters.Markdown,
     file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
     description: @description
 
-  job time_zone_info(data) do
-    Enum.each(data, fn {datetime, time_zone} ->
-      TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
-    end)
+  job time_zone_info({datetime, time_zone}) do
+    TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
   end
 
-  job tz(data) do
-    Enum.each(data, fn {datetime, time_zone} ->
-      Tz.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
-    end)
+  job tz({datetime, time_zone}) do
+    Tz.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
   end
 
-  job tzdata(data) do
-    Enum.each(data, fn {datetime, time_zone} ->
-      Tzdata.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
-    end)
+  job tzdata({datetime, time_zone}) do
+    Tzdata.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
   end
 
-  job zoneinfo(data) do
-    Enum.each(data, fn {datetime, time_zone} ->
-      Zoneinfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
-    end)
+  job zoneinfo({datetime, time_zone}) do
+    Zoneinfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(datetime, time_zone)
   end
 end
