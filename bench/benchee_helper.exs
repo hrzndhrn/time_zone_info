@@ -11,6 +11,6 @@ DataStore.ErlangTermStorage.put(data)
 DataStore.Server.put(data)
 
 BencheeDsl.run(
-  time: 30,
+  time: 10,
   memory_time: 5
 )

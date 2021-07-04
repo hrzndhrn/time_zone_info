@@ -48,7 +48,7 @@ Benchmark suite executing with the following configuration:
 <table style="width: 1%">
   <tr>
     <th style="width: 1%">:time</th>
-    <td style="white-space: nowrap">30 s</td>
+    <td style="white-space: nowrap">10 s</td>
   </tr><tr>
     <th>:parallel</th>
     <td style="white-space: nowrap">1</td>
@@ -77,29 +77,29 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap; text-align: right">177.85 K</td>
-    <td style="white-space: nowrap; text-align: right">5.62 μs</td>
-    <td style="white-space: nowrap; text-align: right">±529.01%</td>
+    <td style="white-space: nowrap; text-align: right">410.27 K</td>
+    <td style="white-space: nowrap; text-align: right">2.44 μs</td>
+    <td style="white-space: nowrap; text-align: right">±1419.45%</td>
+    <td style="white-space: nowrap; text-align: right">1.90 μs</td>
     <td style="white-space: nowrap; text-align: right">4.90 μs</td>
-    <td style="white-space: nowrap; text-align: right">14.90 μs</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">22.19 K</td>
-    <td style="white-space: nowrap; text-align: right">45.06 μs</td>
-    <td style="white-space: nowrap; text-align: right">±45.71%</td>
-    <td style="white-space: nowrap; text-align: right">39.90 μs</td>
-    <td style="white-space: nowrap; text-align: right">116.90 μs</td>
+    <td style="white-space: nowrap; text-align: right">24.87 K</td>
+    <td style="white-space: nowrap; text-align: right">40.21 μs</td>
+    <td style="white-space: nowrap; text-align: right">±31.03%</td>
+    <td style="white-space: nowrap; text-align: right">33.90 μs</td>
+    <td style="white-space: nowrap; text-align: right">73.90 μs</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">17.76 K</td>
-    <td style="white-space: nowrap; text-align: right">56.31 μs</td>
-    <td style="white-space: nowrap; text-align: right">±68.46%</td>
-    <td style="white-space: nowrap; text-align: right">47.90 μs</td>
-    <td style="white-space: nowrap; text-align: right">130.90 μs</td>
+    <td style="white-space: nowrap; text-align: right">21.29 K</td>
+    <td style="white-space: nowrap; text-align: right">46.98 μs</td>
+    <td style="white-space: nowrap; text-align: right">±28.27%</td>
+    <td style="white-space: nowrap; text-align: right">40.90 μs</td>
+    <td style="white-space: nowrap; text-align: right">84.90 μs</td>
   </tr>
 
 </table>
@@ -114,20 +114,20 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap;text-align: right">177.85 K</td>
+    <td style="white-space: nowrap;text-align: right">410.27 K</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">22.19 K</td>
-    <td style="white-space: nowrap; text-align: right">8.01x</td>
+    <td style="white-space: nowrap; text-align: right">24.87 K</td>
+    <td style="white-space: nowrap; text-align: right">16.5x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">17.76 K</td>
-    <td style="white-space: nowrap; text-align: right">10.02x</td>
+    <td style="white-space: nowrap; text-align: right">21.29 K</td>
+    <td style="white-space: nowrap; text-align: right">19.27x</td>
   </tr>
 
 </table>
@@ -144,20 +144,20 @@ Memory Usage
   </tr>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap">856 B</td>
+    <td style="white-space: nowrap">584 B</td>
 <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap">880 B</td>
-    <td>1.03x</td>
+    <td style="white-space: nowrap">608 B</td>
+    <td>1.04x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap">928 B</td>
-    <td>1.08x</td>
+    <td style="white-space: nowrap">656 B</td>
+    <td>1.12x</td>
   </tr>
 
 </table>
