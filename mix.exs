@@ -153,13 +153,14 @@ defmodule TimeZoneInfo.MixProject do
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
+      {:mime, "~> 1.6.0", only: :test, override: true},
       {:mox, "~> 1.0", only: :test},
       {:nerves_time_zones, "~> 0.1.2", only: [:dev]},
       {:plug_cowboy, "~> 2.3", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
-      {:zoneinfo, "~> 0.1.3", only: [:test, :dev]}
+      {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
     ]
   end
 
