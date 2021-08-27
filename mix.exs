@@ -156,7 +156,7 @@ defmodule TimeZoneInfo.MixProject do
       {:mime, "~> 1.6.0", only: [:test, :dev], override: true},
       {:mox, "~> 1.0", only: :test},
       {:nerves_time_zones, "~> 0.1.2", only: [:dev]},
-      {:plug_cowboy, "~> 2.3", only: [:dev, :test]},
+      {:plug_cowboy, "~> 2.3.0", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
