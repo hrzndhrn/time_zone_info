@@ -25,7 +25,7 @@ Benchmark suite executing on the following system:
     <td>macOS</td>
   </tr><tr>
     <th style="white-space: nowrap">CPU Information</th>
-    <td style="white-space: nowrap">Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz</td>
+    <td style="white-space: nowrap">Apple M1</td>
   </tr><tr>
     <th style="white-space: nowrap">Number of Available Cores</th>
     <td style="white-space: nowrap">8</td>
@@ -34,10 +34,10 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.11.3</td>
+    <td style="white-space: nowrap">1.12.2</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">23.2</td>
+    <td style="white-space: nowrap">24.0.5</td>
   </tr>
 </table>
 
@@ -77,29 +77,29 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap; text-align: right">410.27 K</td>
-    <td style="white-space: nowrap; text-align: right">2.44 μs</td>
-    <td style="white-space: nowrap; text-align: right">±1419.45%</td>
-    <td style="white-space: nowrap; text-align: right">1.90 μs</td>
-    <td style="white-space: nowrap; text-align: right">4.90 μs</td>
+    <td style="white-space: nowrap; text-align: right">1399.73 K</td>
+    <td style="white-space: nowrap; text-align: right">0.71 μs</td>
+    <td style="white-space: nowrap; text-align: right">±3506.86%</td>
+    <td style="white-space: nowrap; text-align: right">0.99 μs</td>
+    <td style="white-space: nowrap; text-align: right">0.99 μs</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">24.87 K</td>
-    <td style="white-space: nowrap; text-align: right">40.21 μs</td>
-    <td style="white-space: nowrap; text-align: right">±31.03%</td>
-    <td style="white-space: nowrap; text-align: right">33.90 μs</td>
-    <td style="white-space: nowrap; text-align: right">73.90 μs</td>
+    <td style="white-space: nowrap; text-align: right">47.55 K</td>
+    <td style="white-space: nowrap; text-align: right">21.03 μs</td>
+    <td style="white-space: nowrap; text-align: right">±52.64%</td>
+    <td style="white-space: nowrap; text-align: right">17.99 μs</td>
+    <td style="white-space: nowrap; text-align: right">58.99 μs</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">21.29 K</td>
-    <td style="white-space: nowrap; text-align: right">46.98 μs</td>
-    <td style="white-space: nowrap; text-align: right">±28.27%</td>
-    <td style="white-space: nowrap; text-align: right">40.90 μs</td>
-    <td style="white-space: nowrap; text-align: right">84.90 μs</td>
+    <td style="white-space: nowrap; text-align: right">43.35 K</td>
+    <td style="white-space: nowrap; text-align: right">23.07 μs</td>
+    <td style="white-space: nowrap; text-align: right">±102.94%</td>
+    <td style="white-space: nowrap; text-align: right">19.99 μs</td>
+    <td style="white-space: nowrap; text-align: right">65.99 μs</td>
   </tr>
 
 </table>
@@ -114,20 +114,20 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap;text-align: right">410.27 K</td>
+    <td style="white-space: nowrap;text-align: right">1399.73 K</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">24.87 K</td>
-    <td style="white-space: nowrap; text-align: right">16.5x</td>
+    <td style="white-space: nowrap; text-align: right">47.55 K</td>
+    <td style="white-space: nowrap; text-align: right">29.44x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">21.29 K</td>
-    <td style="white-space: nowrap; text-align: right">19.27x</td>
+    <td style="white-space: nowrap; text-align: right">43.35 K</td>
+    <td style="white-space: nowrap; text-align: right">32.29x</td>
   </tr>
 
 </table>
@@ -156,8 +156,8 @@ Memory Usage
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap">656 B</td>
-    <td>1.12x</td>
+    <td style="white-space: nowrap">680 B</td>
+    <td>1.16x</td>
   </tr>
 
 </table>

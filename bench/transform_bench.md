@@ -15,7 +15,7 @@ Benchmark suite executing on the following system:
     <td>macOS</td>
   </tr><tr>
     <th style="white-space: nowrap">CPU Information</th>
-    <td style="white-space: nowrap">Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz</td>
+    <td style="white-space: nowrap">Apple M1</td>
   </tr><tr>
     <th style="white-space: nowrap">Number of Available Cores</th>
     <td style="white-space: nowrap">8</td>
@@ -24,10 +24,10 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.11.3</td>
+    <td style="white-space: nowrap">1.12.2</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">23.2</td>
+    <td style="white-space: nowrap">24.0.5</td>
   </tr>
 </table>
 
@@ -67,11 +67,11 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap; text-align: right">0.128</td>
-    <td style="white-space: nowrap; text-align: right">7.79 s</td>
-    <td style="white-space: nowrap; text-align: right">±8.52%</td>
-    <td style="white-space: nowrap; text-align: right">7.56 s</td>
-    <td style="white-space: nowrap; text-align: right">9.38 s</td>
+    <td style="white-space: nowrap; text-align: right">0.47</td>
+    <td style="white-space: nowrap; text-align: right">2.14 s</td>
+    <td style="white-space: nowrap; text-align: right">±0.47%</td>
+    <td style="white-space: nowrap; text-align: right">2.14 s</td>
+    <td style="white-space: nowrap; text-align: right">2.16 s</td>
   </tr>
 
 </table>
@@ -88,7 +88,7 @@ Memory Usage
   </tr>
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap">1.24 GB</td>
+    <td style="white-space: nowrap">1.25 GB</td>
 
   </tr>
 
