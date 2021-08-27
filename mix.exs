@@ -145,7 +145,7 @@ defmodule TimeZoneInfo.MixProject do
       {:castore, "~> 0.1", optional: true},
       {:mint, "~> 1.0", optional: true},
       # dev and test
-      {:benchee_dsl, "~> 0.1", only: :dev},
+      {:benchee_dsl, "~> 0.1", only: [:dev, :test]},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
