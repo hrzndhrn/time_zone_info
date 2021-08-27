@@ -5,7 +5,7 @@ defmodule TimeZoneInfo.MixProject do
     [
       app: :time_zone_info,
       version: "0.5.4",
-      elixir: "~> 1.8",
+      elixir: "~> 1.10",
       name: "TimeZoneInfo",
       description: description(),
       start_permanent: Mix.env() == :prod,
@@ -27,7 +27,7 @@ defmodule TimeZoneInfo.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :crypto],
+      extra_applications: [:logger],
       mod: {TimeZoneInfo.Application, []},
       env: env()
     ]
@@ -145,7 +145,7 @@ defmodule TimeZoneInfo.MixProject do
       {:castore, "~> 0.1", optional: true},
       {:mint, "~> 1.0", optional: true},
       # dev and test
-      {:benchee_dsl, "~> 0.1", only: :dev},
+      {:benchee_dsl, "~> 0.1", only: [:dev, :test]},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
@@ -153,10 +153,9 @@ defmodule TimeZoneInfo.MixProject do
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
-      {:mime, "~> 1.6.0", only: :test, override: true},
       {:mox, "~> 1.0", only: :test},
       {:nerves_time_zones, "~> 0.1.2", only: [:dev]},
-      {:plug_cowboy, "~> 2.3", only: [:dev, :test]},
+      {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},

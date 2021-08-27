@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0-dev
+
+- Update required Elixir version to `~> 1.10`
+- Replace :crypto.hash/2 by :erlang.phash/1.
+
 ## 0.5.3 - 2021/03/13
 
 - Updating `priv/data.etf` with IANA tzdata version 2021a.

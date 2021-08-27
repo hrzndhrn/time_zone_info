@@ -12,9 +12,6 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       binary = :erlang.term_to_binary(term, compressed: 9)
       {:ok, binary}
     end
-
-    # rescue
-    #  _ -> {:error, :encode_fails}
   end
 
   @doc """
@@ -31,17 +28,15 @@ defmodule TimeZoneInfo.ExternalTermFormat do
   @doc """
   Returns a checksum for the `binary` or `TimeZoneInfo.data`.
   """
-  @spec checksum(TimeZoneInfo.data()) :: {:ok, String.t()} | {:error, term()}
+  @spec checksum(TimeZoneInfo.data() | binary()) :: {:ok, String.t()} | {:error, term()}
   def checksum(data) when is_map(data) do
-    with {:ok, data} <- encode(data) do
-      checksum(data)
-    end
+    {:ok, data |> :erlang.phash2() |> to_string()}
   end
 
-  @spec checksum(binary) :: {:ok, String.t()} | {:error, term()}
   def checksum(data) when is_binary(data) do
-    checksum = :md5 |> :crypto.hash(data) |> Base.encode16()
-    {:ok, checksum}
+    with {:ok, term} <- decode(data) do
+      checksum(term)
+    end
   end
 
   # These functions validate the decoded data. The code ensures also that all

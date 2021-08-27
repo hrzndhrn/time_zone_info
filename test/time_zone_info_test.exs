@@ -89,7 +89,7 @@ defmodule TimeZoneInfoTest do
              } = iana |> File.read!() |> TimeZoneInfo.data()
 
       assert version == "2019c"
-      assert checksum == "F6944CA1596A0B83630CBBCD92EEFDB5"
+      assert checksum == "5968945"
       assert map_size(links) == 86
       assert map_size(rules) == 29
       assert map_size(time_zones) == 387
@@ -112,7 +112,7 @@ defmodule TimeZoneInfoTest do
              } = iana |> File.read!() |> TimeZoneInfo.data()
 
       assert version == "2020a"
-      assert checksum == "84704B8170CBC786F9FB5E4AB6C2C69A"
+      assert checksum == "76935688"
       assert map_size(links) == 86
       assert map_size(rules) == 29
       assert map_size(time_zones) == 387
