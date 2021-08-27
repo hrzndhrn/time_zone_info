@@ -27,7 +27,7 @@ defmodule TimeZoneInfo.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :crypto],
+      extra_applications: [:logger],
       mod: {TimeZoneInfo.Application, []},
       env: env()
     ]
@@ -153,7 +153,7 @@ defmodule TimeZoneInfo.MixProject do
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
-      {:mime, "~> 1.6.0", only: :test, override: true},
+      {:mime, "~> 1.6.0", only: [:test, :dev], override: true},
       {:mox, "~> 1.0", only: :test},
       {:nerves_time_zones, "~> 0.1.2", only: [:dev]},
       {:plug_cowboy, "~> 2.3", only: [:dev, :test]},
