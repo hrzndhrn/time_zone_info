@@ -23,17 +23,15 @@ end
 ## Usage
 
 After installation, `TimeZoneInfo` can be used as follows.
-```
+```elixir
 iex> TimeZoneInfo.iana_version
 "2021a"
 iex> TimeZoneInfo.time_zones() |> Enum.take(3)
 ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa"]
-iex> TimeZoneInfo.period_from_utc(~N[2020-03-29 01:30:00], "Europe/Berlin")
-{:ok, {3600, 3600, "CEST"}}
 ```
 
 In combination with `DateTime` and `Calendar`:
-```
+```elixir
 iex> {:ok, berlin} = DateTime.from_naive(
 ...>   ~N[2020-03-29 01:30:00],
 ...>   "Europe/Berlin",
@@ -48,7 +46,7 @@ iex> DateTime.shift_zone(berlin, "America/New_York")
 Instead of the line
 `Calendar.put_time_zone_database(TimeZoneInfo.TimeZoneDatabase)` you can also
 specify the following entry in the configuration.
-```
+```elixir
 config :elixir, :time_zone_database, TimeZoneInfo.TimeZoneDatabase
 ```
 
