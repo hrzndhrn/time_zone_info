@@ -28,6 +28,14 @@ iex> TimeZoneInfo.iana_version
 "2021a"
 iex> TimeZoneInfo.time_zones() |> Enum.take(3)
 ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa"]
+iex> TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(~N[2021-09-23 09:56:00], "Europe/Berlin")
+{:ok,
+ %{
+   std_offset: 3600,
+   utc_offset: 3600,
+   wall_period: {~N[2021-03-28 03:00:00], ~N[2021-10-31 03:00:00]},
+   zone_abbr: "CEST"
+ }}
 ```
 
 In combination with `DateTime` and `Calendar`:
