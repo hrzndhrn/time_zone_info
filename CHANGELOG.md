@@ -1,25 +1,26 @@
 # Changelog
 
-## 0.6.0-dev
+## 0.6.0 - 2021/09/25
 
 - Update required Elixir version to `~> 1.10`
 - Replace :crypto.hash/2 by :erlang.phash/1.
+- Update `priv/data.etf` with IANA tzdata version 2021b.
 
 ## 0.5.3 - 2021/03/13
 
-- Updating `priv/data.etf` with IANA tzdata version 2021a.
+- Update `priv/data.etf` with IANA tzdata version 2021a.
 
 ## 0.5.3 - 2021/01/13
 
-- Updating `priv/data.etf` with IANA tzdata version 2020f.
+- Update `priv/data.etf` with IANA tzdata version 2020f.
 
 ## 0.5.2 - 2020/10/26
 
-- Updating `priv/data.etf` with IANA tzdata version 2020d.
+- Update `priv/data.etf` with IANA tzdata version 2020d.
 
 ## 0.5.1 - 2020/07/08
 
-- Supporting different calendars.
+- Support different calendars.
 
 ## 0.5.0 - 2020/06/08
 

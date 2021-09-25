@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.5.4",
+      version: "0.6.0",
       elixir: "~> 1.10",
       name: "TimeZoneInfo",
       description: description(),
