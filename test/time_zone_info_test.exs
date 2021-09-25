@@ -131,5 +131,42 @@ defmodule TimeZoneInfoTest do
                "southamerica"
              ]
     end
+
+    test "tzdata2021b" do
+      iana = "test/fixtures/iana/tzdata2021b.tar.gz"
+
+      assert {
+               :ok,
+               %{
+                 links: links,
+                 rules: rules,
+                 time_zones: time_zones,
+                 version: version,
+                 config: config
+               },
+               checksum
+             } = iana |> File.read!() |> TimeZoneInfo.data()
+
+      assert version == "2021b"
+      assert checksum == "132411756"
+
+      assert map_size(links) == 7
+      assert map_size(rules) == 28
+      assert map_size(time_zones) == 377
+
+      assert config[:time_zones] == :all
+      assert config[:lookahead] == 10
+
+      assert config[:files] == [
+               "africa",
+               "antarctica",
+               "asia",
+               "australasia",
+               "etcetera",
+               "europe",
+               "northamerica",
+               "southamerica"
+             ]
+    end
   end
 end
