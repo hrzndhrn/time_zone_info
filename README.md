@@ -1,8 +1,8 @@
 # TimeZoneInfo
-[![Hex.pm](https://img.shields.io/hexpm/v/time_zone_info.svg)](https://hex.pm/packages/time_zone_info)
-![CI](https://github.com/hrzndhrn/time_zone_info/workflows/CI/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/hrzndhrn/time_zone_info/badge.svg)](https://coveralls.io/github/hrzndhrn/time_zone_info)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Hex.pm: version](https://img.shields.io/hexpm/v/time_zone_info.svg?style=flat-square)](https://hex.pm/packages/time_zone_info)
+[![GitHub: CI status](https://img.shields.io/github/workflow/status/hrzndhrn/time_zone_info/CI?style=flat-square)](https://github.com/hrzndhrn/time_zone_info/actions)
+[![Coveralls: coverage](https://img.shields.io/coveralls/github/hrzndhrn/time_zone_info?style=flat-square)](https://coveralls.io/github/hrzndhrn/time_zone_info)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://github.com/hrzndhrn/time_zone_info/blob/main/LICENSE.md)
 
 Time zone support for Elixir by using the
 [IANA Time Zone Database](https://www.iana.org/time-zones).
