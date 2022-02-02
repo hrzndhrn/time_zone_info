@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1 - 2022/??/??
+
+- Update `priv/data.etf` with IANA tzdata version 2021e.
+
 ## 0.6.0 - 2021/09/25
 
 - Update required Elixir version to `~> 1.10`
