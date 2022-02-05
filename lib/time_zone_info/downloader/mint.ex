@@ -61,7 +61,7 @@ defmodule TimeZoneInfo.Downloader.Mint do
                 {:done, ^request_ref} ->
                   {status, {body, :complete}}
 
-                {_, ^request_ref, _} ->
+                {_incomplete, ^request_ref, _data} ->
                   {status, {body, :incomplete}}
               end
             end

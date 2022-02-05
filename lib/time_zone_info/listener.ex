@@ -19,7 +19,7 @@ defmodule TimeZoneInfo.Listener do
   defp impl do
     case Application.get_env(:time_zone_info, :listener) do
       module when is_atom(module) and module != nil -> {:ok, module}
-      _ -> :undefined
+      _undefined -> :undefined
     end
   end
 

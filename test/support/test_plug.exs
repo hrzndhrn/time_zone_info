@@ -40,12 +40,12 @@ defmodule TestPlug do
         {"time_zones", time_zones}, acc -> [{:time_zones, time_zones} | acc]
         {"files", files}, acc -> [{:files, files} | acc]
         {"lookahead", lookahead}, acc -> [{:lookahead, lookahead} | acc]
-        _, acc -> acc
+        _unknown, acc -> acc
       end)
       |> Keyword.update(:lookahead, nil, fn lookahead ->
         case Integer.parse(lookahead) do
           {years, ""} -> years
-          _ -> lookahead
+          _else -> lookahead
         end
       end)
       |> Keyword.put(:encode, true)

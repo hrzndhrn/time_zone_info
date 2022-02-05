@@ -139,9 +139,8 @@ defmodule TimeZoneInfo.Updater.Impl do
 
     with {:ok, time_zones} <- fetch_env(:time_zones),
          {:ok, data} <- DataConfig.update_time_zones(data, time_zones),
-         :ok <- DataStore.put(data),
-         :ok <- DataPersistence.put(data) do
-      :ok
+         :ok <- DataStore.put(data) do
+      DataPersistence.put(data)
     end
   end
 
@@ -184,7 +183,7 @@ defmodule TimeZoneInfo.Updater.Impl do
       opts =
         case DataPersistence.checksum() do
           {:ok, checksum} -> Keyword.put(opts, :checksum, checksum)
-          _ -> opts
+          _error -> opts
         end
 
       case Downloader.download(opts) do
@@ -222,7 +221,7 @@ defmodule TimeZoneInfo.Updater.Impl do
   end
 
   defp join(files) do
-    files |> Enum.map(fn {_name, content} -> content end) |> Enum.join("\n")
+    Enum.map_join(files, "\n", fn {_name, content} -> content end)
   end
 
   defp step(:run) do
@@ -285,17 +284,18 @@ defmodule TimeZoneInfo.Updater.Impl do
       [] ->
         {:error, {:invalid_config, [time_zones: []]}}
 
-      list when is_list(list) ->
-        case Enum.all?(list, fn item -> is_binary(item) end) do
-          true ->
-            {:ok, list}
-
-          false ->
-            {:error, {:invalid_config, [time_zones: list]}}
-        end
+      [_ | _] = list ->
+        validate_time_zones(list)
 
       value ->
         {:error, {:invalid_config, [time_zones: value]}}
+    end
+  end
+
+  defp validate_time_zones(list) do
+    case Enum.all?(list, fn item -> is_binary(item) end) do
+      true -> {:ok, list}
+      false -> {:error, {:invalid_config, [time_zones: list]}}
     end
   end
 end

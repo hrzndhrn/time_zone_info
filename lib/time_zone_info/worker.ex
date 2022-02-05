@@ -48,7 +48,7 @@ defmodule TimeZoneInfo.Worker do
   # Implementation
 
   @impl true
-  def init(_) do
+  def init(_opts) do
     state = do_update(:run)
     {:ok, state}
   end

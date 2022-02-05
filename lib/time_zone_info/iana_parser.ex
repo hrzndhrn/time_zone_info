@@ -154,8 +154,6 @@ defmodule TimeZoneInfo.IanaParser do
   end
 
   defp read(path, files) do
-    files
-    |> Enum.map(fn file -> path |> Path.join(file) |> File.read!() end)
-    |> Enum.join("\n")
+    Enum.map_join(files, "\n", fn file -> path |> Path.join(file) |> File.read!() end)
   end
 end

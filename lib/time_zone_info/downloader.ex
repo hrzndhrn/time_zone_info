@@ -35,6 +35,7 @@ defmodule TimeZoneInfo.Downloader do
   @callback download(uri :: URI.t(), opts :: opts) :: download() | {:error, term()}
 
   @doc false
+  @spec download(keyword()) :: download() | {:error, term()}
   def download(config) do
     with {:ok, mode} <- mode(),
          {:ok, uri} <- uri(mode, config),
@@ -75,7 +76,7 @@ defmodule TimeZoneInfo.Downloader do
     end
   end
 
-  defp uri(_, _), do: uri()
+  defp uri(_mode, _config), do: uri()
 
   defp prepare_query(config) do
     config
@@ -86,7 +87,7 @@ defmodule TimeZoneInfo.Downloader do
   defp prepare_query(config, key, query_key) do
     case Keyword.pop(config, key) do
       {[_ | _] = values, config} ->
-        Enum.into(values, config, fn value -> {query_key, value} end)
+        values |> Enum.map(fn value -> {query_key, value} end) |> Keyword.merge(config)
 
       {_, config} ->
         config

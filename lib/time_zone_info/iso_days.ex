@@ -22,7 +22,6 @@ defmodule TimeZoneInfo.IsoDays do
   """
   @spec to_year(Calendar.iso_days()) :: Calendar.year()
   def to_year(iso_days) do
-    {year, _, _, _, _, _, _} = naive_datetime_from_iso_days(iso_days)
-    year
+    iso_days |> naive_datetime_from_iso_days() |> elem(0)
   end
 end

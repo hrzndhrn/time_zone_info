@@ -49,7 +49,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
               [{:time_zone_periods_from_wall_datetime, _, [datetime, time_zone]}, expected]}
            ) do
     desc = if desc == nil, do: "returns periods for", else: desc
-    {:sigil_N, _, [{_, _, [datetime_str]}, []]} = datetime
+    {:sigil_N, _meta1, [{_sigil, _meta2, [datetime_str]}, []]} = datetime
 
     quote do
       test "#{unquote(desc)} #{unquote(time_zone)} at #{unquote(datetime_str)}" do
@@ -68,7 +68,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
              {:==, _, [{:time_zone_period_from_utc_iso_days, _, [datetime, time_zone]}, expected]}
            ) do
     desc = if desc == nil, do: "returns period for", else: desc
-    {:sigil_N, _, [{_, _, [datetime_str]}, []]} = datetime
+    {:sigil_N, _meta1, [{_sigil, _meta2, [datetime_str]}, []]} = datetime
 
     quote do
       test "#{unquote(desc)} #{unquote(time_zone)} at #{unquote(datetime_str)}" do
@@ -197,7 +197,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
   def datetime(from, to) do
     diff = NaiveDateTime.diff(to, from)
 
-    StreamData.map(StreamData.constant(nil), fn _ ->
+    StreamData.map(StreamData.constant(nil), fn _nil ->
       NaiveDateTime.add(from, :rand.uniform(diff), :second)
     end)
   end
@@ -206,7 +206,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
     time_zones = TimeZoneInfo.time_zones()
     diff = NaiveDateTime.diff(to, from)
 
-    StreamData.map(StreamData.constant(nil), fn _ ->
+    StreamData.map(StreamData.constant(nil), fn _nil ->
       time_zone = Enum.random(time_zones)
       at = NaiveDateTime.add(from, :rand.uniform(diff), :second)
 

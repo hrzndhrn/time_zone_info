@@ -16,7 +16,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2}
 
   @impl true
-  def time_zone_periods_from_wall_datetime(_, "Etc/UTC"),
+  def time_zone_periods_from_wall_datetime(%NaiveDateTime{}, "Etc/UTC"),
     do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC", wall_period: {:min, :max}}}
 
   def time_zone_periods_from_wall_datetime(
@@ -35,7 +35,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   @impl true
-  def time_zone_period_from_utc_iso_days(_, "Etc/UTC"),
+  def time_zone_period_from_utc_iso_days(_iso_days, "Etc/UTC"),
     do: {:ok, %{std_offset: 0, utc_offset: 0, zone_abbr: "UTC", wall_period: {:min, :max}}}
 
   def time_zone_period_from_utc_iso_days(iso_days, time_zone) do
@@ -83,7 +83,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   defp head([], default), do: default
 
-  defp head(list, _), do: hd(list)
+  defp head(list, _default), do: hd(list)
 
   defp to_period(
          {utc_offset, rule_name, {_, _} = format},
@@ -101,7 +101,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end
   end
 
-  defp to_period({utc_offset, std_offset, zone_abbr, wall_period}, _) do
+  defp to_period({utc_offset, std_offset, zone_abbr, wall_period}, _iso_days) do
     {:ok,
      %{
        utc_offset: utc_offset,
@@ -111,7 +111,11 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
      }}
   end
 
-  defp to_periods({:none, {_at, {utc_offset, std_offset, zone_abbr, _wall_period}}, :none}, _, _) do
+  defp to_periods(
+         {:none, {_at, {utc_offset, std_offset, zone_abbr, _wall_period}}, :none},
+         _at_wall,
+         _at_wall_datetime
+       ) do
     {:ok,
      %{
        utc_offset: utc_offset,

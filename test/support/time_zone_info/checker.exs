@@ -15,12 +15,14 @@ defmodule TimeZoneInfo.Checker do
     expected: #{inspect(expected)}\
     """
 
-    config()
-    |> Enum.map(fn checker_config ->
-      check(checker_config, fun, [datetime, time_zone, update(expected)], info)
-    end)
-    |> join()
-    |> case do
+    result =
+      config()
+      |> Enum.map(fn checker_config ->
+        check(checker_config, fun, [datetime, time_zone, update(expected)], info)
+      end)
+      |> join()
+
+    case result do
       {:valid, ""} ->
         :ok
 
@@ -42,36 +44,37 @@ defmodule TimeZoneInfo.Checker do
         message = mod |> apply(fun, args) |> message(mod, info?(config))
 
         case config[:assert] do
-          false ->
-            message
-
-          true ->
-            case message do
-              {:error, message} -> flunk("#{info}\n#{message}")
-              message -> message
-            end
+          false -> message
+          true -> check_assert(message, info)
         end
 
-      _ ->
+      _flag ->
         {:valid, ""}
+    end
+  end
+
+  defp check_assert(message, info) do
+    case message do
+      {:error, message} -> flunk("#{info}\n#{message}")
+      message -> message
     end
   end
 
   defp info?(config), do: config[:info] || false
 
-  defp message(:blacklist, _, _), do: {:blacklist, nil}
+  defp message(:blacklist, _mod, _info), do: {:blacklist, nil}
 
   defp message({validation, result}, mod, info) when validation == :invalid or info == true do
     {validation, "#{inspect(mod)}\nresult: #{inspect(result)}"}
   end
 
-  defp message({:valid, _}, _, _), do: {:valid, ""}
+  defp message({:valid, _result}, _mod, _info), do: {:valid, ""}
 
   defp join(results, flag \\ :valid, acc \\ [])
 
   defp join([], flag, acc), do: {flag, acc |> Enum.reverse() |> Enum.join("\n")}
 
-  defp join([{:blacklist, _} | results], flag, acc) do
+  defp join([{:blacklist, _result} | results], flag, acc) do
     join(results, flag, acc)
   end
 

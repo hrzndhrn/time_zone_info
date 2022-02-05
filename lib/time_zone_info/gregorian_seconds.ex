@@ -16,7 +16,9 @@ defmodule TimeZoneInfo.GregorianSeconds do
           Calendar.utc_offset(),
           Calendar.std_offset()
         ) :: t()
-  def to_utc(seconds, time_standard, _, _) when time_standard in @utc, do: seconds
+  def to_utc(seconds, time_standard, _utc_offset, _std_offset) when time_standard in @utc do
+    seconds
+  end
 
   def to_utc(seconds, time_standard, utc_offset, std_offset) do
     case time_standard do

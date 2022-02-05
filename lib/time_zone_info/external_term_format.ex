@@ -73,9 +73,8 @@ defmodule TimeZoneInfo.ExternalTermFormat do
 
   defp validate(:config, %{config: config}) do
     with :ok <- validate(:config_time_zones, config[:time_zones]),
-         :ok <- validate(:config_lookahead, config[:lookahead]),
-         :ok <- validate(:config_files, config[:files]) do
-      :ok
+         :ok <- validate(:config_lookahead, config[:lookahead]) do
+      validate(:config_files, config[:files])
     end
   end
 
@@ -107,7 +106,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     |> Map.get(:links)
     |> Enum.all?(fn
       {from, to} when is_binary(from) and is_binary(to) -> true
-      _ -> false
+      _else -> false
     end)
     |> check(:invalid_links)
   end
@@ -117,7 +116,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     |> Map.get(:time_zones)
     |> Enum.all?(fn
       {name, zone_states} when is_binary(name) -> validate(:zone_states, zone_states)
-      _ -> false
+      _else -> false
     end)
     |> check(:invalid_time_zones)
   end
@@ -130,7 +129,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       {at, zone_rule} when at >= 0 ->
         validate(:zone_rule, zone_rule)
 
-      _ ->
+      _else ->
         false
     end)
   end
@@ -148,14 +147,14 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     validate(:format, format)
   end
 
-  defp validate(:zone_state, _), do: false
+  defp validate(:zone_state, _zone_state), do: false
 
   defp validate(:format, format) do
     case format do
       {:choice, [one, two]} when is_binary(one) and is_binary(two) -> true
       {:template, template} when is_binary(template) -> true
       {:string, string} when is_binary(string) -> true
-      _ -> false
+      _else -> false
     end
   end
 
@@ -166,7 +165,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     |> Map.get(:rules)
     |> Enum.all?(fn
       {name, rule_set} when is_binary(name) -> validate(:rule_set, rule_set)
-      _ -> false
+      _else -> false
     end)
     |> check(:invalid_rules)
   end
@@ -175,7 +174,7 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     Enum.all?(rule_set, fn rule -> validate(:rule, rule) end)
   end
 
-  defp validate(:rule_set, _), do: false
+  defp validate(:rule_set, _rule_set), do: false
 
   defp validate(:rule, {at, time_standard, utc_offset, letters})
        when is_tuple(at) and time_standard in [:wall, :standard, :gmt, :utc, :zulu] and
@@ -183,14 +182,14 @@ defmodule TimeZoneInfo.ExternalTermFormat do
     validate(:at, at)
   end
 
-  defp validate(:rule, _), do: false
+  defp validate(:rule, _rule), do: false
 
   defp validate(:at, {month, day, {hour, minute, second}})
        when is_integer(month) and is_integer(hour) and is_integer(minute) and is_integer(second) do
     validate(:day, day)
   end
 
-  defp validate(:at, _), do: false
+  defp validate(:at, _at), do: false
 
   defp validate(:day, day) when is_integer(day), do: true
 
@@ -203,14 +202,14 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       when is_integer(day) and op in [:le, :ge] and is_integer(day_of_week) ->
         true
 
-      _ ->
+      _else ->
         false
     end
   end
 
-  defp validate(:day, _), do: false
+  defp validate(:day, _day), do: false
 
-  defp check(true, _), do: :ok
+  defp check(true, _ok), do: :ok
 
   defp check(false, error), do: {:error, error}
 end

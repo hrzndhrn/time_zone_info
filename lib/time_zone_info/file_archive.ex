@@ -19,15 +19,13 @@ defmodule TimeZoneInfo.FileArchive do
   defp files(files), do: {:files, Enum.map(files, &String.to_charlist/1)}
 
   defp to_map(extracted, files) do
-    extracted
-    |> Enum.reduce({%{}, files}, fn {name, content}, {map, list} ->
-      name = List.to_string(name)
-      map = Map.put(map, name, content)
-      list = List.delete(list, name)
+    result =
+      Enum.reduce(extracted, {%{}, files}, fn {name, content}, {map, list} ->
+        name = List.to_string(name)
+        {Map.put(map, name, content), List.delete(list, name)}
+      end)
 
-      {map, list}
-    end)
-    |> case do
+    case result do
       {files, []} -> {:ok, files}
       {_files, not_found} -> {:error, {:not_found, not_found}}
     end

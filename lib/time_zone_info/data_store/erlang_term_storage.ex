@@ -23,7 +23,7 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
          true <- put(data, :time_zone_names, @time_zones) do
       :ok
     else
-      _ -> :error
+      _error -> :error
     end
   end
 
@@ -32,7 +32,7 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
     Enum.each([@app, @time_zones, @transitions, @links, @rules], fn table ->
       case :ets.info(table) do
         :undefined -> :ok
-        _ -> :ets.delete(table)
+        _info -> :ets.delete(table)
       end
     end)
   end
@@ -79,7 +79,7 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
   def empty? do
     case :ets.info(@app) do
       :undefined -> true
-      _ -> false
+      _info -> false
     end
   end
 
@@ -115,9 +115,8 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
     all = time_zones |> Enum.concat(links) |> Enum.sort()
 
     with true <- :ets.insert(table, {:ignore, time_zones}),
-         true <- :ets.insert(table, {:only, links}),
-         true <- :ets.insert(table, {:include, all}) do
-      true
+         true <- :ets.insert(table, {:only, links}) do
+      :ets.insert(table, {:include, all})
     end
   end
 
@@ -139,7 +138,7 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
   defp create_table(table) do
     case :ets.info(table) do
       :undefined -> :ets.new(table, [:named_table, :set, :public, read_concurrency: true])
-      _ -> table
+      _info -> table
     end
   end
 end

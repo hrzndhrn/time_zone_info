@@ -52,7 +52,16 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
          acc \\ []
        )
 
-  defp transform_zone_states([], _, _, _, _, acc), do: List.flatten(acc)
+  defp transform_zone_states(
+         [],
+         _rule_sets,
+         _since,
+         _std_offset,
+         _last_zone_state,
+         acc
+       ) do
+    List.flatten(acc)
+  end
 
   defp transform_zone_states(
          [zone_state | zone_states],
@@ -80,7 +89,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     )
   end
 
-  defp transitions(:none, since, zone_state, _, _) do
+  defp transitions(:none, since, zone_state, _std_offset, _last_zone_state) do
     utc_offset = zone_state[:utc_offset]
     std_offset = 0
     zone_abbr = Abbr.create(zone_state[:format])
@@ -93,7 +102,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     }
   end
 
-  defp transitions({:std_offset, std_offset}, since, zone_state, _, _) do
+  defp transitions({:std_offset, std_offset}, since, zone_state, _std_offset, _last_zone_state) do
     utc_offset = zone_state[:utc_offset]
     zone_abbr = Abbr.create(zone_state[:format], std_offset)
     until = zone_state |> until(std_offset)

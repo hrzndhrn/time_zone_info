@@ -32,7 +32,7 @@ defmodule TimeZoneInfo.Listener.ErrorLogger do
     Logger.error("TimeZoneInfo: Update failed! #{inspect(error)}")
   end
 
-  def on_update(_), do: :ok
+  def on_update(_event), do: :ok
 
   defp to_one_line(string), do: String.replace(string, "\n", " ")
 end

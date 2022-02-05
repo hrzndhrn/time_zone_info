@@ -56,7 +56,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
     def empty? do
       case version() do
         nil -> true
-        _ -> false
+        _version -> false
       end
     end
 
@@ -71,7 +71,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
       |> Enum.map(fn {key, _value} -> key end)
       |> Enum.filter(fn
         key when is_tuple(key) -> elem(key, 0) == @app
-        _ -> false
+        _key -> false
       end)
       |> Enum.each(fn key ->
         :persistent_term.erase(key)

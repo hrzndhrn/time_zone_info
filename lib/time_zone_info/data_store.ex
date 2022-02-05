@@ -90,7 +90,7 @@ defmodule TimeZoneInfo.DataStore do
       :only ->
         time_zones
 
-      _ ->
+      _else ->
         case Enum.member?(time_zones, @default_time_zone) do
           true -> time_zones
           false -> Enum.sort([@default_time_zone | time_zones])

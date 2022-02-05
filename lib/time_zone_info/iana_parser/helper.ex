@@ -1,5 +1,6 @@
 defmodule TimeZoneInfo.IanaParser.Helper do
   @moduledoc false
+
   import NimbleParsec
 
   @seconds_per_hour 3600
@@ -60,10 +61,7 @@ defmodule TimeZoneInfo.IanaParser.Helper do
   end
 
   def reduce_word(data) do
-    data
-    |> IO.iodata_to_binary()
-    |> String.trim()
-    |> case do
+    case data |> IO.iodata_to_binary() |> String.trim() do
       "" -> nil
       "-" -> nil
       x -> x
@@ -268,20 +266,17 @@ defmodule TimeZoneInfo.IanaParser.Helper do
 
   def reduce_collect({:zone, data}) do
     zones =
-      Enum.into(data, %{}, fn [name: name, states: states] ->
+      for [name: name, states: states] <- data, into: %{} do
         states =
           Enum.map(states, fn state ->
-            case state[:until] == nil do
-              true ->
-                List.insert_at(state, 3, {:until, nil})
-
-              false ->
-                state
+            case state[:until] do
+              nil -> List.insert_at(state, 3, {:until, nil})
+              _until -> state
             end
           end)
 
         {name, states}
-      end)
+      end
 
     {:zones, zones}
   end

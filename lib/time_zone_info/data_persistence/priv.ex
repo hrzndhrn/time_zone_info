@@ -78,18 +78,18 @@ defmodule TimeZoneInfo.DataPersistence.Priv do
   end
 
   defp fetch_env(:path) do
-    with {:priv, {:ok, priv}} <- {:priv, Application.fetch_env(:time_zone_info, :priv)},
-         {:path, {:ok, path}} when is_binary(path) <- {:path, Keyword.fetch(priv, :path)} do
-      {:ok, path}
-    else
-      {:priv, :error} ->
-        {:error, {:invalid_config, :priv}}
+    with {:ok, priv} <- fetch_env(:priv) do
+      case Keyword.fetch(priv, :path) do
+        {:ok, path} when is_binary(path) -> {:ok, path}
+        {:ok, path} -> {:error, {:invalid_config, [priv: [path: path]]}}
+        :error -> {:error, {:invalid_config, [:priv, :path]}}
+      end
+    end
+  end
 
-      {:path, :error} ->
-        {:error, {:invalid_config, [:priv, :path]}}
-
-      {:path, {:ok, path}} ->
-        {:error, {:invalid_config, [priv: [path: path]]}}
+  defp fetch_env(:priv) do
+    with :error <- Application.fetch_env(:time_zone_info, :priv) do
+      {:error, {:invalid_config, :priv}}
     end
   end
 end

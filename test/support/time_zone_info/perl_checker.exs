@@ -41,11 +41,11 @@ defmodule TimeZoneInfo.PerlChecker do
     check_offset && check_abbr && check_dst
   end
 
-  defp check(_, _), do: false
+  defp check(_result, _expected), do: false
 
-  defp blacklist([_, "Etc" <> _]), do: :blacklist
+  defp blacklist([_date_time, "Etc" <> _etc]), do: :blacklist
 
-  defp blacklist(_), do: :ok
+  defp blacklist(_else), do: :ok
 
   defp period_from_utc(at, time_zone),
     do: perl("period_from_utc.pl", [time_zone, NaiveDateTime.to_iso8601(at)])
@@ -60,7 +60,7 @@ defmodule TimeZoneInfo.PerlChecker do
          {result, []} <- Code.eval_string(output) do
       result
     else
-      _ -> {:error, :time_zone_not_found}
+      _error -> {:error, :time_zone_not_found}
     end
   end
 end

@@ -21,7 +21,7 @@ defmodule TimeZoneInfo.WorkerTest do
 
   describe "start_link/1" do
     test "ends in state :ok" do
-      expect(UpdaterMock, :update, 1, fn _ -> :ok end)
+      expect(UpdaterMock, :update, 1, fn _opt -> :ok end)
 
       assert {:ok, _pid} = Worker.start_link(name: :worker_test)
 
@@ -30,7 +30,7 @@ defmodule TimeZoneInfo.WorkerTest do
     end
 
     test "call update" do
-      expect(UpdaterMock, :update, 1, fn _ -> :ok end)
+      expect(UpdaterMock, :update, 1, fn _opt -> :ok end)
 
       assert {:ok, _pid} = Worker.start_link(name: :worker_test)
 
@@ -39,7 +39,7 @@ defmodule TimeZoneInfo.WorkerTest do
     end
 
     test "ends in state {:error, ...}" do
-      expect(UpdaterMock, :update, 1, fn _ -> {:error, :foo} end)
+      expect(UpdaterMock, :update, 1, fn _optopt -> {:error, :foo} end)
 
       assert {:ok, _pid} = Worker.start_link(name: :worker_test)
 
@@ -51,7 +51,7 @@ defmodule TimeZoneInfo.WorkerTest do
       now = now()
       test_pid = self()
 
-      expect(UpdaterMock, :update, 2, fn _ ->
+      expect(UpdaterMock, :update, 2, fn _opt ->
         send(test_pid, :next)
         {:next, now + 1}
       end)
@@ -69,7 +69,7 @@ defmodule TimeZoneInfo.WorkerTest do
 
   describe "update/0" do
     test "ends in state :ok" do
-      expect(UpdaterMock, :update, 2, fn _ -> :ok end)
+      expect(UpdaterMock, :update, 2, fn _opt -> :ok end)
 
       assert {:ok, _pid} = Worker.start_link(name: :worker_test)
       assert Worker.update(:worker_test, :run) == :ok

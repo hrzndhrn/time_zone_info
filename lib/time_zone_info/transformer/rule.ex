@@ -54,7 +54,7 @@ defmodule TimeZoneInfo.Transformer.Rule do
   defp first_standard(rule_set) do
     Enum.find(rule_set, fn
       {_, {_, 0, _}} -> true
-      _ -> false
+      _else -> false
     end)
   end
 
@@ -97,5 +97,5 @@ defmodule TimeZoneInfo.Transformer.Rule do
     end
   end
 
-  def max?(_), do: false
+  def max?(_rule_or_rules), do: false
 end

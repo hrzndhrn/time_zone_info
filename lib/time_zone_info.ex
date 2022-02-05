@@ -137,7 +137,7 @@ defmodule TimeZoneInfo do
   def next_update do
     case Worker.next() do
       {:next, value} -> value
-      _ -> :error
+      _error -> :error
     end
   end
 
@@ -182,7 +182,7 @@ defmodule TimeZoneInfo do
 
   defp encode(data, true), do: ExternalTermFormat.encode(data)
 
-  defp encode(data, _), do: {:ok, data}
+  defp encode(data, _flag), do: {:ok, data}
 
   defp content(files) do
     case Map.pop(files, "version") do
@@ -192,15 +192,14 @@ defmodule TimeZoneInfo do
   end
 
   defp join(files) do
-    files |> Enum.map(fn {_name, content} -> content end) |> Enum.join("\n")
+    Enum.map_join(files, "\n", fn {_name, content} -> content end)
   end
 
   defp validate(config) do
     with {:ok, config} <- validate(:lookahead, config),
          {:ok, config} <- validate(:time_zones, config),
-         {:ok, config} <- validate(:files, config),
-         {:ok, config} <- validate(:version_file, config) do
-      {:ok, config}
+         {:ok, config} <- validate(:files, config) do
+      validate(:version_file, config)
     end
   end
 

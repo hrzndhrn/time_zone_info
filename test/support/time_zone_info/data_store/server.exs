@@ -6,7 +6,7 @@ defmodule TimeZoneInfo.DataStore.Server do
   @compile {:inline, get_transitions: 3, get_rules: 2}
 
   @impl true
-  def init(_), do: {:ok, :empty}
+  def init(_opts), do: {:ok, :empty}
 
   @impl true
   def put(data) do
@@ -43,23 +43,27 @@ defmodule TimeZoneInfo.DataStore.Server do
   def delete!, do: :ok
 
   @impl true
-  def handle_call({:put, data}, _, _) do
+  def handle_call({:put, data}, _from, _state) do
     {:reply, :ok, data}
   end
 
   def handle_call(
         {:get_transitions, time_zone},
-        _,
+        _from,
         %{time_zones: time_zones, links: links} = state
       ) do
     {:reply, get_transitions(time_zones, links, time_zone), state}
   end
 
-  def handle_call({:get_rules, rule_name}, _, %{rules: rules} = state) do
+  def handle_call({:get_rules, rule_name}, _from, %{rules: rules} = state) do
     {:reply, get_rules(rules, rule_name), state}
   end
 
-  def handle_call({:get_time_zones, select}, _, %{time_zones: time_zones, links: links} = state) do
+  def handle_call(
+        {:get_time_zones, select},
+        _from,
+        %{time_zones: time_zones, links: links} = state
+      ) do
     time_zones =
       case select do
         :ignore ->
@@ -77,7 +81,7 @@ defmodule TimeZoneInfo.DataStore.Server do
     {:reply, time_zones, state}
   end
 
-  def handle_call(:version, _, state) do
+  def handle_call(:version, _from, state) do
     version =
       case state do
         :empty -> nil
@@ -87,7 +91,7 @@ defmodule TimeZoneInfo.DataStore.Server do
     {:reply, version, state}
   end
 
-  def handle_call(:empty?, _, state) do
+  def handle_call(:empty?, _from, state) do
     {:reply, state == :empty, state}
   end
 

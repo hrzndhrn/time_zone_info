@@ -11,7 +11,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
 
   @impl true
   def put(data) do
-    with {:ok, path} <- fetch_path(),
+    with {:ok, path} <- fetch_env(:path),
          {:ok, data} <- ExternalTermFormat.encode(data) do
       File.write(path, data)
     end
@@ -19,7 +19,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
 
   @impl true
   def fetch do
-    with {:ok, path} <- fetch_path(),
+    with {:ok, path} <- fetch_env(:path),
          {:ok, data} <- File.read(path) do
       ExternalTermFormat.decode(data)
     end
@@ -27,7 +27,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
 
   @impl true
   def checksum do
-    with {:ok, path} <- fetch_path(),
+    with {:ok, path} <- fetch_env(:path),
          {:ok, data} <- File.read(path) do
       ExternalTermFormat.checksum(data)
     end
@@ -35,7 +35,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
 
   @impl true
   def fetch_last_update do
-    with {:ok, path} <- fetch_path(),
+    with {:ok, path} <- fetch_env(:path),
          {:ok, %Stat{mtime: mtime}} <- File.stat(path, time: :posix) do
       {:ok, mtime}
     end
@@ -43,7 +43,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
 
   @impl true
   def put_last_update(time) do
-    with {:ok, path} <- fetch_path() do
+    with {:ok, path} <- fetch_env(:path) do
       case File.exists?(path) do
         true -> File.touch(path, time)
         false -> {:error, :enoent}
@@ -53,7 +53,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
 
   @impl true
   def info do
-    with {:ok, path} <- fetch_path(),
+    with {:ok, path} <- fetch_env(:path),
          {:ok, stat} <- File.stat(path),
          {:ok, data} <- File.read(path) do
       %{
@@ -64,23 +64,21 @@ defmodule TimeZoneInfo.DataPersistence.FileSystem do
     end
   end
 
-  @spec fetch_path ::
+  @spec fetch_env(atom()) ::
           {:ok, Path.t()} | {:error, {:invalid_config, Keyword.key() | [Keyword.key()]}}
-  defp fetch_path do
-    with {:file_system, {:ok, file_system}} <-
-           {:file_system, Application.fetch_env(:time_zone_info, :file_system)},
-         {:path, {:ok, path}} when is_binary(path) <-
-           {:path, Keyword.fetch(file_system, :path)} do
-      {:ok, path}
-    else
-      {:file_system, :error} ->
-        {:error, {:invalid_config, :file_system}}
+  defp fetch_env(:path) do
+    with {:ok, file_system} <- fetch_env(:file_system) do
+      case Keyword.fetch(file_system, :path) do
+        {:ok, path} when is_binary(path) -> {:ok, path}
+        {:ok, path} -> {:error, {:invalid_config, [file_system: [path: path]]}}
+        :error -> {:error, {:invalid_config, [:file_system, :path]}}
+      end
+    end
+  end
 
-      {:path, :error} ->
-        {:error, {:invalid_config, [:file_system, :path]}}
-
-      {:path, {:ok, path}} ->
-        {:error, {:invalid_config, [file_system: [path: path]]}}
+  defp fetch_env(:file_system) do
+    with :error <- Application.fetch_env(:time_zone_info, :file_system) do
+      {:error, {:invalid_config, :file_system}}
     end
   end
 end

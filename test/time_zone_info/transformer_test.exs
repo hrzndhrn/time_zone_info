@@ -202,7 +202,7 @@ defmodule TimeZoneInfo.TransformerTest do
             tzvalidate: #{inspect(tzd)}
             """
 
-          _ ->
+          _else ->
             :ok
         end)
       end)
@@ -1177,9 +1177,7 @@ defmodule TimeZoneInfo.TransformerTest do
   end
 
   defp data(path, files) do
-    files
-    |> Enum.map(fn file -> path |> Path.join(file) |> File.read!() end)
-    |> Enum.join("\n")
+    Enum.map_join(files, "\n", fn file -> path |> Path.join(file) |> File.read!() end)
   end
 
   defp to_naive(data) do
@@ -1253,38 +1251,37 @@ defmodule TimeZoneInfo.TransformerTest do
     end)
     |> elem(0)
     |> Enum.into(%{}, fn {time_zone, transitions} ->
-      transitions =
-        Enum.map(transitions, fn transition ->
-          transition = String.split(transition)
-
-          case length(transition) do
-            4 ->
-              {
-                0,
-                time_to_seconds(Enum.at(transition, 1)),
-                Enum.at(transition, 2) == "daylight",
-                Enum.at(transition, 3)
-              }
-
-            5 ->
-              datetime =
-                transition
-                |> Enum.take(2)
-                |> Enum.join(" ")
-                |> NaiveDateTime.from_iso8601!()
-                |> GregorianSeconds.from_naive()
-
-              {
-                datetime,
-                time_to_seconds(Enum.at(transition, 2)),
-                Enum.at(transition, 3) == "daylight",
-                Enum.at(transition, 4)
-              }
-          end
-        end)
-
-      {time_zone, transitions}
+      {time_zone, Enum.map(transitions, &transition/1)}
     end)
+  end
+
+  defp transition(transition) do
+    transition = String.split(transition)
+
+    case length(transition) do
+      4 ->
+        {
+          0,
+          time_to_seconds(Enum.at(transition, 1)),
+          Enum.at(transition, 2) == "daylight",
+          Enum.at(transition, 3)
+        }
+
+      5 ->
+        datetime =
+          transition
+          |> Enum.take(2)
+          |> Enum.join(" ")
+          |> NaiveDateTime.from_iso8601!()
+          |> GregorianSeconds.from_naive()
+
+        {
+          datetime,
+          time_to_seconds(Enum.at(transition, 2)),
+          Enum.at(transition, 3) == "daylight",
+          Enum.at(transition, 4)
+        }
+    end
   end
 
   defp time_to_seconds("+" <> time), do: time_to_seconds(time)
@@ -1301,11 +1298,8 @@ defmodule TimeZoneInfo.TransformerTest do
   end
 
   defp get_time_zone(data, time_zone, link \\ false) do
-    data
-    |> Map.fetch!(:time_zones)
-    |> Map.fetch(time_zone)
-    |> case do
-      {:ok, _} = transitions ->
+    case data |> Map.fetch!(:time_zones) |> Map.fetch(time_zone) do
+      {:ok, _data} = transitions ->
         transitions
 
       :error ->

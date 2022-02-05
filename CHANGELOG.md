@@ -3,6 +3,7 @@
 ## 0.6.1 - 2022/??/??
 
 - Update `priv/data.etf` with IANA tzdata version 2021e.
+- Minor refactorings.
 
 ## 0.6.0 - 2021/09/25
 

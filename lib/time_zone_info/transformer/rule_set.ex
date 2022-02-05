@@ -243,13 +243,13 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
     {at, {std_offset, letters}}
   end
 
-  defp position(at, at, _), do: :start
+  defp position(at, at, _until), do: :start
 
   defp position(at, since, until) do
     case {at < since, at < until} do
       {_, false} -> :after
       {true, _} -> :before
-      _ -> :inside
+      _else -> :inside
     end
   end
 end
