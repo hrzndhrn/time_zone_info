@@ -4,11 +4,9 @@ defmodule TimeZoneInfo.Transformer do
   `TimeZoneInfo`.
   """
 
-  alias TimeZoneInfo.{
-    IanaParser,
-    Transformer.Rule,
-    Transformer.ZoneState
-  }
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Transformer.Rule
+  alias TimeZoneInfo.Transformer.ZoneState
 
   @type version :: String.t()
 

@@ -5,18 +5,16 @@ defmodule TimeZoneInfo.Updater.Impl do
 
   @behaviour TimeZoneInfo.Updater
 
-  alias TimeZoneInfo.{
-    DataConfig,
-    DataPersistence,
-    DataStore,
-    Downloader,
-    ExternalTermFormat,
-    FileArchive,
-    IanaParser,
-    Listener,
-    Transformer,
-    UtcDateTime
-  }
+  alias TimeZoneInfo.DataConfig
+  alias TimeZoneInfo.DataPersistence
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.Downloader
+  alias TimeZoneInfo.ExternalTermFormat
+  alias TimeZoneInfo.FileArchive
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Listener
+  alias TimeZoneInfo.Transformer
+  alias TimeZoneInfo.UtcDateTime
 
   require Logger
 

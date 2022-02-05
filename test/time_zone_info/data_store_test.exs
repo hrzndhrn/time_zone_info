@@ -4,7 +4,8 @@ defmodule TimeZoneInfo.DataStoreTest do
   import Mox
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.{DataStore, DataStoreMock}
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.DataStoreMock
 
   setup do
     put_env(data_store: DataStoreMock)

@@ -1,13 +1,11 @@
 defmodule TimeZoneInfo.TimeZoneDatabaseCase do
   use ExUnit.CaseTemplate
 
-  alias TimeZoneInfo.{
-    Checker,
-    DataStore,
-    ExternalTermFormat,
-    TestUtils,
-    TimeZoneDatabase
-  }
+  alias TimeZoneInfo.Checker
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.ExternalTermFormat
+  alias TimeZoneInfo.TestUtils
+  alias TimeZoneInfo.TimeZoneDatabase
 
   @default_data_store TimeZoneInfo.DataStore.Server
   using(opts) do

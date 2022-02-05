@@ -3,12 +3,10 @@ defmodule TimeZoneInfo.Transformer.Rule do
   This module handles and transforms the IANA rules.
   """
 
-  alias TimeZoneInfo.{
-    IanaDateTime,
-    IanaParser,
-    Transformer.RuleSet,
-    UtcDateTime
-  }
+  alias TimeZoneInfo.IanaDateTime
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Transformer.RuleSet
+  alias TimeZoneInfo.UtcDateTime
 
   @doc """
   Returns a map of rule-set for the given map of `rules`.

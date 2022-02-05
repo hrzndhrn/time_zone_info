@@ -4,7 +4,8 @@ defmodule TimeZoneInfo.DataPersistenceTest do
   import Mox
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.{DataPersistence, DataPersistenceMock}
+  alias TimeZoneInfo.DataPersistence
+  alias TimeZoneInfo.DataPersistenceMock
 
   setup do
     put_env(data_persistence: DataPersistenceMock)

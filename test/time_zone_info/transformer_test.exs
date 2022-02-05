@@ -1,7 +1,9 @@
 defmodule TimeZoneInfo.TransformerTest do
   use ExUnit.Case, async: true
 
-  alias TimeZoneInfo.{GregorianSeconds, IanaParser, Transformer}
+  alias TimeZoneInfo.GregorianSeconds
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Transformer
 
   require Logger
 

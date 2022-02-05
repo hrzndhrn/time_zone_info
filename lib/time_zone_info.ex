@@ -8,17 +8,15 @@ defmodule TimeZoneInfo do
   `Calendar.TimeZoneDatabase` behaviour under `TimeZoneInfo.TimeZoneDatabase`.
   """
 
-  alias TimeZoneInfo.{
-    DataConfig,
-    DataPersistence,
-    DataStore,
-    ExternalTermFormat,
-    FileArchive,
-    IanaParser,
-    Transformer,
-    Transformer.Abbr,
-    Worker
-  }
+  alias TimeZoneInfo.DataConfig
+  alias TimeZoneInfo.DataPersistence
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.ExternalTermFormat
+  alias TimeZoneInfo.FileArchive
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Transformer
+  alias TimeZoneInfo.Transformer.Abbr
+  alias TimeZoneInfo.Worker
 
   @typedoc "Seconds since year 0 in the gregorian calendar."
   @type gregorian_seconds :: integer()

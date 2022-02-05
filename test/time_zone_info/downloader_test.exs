@@ -4,7 +4,8 @@ defmodule TimeZoneInfo.DownloaderTest do
   import Mox
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.{Downloader, DownloaderMock}
+  alias TimeZoneInfo.Downloader
+  alias TimeZoneInfo.DownloaderMock
 
   setup do
     on_exit(&delete_env/0)

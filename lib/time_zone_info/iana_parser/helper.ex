@@ -55,7 +55,7 @@ defmodule TimeZoneInfo.IanaParser.Helper do
 
   defp do_word do
     [{:not, ?\t}, {:not, ?\n}, {:not, ?#}, {:not, ?\s}, {:not, ?\r}]
-    |> utf8_char
+    |> utf8_char()
     |> repeat()
     |> reduce({:reduce_word, []})
   end

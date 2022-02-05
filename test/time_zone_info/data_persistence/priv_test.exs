@@ -4,7 +4,9 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
   import TimeZoneInfo.TestUtils
 
   alias TimeZoneInfo.DataPersistence.Priv
-  alias TimeZoneInfo.{ExternalTermFormat, IanaParser, Transformer}
+  alias TimeZoneInfo.ExternalTermFormat
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Transformer
 
   @path "test/data.etf"
   @fixture "data/2019c/extract/africa/data.etf"

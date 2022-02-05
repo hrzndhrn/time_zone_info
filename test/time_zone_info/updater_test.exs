@@ -4,14 +4,12 @@ defmodule TimeZoneInfo.UpdaterTest do
   import ExUnit.CaptureLog
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.{
-    DataPersistence.Priv,
-    DataStore,
-    DataStore.ErlangTermStorage,
-    DataStore.PersistentTerm,
-    TimeZoneDatabase,
-    Updater
-  }
+  alias TimeZoneInfo.DataPersistence.Priv
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.DataStore.ErlangTermStorage
+  alias TimeZoneInfo.DataStore.PersistentTerm
+  alias TimeZoneInfo.TimeZoneDatabase
+  alias TimeZoneInfo.Updater
 
   @seconds_per_hour 60 * 60
   @seconds_per_day 24 * @seconds_per_hour

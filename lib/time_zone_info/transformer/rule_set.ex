@@ -3,8 +3,11 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
   A rule set is a set of IANA rules with one entry per rule execution.
   """
 
-  alias TimeZoneInfo.{GregorianSeconds, IanaParser}
-  alias TimeZoneInfo.Transformer.{Abbr, ZoneState}
+  alias TimeZoneInfo.GregorianSeconds
+  alias TimeZoneInfo.IanaParser
+
+  alias TimeZoneInfo.Transformer.Abbr
+  alias TimeZoneInfo.Transformer.ZoneState
 
   @type rule :: {
           TimeZoneInfo.gregorian_seconds(),

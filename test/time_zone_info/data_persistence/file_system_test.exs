@@ -3,12 +3,10 @@ defmodule TimeZoneInfo.DataPersistence.FileSystemTest do
 
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.{
-    DataPersistence.FileSystem,
-    ExternalTermFormat,
-    IanaParser,
-    Transformer
-  }
+  alias TimeZoneInfo.DataPersistence.FileSystem
+  alias TimeZoneInfo.ExternalTermFormat
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Transformer
 
   @path "test/temp/data.etf"
   @data "test/fixtures/data/2019c/extract/africa/data.etf"

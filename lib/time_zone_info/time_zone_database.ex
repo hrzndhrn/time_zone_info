@@ -5,13 +5,11 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
 
   @behaviour Calendar.TimeZoneDatabase
 
-  alias TimeZoneInfo.{
-    DataStore,
-    GregorianSeconds,
-    IanaDateTime,
-    IsoDays,
-    Transformer.RuleSet
-  }
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.GregorianSeconds
+  alias TimeZoneInfo.IanaDateTime
+  alias TimeZoneInfo.IsoDays
+  alias TimeZoneInfo.Transformer.RuleSet
 
   @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2}
 

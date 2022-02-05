@@ -3,13 +3,11 @@ defmodule TimeZoneInfoTest do
 
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.{
-    DataPersistence.Priv,
-    DataStore,
-    DataStore.Server,
-    IanaParser,
-    Transformer
-  }
+  alias TimeZoneInfo.DataPersistence.Priv
+  alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.DataStore.Server
+  alias TimeZoneInfo.IanaParser
+  alias TimeZoneInfo.Transformer
 
   setup_all do
     put_env(

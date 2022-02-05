@@ -4,7 +4,8 @@ defmodule TimeZoneInfo.WorkerTest do
   import Mox
   import TimeZoneInfo.TestUtils
 
-  alias TimeZoneInfo.{UpdaterMock, Worker}
+  alias TimeZoneInfo.UpdaterMock
+  alias TimeZoneInfo.Worker
 
   setup_all do
     Application.put_env(:time_zone_info, :updater, TimeZoneInfo.UpdaterMock)

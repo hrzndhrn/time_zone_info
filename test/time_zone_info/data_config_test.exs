@@ -1,10 +1,8 @@
 defmodule TimeZoneInfo.DataConfigTest do
   use ExUnit.Case
 
-  alias TimeZoneInfo.{
-    DataConfig,
-    ExternalTermFormat
-  }
+  alias TimeZoneInfo.DataConfig
+  alias TimeZoneInfo.ExternalTermFormat
 
   setup_all do
     {:ok, data} =
