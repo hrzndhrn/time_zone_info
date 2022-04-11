@@ -149,7 +149,7 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
-      {:ex_cldr_calendars_coptic, "~> 0.2", only: [:dev, :test]},
+      {:ex_cldr_calendars_coptic, "~> 0.4", only: [:dev, :test]},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
