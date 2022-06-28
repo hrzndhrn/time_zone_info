@@ -154,7 +154,7 @@ defmodule TimeZoneInfo.MixProject do
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
       {:mox, "~> 1.0", only: :test},
-      {:nerves_time_zones, "~> 0.1.2", only: [:dev]},
+      {:nerves_time_zones, "~> 0.2", only: [:dev]},
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
