@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0 - dev
+
+- Update `priv/data.etf` with IANA tzdata version 2021e.
+
 ## 0.6.1 - 2022/02/05
 
 - Update `priv/data.etf` with IANA tzdata version 2021e.

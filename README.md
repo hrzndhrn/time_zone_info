@@ -25,7 +25,7 @@ end
 After installation, `TimeZoneInfo` can be used as follows.
 ```elixir
 iex> TimeZoneInfo.iana_version
-"2021e"
+"2022a"
 iex> TimeZoneInfo.time_zones() |> Enum.take(3)
 ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa"]
 iex> TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(~N[2021-09-23 09:56:00], "Europe/Berlin")
@@ -71,7 +71,7 @@ For more information how to configure `TimeZoneInfo` see
 ## Default Time Zone Data
 
 The default configuration of `TimeZoneInfo` is `updater: :disabled`. In this
-case, the IANA database in version `2021e` with a `lookahead` of 15 years is in
+case, the IANA database in version `2022a` with a `lookahead` of 15 years is in
 use.
 
 If a time zone has continuation rules, the periods after the lookahead are
