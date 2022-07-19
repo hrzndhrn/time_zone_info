@@ -83,13 +83,13 @@ the determination of periods inside the prepared time span.
 The benchmarks can be executed with `mix bench`.
 
 Benchmarks:
-+ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/time_zone_database_bench.md)
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/time_zone_database_bench.md)
   compares `TimeZoneInfo` with `Tzdata`, `Tz` and `Zoneinfo`.
 
-+ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/stores_bench.md)
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/stores_bench.md)
   compares the different `TimeZoneInfo.DataStore`s.
 
-+ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/master/bench/transform_bench.md)
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/transform_bench.md)
   measures the speed of transforming the raw IANA data to the required format at
   runtime.
 
