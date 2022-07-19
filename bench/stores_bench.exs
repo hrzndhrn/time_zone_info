@@ -2,6 +2,7 @@ defmodule StoresBench do
   use BencheeDsl.Benchmark
 
   alias TimeZoneInfo.DataStore
+  alias TimeZoneInfo.TimeZoneDatabase
 
   @title "Benchmark: TimeZoneDatabase Storage"
 
@@ -22,21 +23,23 @@ defmodule StoresBench do
 
   formatter Benchee.Formatters.Markdown,
     file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    title: @title,
     description: @description
 
-  @before fn -> Application.put_env(:time_zone_info, :data_store, DataStore.ErlangTermStorage) end
-  job &run/0, as: :ets
+  inputs %{"Europe/Berlin" => [~N[2021-06-01 00:00:00], "Europe/Berlin"]}
 
-  @before fn -> Application.put_env(:time_zone_info, :data_store, DataStore.PersistentTerm) end
-  job &run/0, as: :pst
-
-  @before fn -> Application.put_env(:time_zone_info, :data_store, DataStore.Server) end
-  job &run/0, as: :map
-
-  defp run do
-    TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(
-      ~N[2021-06-01 00:00:00],
-      "Europe/Berlin"
-    )
+  @before_scenario fn ->
+    Application.put_env(:time_zone_info, :data_store, DataStore.ErlangTermStorage)
   end
+  job &TimeZoneDatabase.time_zone_periods_from_wall_datetime/2, as: :ets
+
+  @before_scenario fn ->
+    Application.put_env(:time_zone_info, :data_store, DataStore.PersistentTerm)
+  end
+  job &TimeZoneDatabase.time_zone_periods_from_wall_datetime/2, as: :pst
+
+  @before_scenario fn ->
+    Application.put_env(:time_zone_info, :data_store, DataStore.Server)
+  end
+  job &TimeZoneDatabase.time_zone_periods_from_wall_datetime/2, as: :map
 end

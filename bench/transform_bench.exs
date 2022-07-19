@@ -12,6 +12,7 @@ defmodule TransformBench do
 
   formatter Benchee.Formatters.Markdown,
     file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    title: @title,
     description: @description
 
   config time: 60

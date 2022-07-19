@@ -12,5 +12,6 @@ DataStore.Server.put(data)
 
 BencheeDsl.run(
   time: 10,
-  memory_time: 5
+  memory_time: 5,
+  pre_check: true
 )
