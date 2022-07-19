@@ -42,7 +42,7 @@ defmodule TimeZoneInfo.Updater.Impl do
   - `{:error, reason}` in case of an error.
   """
   @spec update(opt :: :run | :force) :: :ok | {:next, Calendar.second()} | {:error, term()}
-  def update(step \\ :run) do
+  def update(step \\ :run) when step in [:run, :force] do
     with {:error, _} = error <- step |> step() |> do_update() do
       Listener.on_update(error)
       error
