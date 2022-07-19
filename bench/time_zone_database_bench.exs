@@ -34,6 +34,7 @@ defmodule TimeZoneDatabaseBench do
 
   formatter Benchee.Formatters.Markdown,
     file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    title: @title,
     description: @description
 
   job &TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime/2,
