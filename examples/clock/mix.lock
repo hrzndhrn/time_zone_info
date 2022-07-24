@@ -1,5 +1,7 @@
 %{
-  "castore": {:hex, :castore, "0.1.5", "591c763a637af2cc468a72f006878584bc6c306f8d111ef8ba1d4c10e0684010", [:mix], [], "hexpm", "6db356b2bc6cc22561e051ff545c20ad064af57647e436650aa24d7d06cd941a"},
-  "mint": {:hex, :mint, "1.0.0", "ca5ab33497ba2bdcc42f6cdd3927420a6159116be87c8173658e93c8746703da", [:mix], [{:castore, "~> 0.1.0", [hex: :castore, repo: "hexpm", optional: true]}], "hexpm", "b8943ef1e630879538dd6620bfc189d4d75fab3ad39f3fe9c50539879f7efd84"},
-  "nimble_parsec": {:hex, :nimble_parsec, "0.5.3", "def21c10a9ed70ce22754fdeea0810dafd53c2db3219a0cd54cf5526377af1c6", [:mix], [], "hexpm", "589b5af56f4afca65217a1f3eb3fee7e79b09c40c742fddc1c312b3ac0b3399f"},
+  "castore": {:hex, :castore, "0.1.17", "ba672681de4e51ed8ec1f74ed624d104c0db72742ea1a5e74edbc770c815182f", [:mix], [], "hexpm", "d9844227ed52d26e7519224525cb6868650c272d4a3d327ce3ca5570c12163f9"},
+  "hpax": {:hex, :hpax, "0.1.1", "2396c313683ada39e98c20a75a82911592b47e5c24391363343bde74f82396ca", [:mix], [], "hexpm", "0ae7d5a0b04a8a60caf7a39fcf3ec476f35cc2cc16c05abea730d3ce6ac6c826"},
+  "mint": {:hex, :mint, "1.4.2", "50330223429a6e1260b2ca5415f69b0ab086141bc76dc2fbf34d7c389a6675b2", [:mix], [{:castore, "~> 0.1.0", [hex: :castore, repo: "hexpm", optional: true]}, {:hpax, "~> 0.1.1", [hex: :hpax, repo: "hexpm", optional: false]}], "hexpm", "ce75a5bbcc59b4d7d8d70f8b2fc284b1751ffb35c7b6a6302b5192f8ab4ddd80"},
+  "nimble_parsec": {:hex, :nimble_parsec, "1.2.3", "244836e6e3f1200c7f30cb56733fd808744eca61fd182f731eac4af635cc6d0b", [:mix], [], "hexpm", "c8d789e39b9131acf7b99291e93dae60ab48ef14a7ee9d58c6964f59efb570b0"},
+  "time_zone_info": {:hex, :time_zone_info, "0.6.1", "720179ee76034b0e550be2672e41936b00d215f5eafb22c3b485bc9066b3990a", [:mix], [{:castore, "~> 0.1", [hex: :castore, repo: "hexpm", optional: true]}, {:mint, "~> 1.0", [hex: :mint, repo: "hexpm", optional: true]}, {:nimble_parsec, "~> 0.5 or ~> 1.0", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm", "7ba954246d5bda846d2c7bb4538aabac24307069db1ced30a3c2283b086f29a1"},
 }

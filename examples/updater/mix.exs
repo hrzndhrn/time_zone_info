@@ -23,8 +23,8 @@ defmodule Updater.MixProject do
     [
       {:castore, "~> 0.1"},
       {:mint, "~> 1.0"},
-      # {:time_zone_info, "~> 0.6"}
-      {:time_zone_info, path: "../.."}
+      {:time_zone_info, "~> 0.6"}
+      # {:time_zone_info, path: "../.."}
     ]
   end
 end
