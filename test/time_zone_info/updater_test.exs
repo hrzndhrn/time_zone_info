@@ -150,6 +150,8 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "server return 304 if data is unchanged and update forced" do
+      set_priv_timestamp(@timestamp, now())
+
       update_env(
         files: ["africa"],
         downloader: [
