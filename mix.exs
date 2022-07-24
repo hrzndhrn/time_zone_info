@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.6.1",
+      version: "0.6.2",
       elixir: "~> 1.10",
       name: "TimeZoneInfo",
       description: description(),
@@ -61,7 +61,7 @@ defmodule TimeZoneInfo.MixProject do
         ]
       ],
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
-      priv: [path: "data.etf"]
+      priv: [data: "data.etf", timestamp: "timestamp.txt"]
     ]
   end
 

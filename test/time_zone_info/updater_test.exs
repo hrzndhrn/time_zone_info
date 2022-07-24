@@ -13,21 +13,25 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   @seconds_per_hour 60 * 60
   @seconds_per_day 24 * @seconds_per_hour
-  @path "test/data.etf"
+
+  @path "../test/temp/#{__MODULE__}"
+  @data "#{@path}/data.etf"
+  @timestamp "#{@path}/timestamp.txt"
+
   @fixture "data/2019c/extract/africa/data.etf"
   @delta_seconds 30
 
   describe "update/1" do
     setup do
-      cp_data(@fixture, @path)
+      cp_data(@fixture, @data)
       data_store = data_store()
       put_test_env(data_store)
       on_exit(fn -> do_exit(data_store) end)
     end
 
     test "tries to update old file" do
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
-      checksum = checksum(@path)
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
+      checksum = checksum(@data)
 
       assert DataStore.empty?()
 
@@ -40,12 +44,12 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert checksum(@path) == checksum
+      assert checksum(@data) == checksum
     end
 
     test "updates old file" do
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
-      checksum = checksum(@path)
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
+      checksum = checksum(@data)
 
       update_env(
         downloader: [
@@ -66,7 +70,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert checksum(@path) != checksum
+      assert checksum(@data) != checksum
     end
 
     test "force with disabled updater" do
@@ -82,8 +86,8 @@ defmodule TimeZoneInfo.UpdaterTest do
 
     test "tries to update old file and new config" do
       update_env(files: ["europe"])
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
-      checksum = checksum(@path)
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
+      checksum = checksum(@data)
 
       assert DataStore.empty?()
 
@@ -96,12 +100,12 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert checksum(@path) != checksum
+      assert checksum(@data) != checksum
     end
 
     test "tries to update with an actual file" do
-      touch_data(@path, now(sub: @seconds_per_hour))
-      checksum = checksum(@path)
+      set_priv_timestamp(@timestamp, now(sub: @seconds_per_hour))
+      checksum = checksum(@data)
 
       assert DataStore.empty?()
 
@@ -114,11 +118,11 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert checksum(@path) == checksum
+      assert checksum(@data) == checksum
     end
 
     test "server return 304 if data is unchanged" do
-      touch_data(@path, now(sub: @seconds_per_day * 2))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       update_env(
         files: ["africa"],
@@ -146,6 +150,8 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "server return 304 if data is unchanged and update forced" do
+      set_priv_timestamp(@timestamp, now())
+
       update_env(
         files: ["africa"],
         downloader: [
@@ -159,7 +165,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      assert data_exists?(@path)
+      assert data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -174,7 +180,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "server returns 500" do
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       update_env(
         downloader: [
@@ -184,7 +190,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      assert data_exists?(@path)
+      assert data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -204,7 +210,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      assert data_exists?(@path)
+      assert data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -217,7 +223,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
     test "updates data for europe and etcetera" do
       update_env(files: ["europe", "etcetera"])
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       assert_log(
         fn ->
@@ -277,7 +283,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         time_zones: ["Europe/Berlin", "Indian"]
       )
 
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       assert_log(
         fn ->
@@ -308,7 +314,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         time_zones: ["Europe/Berlin", "Utopia/Metropolis"]
       )
 
-      touch_data(@path, now())
+      set_priv_timestamp(@timestamp, now())
 
       assert_log(
         fn ->
@@ -345,7 +351,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         time_zones: ["Europe/Berlin", "Indian"]
       )
 
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       assert_log(
         fn ->
@@ -385,6 +391,8 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "runs initial update once" do
+      set_priv_timestamp(@timestamp, now())
+
       assert_log(
         fn ->
           assert {:next, _timestamp} = Updater.update()
@@ -401,7 +409,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "does not download data after update" do
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       assert_log(
         fn ->
@@ -421,14 +429,14 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1 initial" do
     setup do
-      mkdir_data(@path)
+      mkdir_data(@data)
       data_store = data_store()
       put_test_env(data_store)
       on_exit(fn -> do_exit(data_store) end)
     end
 
     test "writes data file if it is not exist (tzdata2019c)" do
-      refute data_exists?(@path)
+      refute data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -440,7 +448,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@path)
+      assert data_exists?(@data)
 
       assert %{links: links, time_zones: time_zones} = DataStore.info()
       assert links == 36
@@ -456,7 +464,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@path)
+      refute data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -468,7 +476,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@path)
+      assert data_exists?(@data)
 
       assert %{links: links, time_zones: time_zones} = DataStore.info()
       assert links == 36
@@ -486,7 +494,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@path)
+      refute data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -498,7 +506,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@path)
+      assert data_exists?(@data)
 
       assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") == {
                :ok,
@@ -525,7 +533,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@path)
+      refute data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -537,7 +545,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@path)
+      assert data_exists?(@data)
       assert Enum.member?(TimeZoneInfo.time_zones(), "Europe/Amsterdam")
       refute Enum.member?(TimeZoneInfo.time_zones(), "America/New_York")
 
@@ -563,7 +571,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@path)
+      refute data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -587,7 +595,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@path)
+      refute data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -601,7 +609,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1 returns error" do
     setup do
-      cp_data(@fixture, @path)
+      cp_data(@fixture, @data)
       data_store = data_store()
       put_test_env(data_store)
       on_exit(fn -> do_exit(data_store) end)
@@ -627,7 +635,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "for invalid time_zones" do
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       update_env(time_zones: :foo)
 
@@ -640,7 +648,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "for invalid time zone in time_zones" do
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       update_env(time_zones: [:foo])
 
@@ -653,7 +661,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "updates version 2020a and file backward" do
-      touch_data(@path, now(sub: 2 * @seconds_per_day))
+      set_priv_timestamp(@timestamp, now(sub: 2 * @seconds_per_day))
 
       update_env(
         files: ["europe", "backward"],
@@ -735,13 +743,13 @@ defmodule TimeZoneInfo.UpdaterTest do
       update: :daily,
       data_store: data_store,
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
-      priv: [path: @path],
+      priv: [data: @data, timestamp: @timestamp],
       listener: TimeZoneInfo.Listener.Logger
     )
   end
 
   defp do_exit(data_store) do
-    rm_data(@path)
+    rm_data(@data)
     delete_env()
     data_store.delete!()
   end

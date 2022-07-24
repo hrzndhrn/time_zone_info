@@ -49,6 +49,15 @@ defmodule TimeZoneInfo.Updater.Impl do
     end
   end
 
+  defp step(:run) do
+    case DataStore.empty?() do
+      true -> :initial
+      false -> :check
+    end
+  end
+
+  defp step(step), do: step
+
   defp do_update(:initial) do
     Listener.on_update(:initial)
 
@@ -221,15 +230,6 @@ defmodule TimeZoneInfo.Updater.Impl do
   defp join(files) do
     Enum.map_join(files, "\n", fn {_name, content} -> content end)
   end
-
-  defp step(:run) do
-    case DataStore.empty?() do
-      true -> :initial
-      false -> :check
-    end
-  end
-
-  defp step(step), do: step
 
   defp files do
     with {:ok, files} <- fetch_env(:files) do

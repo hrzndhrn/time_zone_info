@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.7.0 - dev
+## 0.6.2 - 2022/07/24
 
 - Update `priv/data.etf` with IANA tzdata version 2021e.
+- Update `TimeZoneInfo.DataPersistence.Priv`.
 
 ## 0.6.1 - 2022/02/05
 
