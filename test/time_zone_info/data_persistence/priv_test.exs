@@ -49,7 +49,8 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
 
     test "returns an error tuple if the dir is unavailable", %{data: data} do
       put_env(priv: [data: "#{@path}/foo/data.etf"])
-      assert Priv.put(data) == {:error, :enotdir}
+      assert {:error, reason} = Priv.put(data)
+      assert reason in [:enotdir, :enoent]
     end
 
     test "returns an error tuple if the config is unavailable", %{data: data} do
