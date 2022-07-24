@@ -31,7 +31,7 @@ defmodule TimeZoneInfo.ApplicationTest do
         ]
       ],
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
-      priv: [path: "data.etf"]
+      priv: [data: "data.etf", timestamp: "timestamp.txt"]
     )
 
     assert {:ok, _} = Application.ensure_all_started(:time_zone_info)

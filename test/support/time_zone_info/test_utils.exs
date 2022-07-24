@@ -34,11 +34,6 @@ defmodule TimeZoneInfo.TestUtils do
     |> :code.priv_dir()
     |> Path.join(path)
     |> File.rm()
-
-    :time_zone_info
-    |> :code.priv_dir()
-    |> Path.join(Path.dirname(path))
-    |> File.rmdir()
   end
 
   def data_exists?(path) do
@@ -60,14 +55,7 @@ defmodule TimeZoneInfo.TestUtils do
     :time_zone_info
     |> :code.priv_dir()
     |> Path.join(Path.dirname(path))
-    |> File.mkdir()
-  end
-
-  def touch_data(path, time) do
-    :time_zone_info
-    |> :code.priv_dir()
-    |> Path.join(path)
-    |> File.touch(time)
+    |> File.mkdir_p()
   end
 
   def checksum(path) do
@@ -76,6 +64,22 @@ defmodule TimeZoneInfo.TestUtils do
     |> Path.join(path)
     |> File.read!()
     |> ExternalTermFormat.checksum()
+  end
+
+  def set_priv_timestamp(path, timestamp) when is_integer(timestamp) do
+    :time_zone_info
+    |> :code.priv_dir()
+    |> Path.join(path)
+    |> File.write!(to_string(timestamp))
+  end
+
+  def get_priv_timestamp(path) do
+    :time_zone_info
+    |> :code.priv_dir()
+    |> Path.join(path)
+    |> File.read!()
+    |> String.trim()
+    |> String.to_integer()
   end
 
   def now, do: now(add: 0)

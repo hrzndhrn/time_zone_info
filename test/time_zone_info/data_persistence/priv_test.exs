@@ -8,7 +8,10 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
   alias TimeZoneInfo.IanaParser
   alias TimeZoneInfo.Transformer
 
-  @path "test/data.etf"
+  @path "../test/temp/#{__MODULE__}"
+  @data "#{@path}/data.etf"
+  @timestamp "#{@path}/timestamp.txt"
+
   @fixture "data/2019c/extract/africa/data.etf"
 
   @london "test/fixtures/iana/2019c/extract/Europe/London"
@@ -30,11 +33,10 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
   end
 
   setup do
-    cp_data(@fixture, @path)
-    put_env(priv: [path: @path])
+    cp_data(@fixture, @data)
+    put_env(priv: [data: @data, timestamp: @timestamp])
 
     on_exit(fn ->
-      rm_data(@path)
       delete_env()
     end)
   end
@@ -42,12 +44,12 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
   describe "put/1" do
     test "writes data to file", %{data: data} do
       assert Priv.put(data) == :ok
-      assert data_exists?(@path)
+      assert data_exists?(@data)
     end
 
     test "returns an error tuple if the dir is unavailable", %{data: data} do
-      rm_data(@path)
-      assert Priv.put(data) == {:error, :enoent}
+      put_env(priv: [data: "#{@path}/foo/data.etf"])
+      assert Priv.put(data) == {:error, :enotdir}
     end
 
     test "returns an error tuple if the config is unavailable", %{data: data} do
@@ -57,12 +59,12 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
 
     test "returns an error tuple if the config is invalid", %{data: data} do
       put_env(priv: [foo: "42"])
-      assert Priv.put(data) == {:error, {:invalid_config, [:priv, :path]}}
+      assert Priv.put(data) == {:error, {:invalid_config, [:priv, :data]}}
     end
 
-    test "returns an error tuple if the path is invalid", %{data: data} do
-      put_env(priv: [path: 42])
-      assert Priv.put(data) == {:error, {:invalid_config, [{:priv, [path: 42]}]}}
+    test "returns an error tuple if the data path is invalid", %{data: data} do
+      put_env(priv: [data: 42])
+      assert Priv.put(data) == {:error, {:invalid_config, [{:priv, [data: 42]}]}}
     end
   end
 
@@ -73,7 +75,7 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
     end
 
     test "returns error if the data is unavalable" do
-      rm_data(@path)
+      rm_data(@data)
       assert Priv.fetch() == {:error, :enoent}
     end
   end
@@ -85,20 +87,21 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
     end
 
     test "returns error if the data is unavalable" do
-      rm_data(@path)
+      rm_data(@data)
       assert Priv.checksum() == {:error, :enoent}
     end
   end
 
   describe "fetch_last_update/0" do
-    test "returns the checksum for the data", %{data: data} do
-      assert Priv.put(data) == :ok
-      assert {:ok, timestamp} = Priv.fetch_last_update()
-      assert_in_delta(timestamp, now(), 3)
+    test "returns the timestamp for the last update" do
+      set_priv_timestamp(@timestamp, 0)
+      assert {:ok, 0} = Priv.fetch_last_update()
+      assert Priv.put_last_update(333) == :ok
+      assert {:ok, 333} = Priv.fetch_last_update()
     end
 
-    test "returns error if the data is unavalable" do
-      rm_data(@path)
+    test "returns error if the timestamp is unavalable" do
+      put_env(priv: [timestamp: "#{@path}/no.txt"])
       assert Priv.fetch_last_update() == {:error, :enoent}
     end
   end
