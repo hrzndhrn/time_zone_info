@@ -12,7 +12,6 @@ defmodule Updater.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger],
@@ -20,15 +19,12 @@ defmodule Updater.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:castore, "~> 0.1"},
       {:mint, "~> 1.0"},
-      {:time_zone_info, "~> 0.4"}
-      # {:time_zone_info, path: "../.."}
+      # {:time_zone_info, "~> 0.6"}
+      {:time_zone_info, path: "../.."}
     ]
   end
 end
