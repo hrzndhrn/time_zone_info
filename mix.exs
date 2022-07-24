@@ -61,7 +61,7 @@ defmodule TimeZoneInfo.MixProject do
         ]
       ],
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
-      priv: [path: "data.etf"]
+      priv: [data: "data.etf", timestamp: "timestamp.txt"]
     ]
   end
 
