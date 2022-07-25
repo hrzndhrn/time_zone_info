@@ -249,8 +249,8 @@ defmodule TimeZoneInfo.IanaParser.Helper do
 
   def reduce_collect({:rule, data}) do
     rules =
-      data
-      |> Enum.group_by(
+      Enum.group_by(
+        data,
         fn [{:name, name} | _] -> name end,
         fn [_ | data] -> data end
       )
@@ -355,7 +355,7 @@ defmodule TimeZoneInfo.IanaParser.Helper do
         {:template, format}
 
       String.contains?(format, "/") ->
-        {:choice, format |> String.split("/")}
+        {:choice, String.split(format, "/")}
 
       true ->
         {:string, format}

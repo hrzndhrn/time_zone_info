@@ -153,6 +153,7 @@ defmodule TimeZoneInfo do
   @doc """
   Returns infos about persisted and stored data.
   """
+  @spec info :: map()
   def info do
     %{
       store: DataStore.info(),

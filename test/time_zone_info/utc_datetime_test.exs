@@ -15,7 +15,7 @@ defmodule TimeZoneInfo.UtcDateTimeTest do
     def now(:datetime), do: fix()
     def now(:unix), do: DateTime.to_unix(fix())
 
-    def fix, do: DateTime.utc_now() |> DateTime.add(-86400)
+    def fix, do: DateTime.add(DateTime.utc_now(), -86400)
   end
 
   describe "now/1" do
@@ -24,7 +24,7 @@ defmodule TimeZoneInfo.UtcDateTimeTest do
 
       assert_in_delta(
         DateTime.to_unix(now),
-        UtcDateTime.now() |> DateTime.to_unix(),
+        DateTime.to_unix(UtcDateTime.now()),
         1
       )
     end
@@ -46,7 +46,7 @@ defmodule TimeZoneInfo.UtcDateTimeTest do
     end
 
     test "returns fixed datetime as unix" do
-      assert_in_delta(UtcFixDateTime.fix() |> DateTime.to_unix(), UtcDateTime.now(:unix), 1)
+      assert_in_delta(DateTime.to_unix(UtcFixDateTime.fix()), UtcDateTime.now(:unix), 1)
     end
   end
 end
