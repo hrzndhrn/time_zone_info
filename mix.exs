@@ -160,7 +160,14 @@ defmodule TimeZoneInfo.MixProject do
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
       {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
-    ]
+    ] ++ recode()
+  end
+
+  defp recode() do
+    case Version.match?(System.version(), "~> 1.12") do
+      true -> [{:recode, "~> 0.1", only: [:dev, :test]}]
+      false -> []
+    end
   end
 
   defp package do

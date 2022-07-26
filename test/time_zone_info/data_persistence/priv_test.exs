@@ -33,38 +33,38 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
   end
 
   setup do
-    cp_data(@fixture, @data)
-    put_env(priv: [data: @data, timestamp: @timestamp])
+    cp_priv_data(@fixture, @data)
+    put_app_env(priv: [data: @data, timestamp: @timestamp])
 
     on_exit(fn ->
-      delete_env()
+      delete_app_env()
     end)
   end
 
   describe "put/1" do
     test "writes data to file", %{data: data} do
       assert Priv.put(data) == :ok
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
     end
 
     test "returns an error tuple if the dir is unavailable", %{data: data} do
-      put_env(priv: [data: "#{@path}/foo/data.etf"])
+      put_app_env(priv: [data: "#{@path}/foo/data.etf"])
       assert {:error, reason} = Priv.put(data)
       assert reason in [:enotdir, :enoent]
     end
 
     test "returns an error tuple if the config is unavailable", %{data: data} do
-      delete_env()
+      delete_app_env()
       assert Priv.put(data) == {:error, {:invalid_config, :priv}}
     end
 
     test "returns an error tuple if the config is invalid", %{data: data} do
-      put_env(priv: [foo: "42"])
+      put_app_env(priv: [foo: "42"])
       assert Priv.put(data) == {:error, {:invalid_config, [:priv, :data]}}
     end
 
     test "returns an error tuple if the data path is invalid", %{data: data} do
-      put_env(priv: [data: 42])
+      put_app_env(priv: [data: 42])
       assert Priv.put(data) == {:error, {:invalid_config, [{:priv, [data: 42]}]}}
     end
   end
@@ -76,7 +76,7 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
     end
 
     test "returns error if the data is unavalable" do
-      rm_data(@data)
+      rm_priv_data(@data)
       assert Priv.fetch() == {:error, :enoent}
     end
   end
@@ -88,7 +88,7 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
     end
 
     test "returns error if the data is unavalable" do
-      rm_data(@data)
+      rm_priv_data(@data)
       assert Priv.checksum() == {:error, :enoent}
     end
   end
@@ -102,7 +102,7 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
     end
 
     test "returns error if the timestamp is unavalable" do
-      put_env(priv: [timestamp: "#{@path}/no.txt"])
+      put_app_env(priv: [timestamp: "#{@path}/no.txt"])
       assert Priv.fetch_last_update() == {:error, :enoent}
     end
   end

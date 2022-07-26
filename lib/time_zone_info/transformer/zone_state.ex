@@ -98,7 +98,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
     utc_offset = zone_state[:utc_offset]
     std_offset = 0
     zone_abbr = Abbr.create(zone_state[:format])
-    until = zone_state |> until(std_offset)
+    until = until(zone_state, std_offset)
 
     {
       [{since, {utc_offset, std_offset, zone_abbr}}],
@@ -110,7 +110,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   defp transitions({:std_offset, std_offset}, since, zone_state, _std_offset, _last_zone_state) do
     utc_offset = zone_state[:utc_offset]
     zone_abbr = Abbr.create(zone_state[:format], std_offset)
-    until = zone_state |> until(std_offset)
+    until = until(zone_state, std_offset)
 
     {
       [{since, {utc_offset, std_offset, zone_abbr}}],
@@ -171,6 +171,7 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   defp rule_name(value) when is_integer(value), do: {:std_offset, value}
   defp rule_name(string), do: {:ok, string}
 
+  @spec add_wall_period(list()) :: list()
   def add_wall_period(transitions) do
     transitions
     |> Enum.reverse()

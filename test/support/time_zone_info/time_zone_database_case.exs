@@ -22,7 +22,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
       setup_all do
         on_exit(fn ->
           DataStore.delete!()
-          delete_env()
+          delete_app_env()
         end)
 
         Application.put_env(:time_zone_info, :data_store, unquote(data_store))

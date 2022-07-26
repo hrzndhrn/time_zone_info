@@ -10,7 +10,7 @@ defmodule TimeZoneInfoTest do
   alias TimeZoneInfo.Transformer
 
   setup_all do
-    put_env(
+    put_app_env(
       data_store: Server,
       data_persistence: Priv,
       priv: [path: "data.etf"]
@@ -39,7 +39,7 @@ defmodule TimeZoneInfoTest do
       |> DataStore.put()
     end
 
-    put_env(
+    put_app_env(
       data_store: Server,
       data_persistence: Priv,
       priv: [path: "data.etf"],
@@ -48,7 +48,7 @@ defmodule TimeZoneInfoTest do
       time_zones: config[:time_zones]
     )
 
-    on_exit(&delete_env/0)
+    on_exit(&delete_app_env/0)
 
     :ok
   end

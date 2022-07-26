@@ -30,11 +30,11 @@ defmodule TimeZoneInfo.DataPersistence.FileSystemTest do
 
   setup do
     File.cp!(@data, @path)
-    put_env(file_system: [path: @path])
+    put_app_env(file_system: [path: @path])
 
     on_exit(fn ->
       File.rm(@path)
-      delete_env()
+      delete_app_env()
     end)
   end
 
@@ -45,22 +45,22 @@ defmodule TimeZoneInfo.DataPersistence.FileSystemTest do
     end
 
     test "returns an error tuple if the dir is unavailable", %{data: data} do
-      put_env(file_system: [path: "test/temp/no_dir/data.etf"])
+      put_app_env(file_system: [path: "test/temp/no_dir/data.etf"])
       assert FileSystem.put(data) == {:error, :enoent}
     end
 
     test "returns an error tuple if the config is unavailable", %{data: data} do
-      delete_env()
+      delete_app_env()
       assert FileSystem.put(data) == {:error, {:invalid_config, :file_system}}
     end
 
     test "returns an error tuple if the config is invalid", %{data: data} do
-      put_env(file_system: [foo: "42"])
+      put_app_env(file_system: [foo: "42"])
       assert FileSystem.put(data) == {:error, {:invalid_config, [:file_system, :path]}}
     end
 
     test "returns an error tuple if the path is invalid", %{data: data} do
-      put_env(file_system: [path: 42])
+      put_app_env(file_system: [path: 42])
       assert FileSystem.put(data) == {:error, {:invalid_config, [{:file_system, [path: 42]}]}}
     end
   end

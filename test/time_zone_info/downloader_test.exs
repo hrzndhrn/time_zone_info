@@ -8,14 +8,14 @@ defmodule TimeZoneInfo.DownloaderTest do
   alias TimeZoneInfo.DownloaderMock
 
   setup do
-    on_exit(&delete_env/0)
+    on_exit(&delete_app_env/0)
   end
 
   setup :verify_on_exit!
 
   test "download/1" do
     env =
-      put_env(
+      put_app_env(
         downloader: [
           module: DownloaderMock,
           mode: :etf,
@@ -41,7 +41,7 @@ defmodule TimeZoneInfo.DownloaderTest do
   end
 
   test "returns error tuple if config is unavailable" do
-    delete_env()
+    delete_app_env()
     assert Downloader.download([]) == {:error, {:invalid_config, :downloader}}
   end
 end

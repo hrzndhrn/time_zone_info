@@ -4,8 +4,8 @@ defmodule TimeZoneInfo.TestUtils do
 
   @microsecond {0, 0}
 
-  def put_env(env) do
-    delete_env()
+  def put_app_env(env) do
+    delete_app_env()
     update_env(env)
   end
 
@@ -17,7 +17,7 @@ defmodule TimeZoneInfo.TestUtils do
     Application.get_all_env(:time_zone_info)
   end
 
-  def delete_env do
+  def delete_app_env do
     :time_zone_info
     |> Application.get_all_env()
     |> Keyword.keys()
@@ -29,29 +29,29 @@ defmodule TimeZoneInfo.TestUtils do
     end)
   end
 
-  def rm_data(path) do
+  def rm_priv_data(path) do
     :time_zone_info
     |> :code.priv_dir()
     |> Path.join(path)
     |> File.rm()
   end
 
-  def data_exists?(path) do
+  def priv_data_exists?(path) do
     :time_zone_info
     |> :code.priv_dir()
     |> Path.join(path)
     |> File.exists?()
   end
 
-  def cp_data(fixture, path) do
+  def cp_priv_data(fixture, path) do
     source = File.cwd!() |> Path.join("test/fixtures") |> Path.join(fixture)
     destination = :time_zone_info |> :code.priv_dir() |> Path.join(path)
-    mkdir_data(path)
+    mkdir_priv_data(path)
 
     File.cp!(source, destination)
   end
 
-  def mkdir_data(path) do
+  def mkdir_priv_data(path) do
     :time_zone_info
     |> :code.priv_dir()
     |> Path.join(Path.dirname(path))

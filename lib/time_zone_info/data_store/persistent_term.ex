@@ -81,8 +81,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
     @impl true
     def info do
       {count, memory} =
-        :persistent_term.get()
-        |> Enum.reduce({0, 0}, fn {key, value}, {count, memory} = acc ->
+        Enum.reduce(:persistent_term.get(), {0, 0}, fn {key, value}, {count, memory} = acc ->
           case is_tuple(key) && elem(key, 0) == @app do
             true -> {count + 1, memory + memory(key) + memory(value)}
             false -> acc
