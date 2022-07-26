@@ -1,7 +1,7 @@
 defmodule TimeZoneInfo.UtcDateTimeTest do
   use ExUnit.Case, async: true
 
-  import TimeZoneInfo.TestUtils, only: [put_env: 1, delete_env: 0]
+  import TimeZoneInfo.TestUtils, only: [put_app_env: 1, delete_app_env: 0]
 
   alias TimeZoneInfo.UtcDateTime
 
@@ -37,8 +37,8 @@ defmodule TimeZoneInfo.UtcDateTimeTest do
 
   describe "now/1 with UtcFixDateTime" do
     setup do
-      put_env(utc_datetime: UtcFixDateTime)
-      on_exit(&delete_env/0)
+      put_app_env(utc_datetime: UtcFixDateTime)
+      on_exit(&delete_app_env/0)
     end
 
     test "retruns fixed datetime" do

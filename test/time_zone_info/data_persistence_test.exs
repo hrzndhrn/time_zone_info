@@ -8,9 +8,9 @@ defmodule TimeZoneInfo.DataPersistenceTest do
   alias TimeZoneInfo.DataPersistenceMock
 
   setup do
-    put_env(data_persistence: DataPersistenceMock)
+    put_app_env(data_persistence: DataPersistenceMock)
 
-    on_exit(&delete_env/0)
+    on_exit(&delete_app_env/0)
   end
 
   setup :verify_on_exit!
@@ -41,7 +41,7 @@ defmodule TimeZoneInfo.DataPersistenceTest do
   end
 
   test "throws error if config is unset" do
-    delete_env()
+    delete_app_env()
 
     assert_raise ArgumentError, fn ->
       DataPersistence.checksum()

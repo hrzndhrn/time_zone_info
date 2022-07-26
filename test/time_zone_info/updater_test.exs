@@ -23,7 +23,7 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1" do
     setup do
-      cp_data(@fixture, @data)
+      cp_priv_data(@fixture, @data)
       data_store = data_store()
       put_test_env(data_store)
       on_exit(fn -> do_exit(data_store) end)
@@ -165,7 +165,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -190,7 +190,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -210,7 +210,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -429,14 +429,14 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1 initial" do
     setup do
-      mkdir_data(@data)
+      mkdir_priv_data(@data)
       data_store = data_store()
       put_test_env(data_store)
       on_exit(fn -> do_exit(data_store) end)
     end
 
     test "writes data file if it is not exist (tzdata2019c)" do
-      refute data_exists?(@data)
+      refute priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -448,7 +448,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
 
       assert %{links: links, time_zones: time_zones} = DataStore.info()
       assert links == 36
@@ -464,7 +464,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@data)
+      refute priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -476,7 +476,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
 
       assert %{links: links, time_zones: time_zones} = DataStore.info()
       assert links == 36
@@ -494,7 +494,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@data)
+      refute priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -506,7 +506,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
 
       assert periods(~N[2012-03-25 01:59:59], "Indian/Mauritius") == {
                :ok,
@@ -533,7 +533,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@data)
+      refute priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -545,7 +545,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       )
 
       refute DataStore.empty?()
-      assert data_exists?(@data)
+      assert priv_data_exists?(@data)
       assert Enum.member?(TimeZoneInfo.time_zones(), "Europe/Amsterdam")
       refute Enum.member?(TimeZoneInfo.time_zones(), "America/New_York")
 
@@ -571,7 +571,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@data)
+      refute priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -595,7 +595,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         ]
       )
 
-      refute data_exists?(@data)
+      refute priv_data_exists?(@data)
       assert DataStore.empty?()
 
       assert_log(
@@ -609,14 +609,14 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1 returns error" do
     setup do
-      cp_data(@fixture, @data)
+      cp_priv_data(@fixture, @data)
       data_store = data_store()
       put_test_env(data_store)
       on_exit(fn -> do_exit(data_store) end)
     end
 
     test "without any config" do
-      delete_env()
+      delete_app_env()
 
       assert_raise ArgumentError, fn ->
         Updater.update()
@@ -624,9 +624,9 @@ defmodule TimeZoneInfo.UpdaterTest do
     end
 
     test "without invalid config" do
-      delete_env()
+      delete_app_env()
 
-      put_env(
+      put_app_env(
         data_store: ErlangTermStorage,
         data_persistence: Priv
       )
@@ -732,7 +732,7 @@ defmodule TimeZoneInfo.UpdaterTest do
   end
 
   defp put_test_env(data_store) do
-    put_env(
+    put_app_env(
       lookahead: 1,
       files: ["africa"],
       downloader: [
@@ -749,8 +749,8 @@ defmodule TimeZoneInfo.UpdaterTest do
   end
 
   defp do_exit(data_store) do
-    rm_data(@data)
-    delete_env()
+    rm_priv_data(@data)
+    delete_app_env()
     data_store.delete!()
   end
 

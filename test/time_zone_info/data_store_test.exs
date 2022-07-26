@@ -8,9 +8,9 @@ defmodule TimeZoneInfo.DataStoreTest do
   alias TimeZoneInfo.DataStoreMock
 
   setup do
-    put_env(data_store: DataStoreMock)
+    put_app_env(data_store: DataStoreMock)
 
-    on_exit(&delete_env/0)
+    on_exit(&delete_app_env/0)
   end
 
   setup :verify_on_exit!
@@ -51,7 +51,7 @@ defmodule TimeZoneInfo.DataStoreTest do
   end
 
   test "throws error if config is unset" do
-    delete_env()
+    delete_app_env()
 
     assert_raise ArgumentError, fn ->
       DataStore.empty?()

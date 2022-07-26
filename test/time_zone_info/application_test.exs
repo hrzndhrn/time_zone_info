@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.ApplicationTest do
   import TimeZoneInfo.TestUtils
 
   test "start" do
-    put_env(
+    put_app_env(
       files: [
         "africa",
         "antarctica",
