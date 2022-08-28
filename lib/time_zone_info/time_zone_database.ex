@@ -11,7 +11,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   alias TimeZoneInfo.IsoDays
   alias TimeZoneInfo.Transformer.RuleSet
 
-  @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2}
+  @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2, convert: 1}
 
   @impl true
   def time_zone_periods_from_wall_datetime(%NaiveDateTime{}, "Etc/UTC"),
@@ -72,11 +72,15 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end)
   end
 
-  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, last \\ :none) do
-    case at_utc > at_wall do
-      false -> {head(transitions, :none), transition, last}
-      true -> find_transitions(transitions, at_wall, transition)
-    end
+  defp find_transitions(transitions, at_wall, last \\ :none)
+
+  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, _last)
+       when at_utc > at_wall do
+    find_transitions(transitions, at_wall, transition)
+  end
+
+  defp find_transitions([transition | transitions], _at_wall, last) do
+    {head(transitions, :none), transition, last}
   end
 
   defp head([], default), do: default

@@ -109,7 +109,7 @@ defmodule TimeZoneInfo.MixProject do
           TimeZoneInfo.Listener.ErrorLogger,
           TimeZoneInfo.Listener.Logger
         ],
-        "Parser/Transformer": [
+        "Parser/Tranformer": [
           TimeZoneInfo.IanaParser,
           TimeZoneInfo.Transformer,
           TimeZoneInfo.Transformer.Abbr,
@@ -145,7 +145,8 @@ defmodule TimeZoneInfo.MixProject do
       {:castore, "~> 0.1", optional: true},
       {:mint, "~> 1.0", optional: true},
       # dev and test
-      {:benchee_dsl, "~> 0.1", only: [:dev, :test]},
+      {:benchee_dsl, "~> 0.3", only: [:dev, :test]},
+      # {:benchee_dsl, path: "../benchee_dsl"},
       {:benchee_markdown, "~> 0.1", only: :dev},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
