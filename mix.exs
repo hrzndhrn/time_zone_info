@@ -154,7 +154,6 @@ defmodule TimeZoneInfo.MixProject do
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
       {:mox, "~> 1.0", only: :test},
-      {:nerves_time_zones, "~> 0.2", only: [:dev]},
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
       {:recode, "~> 0.1", only: :dev},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
@@ -163,6 +162,7 @@ defmodule TimeZoneInfo.MixProject do
       {:benchee_dsl, "~> 0.3", only: :dev},
       # {:benchee_dsl, path: "../benchee_dsl"},
       {:benchee_markdown, "~> 0.1", only: :dev},
+      {:nerves_time_zones, "~> 0.2", only: [:dev], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
       {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
       {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
