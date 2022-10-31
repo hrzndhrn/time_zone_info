@@ -156,32 +156,17 @@ defmodule TimeZoneInfo.MixProject do
       {:mox, "~> 1.0", only: :test},
       {:nerves_time_zones, "~> 0.2", only: [:dev]},
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
-      {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false}
-    ] ++ recode() ++ benchee()
-  end
+      {:recode, "~> 0.1", only: :dev},
+      {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
 
-  defp recode() do
-    case Version.match?(System.version(), "~> 1.14") do
-      true -> [{:recode, "~> 0.1", only: [:dev, :test]}]
-      false -> []
-    end
-  end
-
-  defp benchee() do
-    case Version.match?(System.version(), "~> 1.14") do
-      true ->
-        [
-          {:benchee_dsl, "~> 0.3", only: [:dev, :test]},
-          # {:benchee_dsl, path: "../benchee_dsl"},
-          {:benchee_markdown, "~> 0.1", only: :dev},
-          {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
-          {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
-          {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
-        ]
-
-      false ->
-        []
-    end
+      # benchee
+      {:benchee_dsl, "~> 0.3", only: :dev},
+      # {:benchee_dsl, path: "../benchee_dsl"},
+      {:benchee_markdown, "~> 0.1", only: :dev},
+      {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
+      {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
+      {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
+    ]
   end
 
   defp package do
