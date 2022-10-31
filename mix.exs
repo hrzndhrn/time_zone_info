@@ -141,13 +141,12 @@ defmodule TimeZoneInfo.MixProject do
   defp deps do
     [
       {:nimble_parsec, "~> 0.5 or ~> 1.0", runtime: false},
+
       # optional
       {:castore, "~> 0.1", optional: true},
       {:mint, "~> 1.0", optional: true},
+
       # dev and test
-      {:benchee_dsl, "~> 0.3", only: [:dev, :test]},
-      # {:benchee_dsl, path: "../benchee_dsl"},
-      {:benchee_markdown, "~> 0.1", only: :dev},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:ex_cldr_calendars_coptic, "~> 0.4", only: [:dev, :test]},
@@ -157,17 +156,31 @@ defmodule TimeZoneInfo.MixProject do
       {:mox, "~> 1.0", only: :test},
       {:nerves_time_zones, "~> 0.2", only: [:dev]},
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
-      {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
-      {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
-      {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
-      {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
-    ] ++ recode()
+      {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false}
+    ] ++ recode() ++ benchee()
   end
 
   defp recode() do
-    case Version.match?(System.version(), "~> 1.12") do
+    case Version.match?(System.version(), "~> 1.14") do
       true -> [{:recode, "~> 0.1", only: [:dev, :test]}]
       false -> []
+    end
+  end
+
+  defp benchee() do
+    case Version.match?(System.version(), "~> 1.14") do
+      true ->
+        [
+          {:benchee_dsl, "~> 0.3", only: [:dev, :test]},
+          # {:benchee_dsl, path: "../benchee_dsl"},
+          {:benchee_markdown, "~> 0.1", only: :dev},
+          {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
+          {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
+          {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
+        ]
+
+      false ->
+        []
     end
   end
 
