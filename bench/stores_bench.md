@@ -1,5 +1,4 @@
-
-# Benchmark
+Benchmark
 
 This benchmark compares the different `DataStores` available in
 `TimeZoneInfo`.
@@ -34,10 +33,10 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.13.4</td>
+    <td style="white-space: nowrap">1.14.1</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">24.3</td>
+    <td style="white-space: nowrap">25.1.2</td>
   </tr>
 </table>
 
@@ -62,7 +61,6 @@ Benchmark suite executing with the following configuration:
 
 
 
-
 __Input: Europe/Berlin__
 
 Run Time
@@ -79,35 +77,35 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap; text-align: right">1405.97 K</td>
-    <td style="white-space: nowrap; text-align: right">0.71 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;40.95%</td>
-    <td style="white-space: nowrap; text-align: right">0.70 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">0.89 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">2313.56 K</td>
+    <td style="white-space: nowrap; text-align: right">0.43 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;7444.04%</td>
+    <td style="white-space: nowrap; text-align: right">0.38 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">0.50 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.39 K</td>
-    <td style="white-space: nowrap; text-align: right">23.05 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;25.77%</td>
-    <td style="white-space: nowrap; text-align: right">21 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">47 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">43.67 K</td>
+    <td style="white-space: nowrap; text-align: right">22.90 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;37.25%</td>
+    <td style="white-space: nowrap; text-align: right">20.29 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">45.54 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">39.90 K</td>
-    <td style="white-space: nowrap; text-align: right">25.06 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;23.50%</td>
-    <td style="white-space: nowrap; text-align: right">23 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">49 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">41.20 K</td>
+    <td style="white-space: nowrap; text-align: right">24.27 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;24.51%</td>
+    <td style="white-space: nowrap; text-align: right">21.83 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">45.58 &micro;s</td>
   </tr>
 
 </table>
 
 
-Comparison
+Run Time Comparison
 
 <table style="width: 1%">
   <tr>
@@ -116,20 +114,20 @@ Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap;text-align: right">1405.97 K</td>
+    <td style="white-space: nowrap;text-align: right">2313.56 K</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.39 K</td>
-    <td style="white-space: nowrap; text-align: right">32.4x</td>
+    <td style="white-space: nowrap; text-align: right">43.67 K</td>
+    <td style="white-space: nowrap; text-align: right">52.98x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">39.90 K</td>
-    <td style="white-space: nowrap; text-align: right">35.23x</td>
+    <td style="white-space: nowrap; text-align: right">41.20 K</td>
+    <td style="white-space: nowrap; text-align: right">56.16x</td>
   </tr>
 
 </table>
@@ -141,7 +139,7 @@ Memory Usage
 <table style="width: 1%">
   <tr>
     <th>Name</th>
-    <th style="text-align: right">Memory</th>
+    <th style="text-align: right">Average</th>
     <th style="text-align: right">Factor</th>
   </tr>
   <tr>
@@ -160,5 +158,3 @@ Memory Usage
     <td>1.16x</td>
   </tr>
 </table>
-
-

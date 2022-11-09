@@ -1,5 +1,4 @@
-
-# Benchmark
+Benchmark
 
 This benchmark measures the performance of the transformation of the
 raw IANA data to the data structure used by `TimeZoneInfo`.
@@ -24,10 +23,10 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.13.4</td>
+    <td style="white-space: nowrap">1.14.1</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">24.3</td>
+    <td style="white-space: nowrap">25.1.2</td>
   </tr>
 </table>
 
@@ -52,7 +51,6 @@ Benchmark suite executing with the following configuration:
 
 
 
-
 Run Time
 
 <table style="width: 1%">
@@ -67,11 +65,11 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap; text-align: right">0.45</td>
-    <td style="white-space: nowrap; text-align: right">2.23 s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;0.69%</td>
-    <td style="white-space: nowrap; text-align: right">2.23 s</td>
-    <td style="white-space: nowrap; text-align: right">2.25 s</td>
+    <td style="white-space: nowrap; text-align: right">1.13</td>
+    <td style="white-space: nowrap; text-align: right">882.60 ms</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;3.96%</td>
+    <td style="white-space: nowrap; text-align: right">872.74 ms</td>
+    <td style="white-space: nowrap; text-align: right">1060.96 ms</td>
   </tr>
 
 </table>
@@ -83,14 +81,12 @@ Memory Usage
 <table style="width: 1%">
   <tr>
     <th>Name</th>
-    <th style="text-align: right">Memory</th>
+    <th style="text-align: right">Average</th>
 
   </tr>
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap">1.26 GB</td>
+    <td style="white-space: nowrap">1.22 GB</td>
 
   </tr>
 </table>
-
-
