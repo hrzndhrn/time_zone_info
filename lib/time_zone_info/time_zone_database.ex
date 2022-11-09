@@ -66,10 +66,10 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end
   end
 
-  defp find_transition(transitions, timestamp) do
-    Enum.find_value(transitions, fn {at, period} ->
-      with true <- at <= timestamp, do: period
-    end)
+  defp find_transition([{_at, period}], _timestamp), do: period
+
+  defp find_transition([{at, period} | transitions], timestamp) do
+    if at <= timestamp, do: period, else: find_transition(transitions, timestamp)
   end
 
   defp find_transitions(transitions, at_wall, last \\ :none)

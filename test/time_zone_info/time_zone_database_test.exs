@@ -280,6 +280,19 @@ defmodule TimeZoneInfo.TimeZoneDatabaseTest do
             }
           }
 
+    prove "negative date",
+          time_zone_period_from_utc_iso_days(
+            ~N[-1998-08-02 06:00:00],
+            "Europe/Istanbul"
+          ) ==
+            {:ok,
+             %{
+               std_offset: 0,
+               utc_offset: 6952,
+               wall_period: {:min, ~N[1880-01-01 00:00:00]},
+               zone_abbr: "LMT"
+             }}
+
     # ==========================================================================
     # Additional tests, , for some bugs I can't remember.
 
