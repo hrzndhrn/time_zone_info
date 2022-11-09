@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.4 - 2022/11/09
+
+- Fix bug for negative dates.
+
 ## 0.6.3 - 2022/10/31
 
 - Update `priv/data.etf` with IANA tzdata version 2022f.
