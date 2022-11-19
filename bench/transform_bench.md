@@ -1,4 +1,4 @@
-Benchmark
+Benchmark: Transform
 
 This benchmark measures the performance of the transformation of the
 raw IANA data to the data structure used by `TimeZoneInfo`.
@@ -65,11 +65,11 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap; text-align: right">1.13</td>
-    <td style="white-space: nowrap; text-align: right">882.60 ms</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;3.96%</td>
-    <td style="white-space: nowrap; text-align: right">872.74 ms</td>
-    <td style="white-space: nowrap; text-align: right">1060.96 ms</td>
+    <td style="white-space: nowrap; text-align: right">1.14</td>
+    <td style="white-space: nowrap; text-align: right">875.00 ms</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;1.48%</td>
+    <td style="white-space: nowrap; text-align: right">872.65 ms</td>
+    <td style="white-space: nowrap; text-align: right">972.23 ms</td>
   </tr>
 
 </table>
