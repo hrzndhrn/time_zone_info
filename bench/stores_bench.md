@@ -1,4 +1,4 @@
-Benchmark
+Benchmark: TimeZoneDatabase Storage
 
 This benchmark compares the different `DataStores` available in
 `TimeZoneInfo`.
@@ -77,27 +77,27 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap; text-align: right">2313.56 K</td>
-    <td style="white-space: nowrap; text-align: right">0.43 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;7444.04%</td>
+    <td style="white-space: nowrap; text-align: right">2213.26 K</td>
+    <td style="white-space: nowrap; text-align: right">0.45 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;7218.25%</td>
     <td style="white-space: nowrap; text-align: right">0.38 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">0.50 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">1.25 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.67 K</td>
-    <td style="white-space: nowrap; text-align: right">22.90 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;37.25%</td>
+    <td style="white-space: nowrap; text-align: right">43.77 K</td>
+    <td style="white-space: nowrap; text-align: right">22.85 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;75.51%</td>
     <td style="white-space: nowrap; text-align: right">20.29 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">45.54 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">45.71 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">41.20 K</td>
-    <td style="white-space: nowrap; text-align: right">24.27 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;24.51%</td>
+    <td style="white-space: nowrap; text-align: right">41.16 K</td>
+    <td style="white-space: nowrap; text-align: right">24.29 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;35.17%</td>
     <td style="white-space: nowrap; text-align: right">21.83 &micro;s</td>
     <td style="white-space: nowrap; text-align: right">45.58 &micro;s</td>
   </tr>
@@ -114,20 +114,20 @@ Run Time Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap;text-align: right">2313.56 K</td>
+    <td style="white-space: nowrap;text-align: right">2213.26 K</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.67 K</td>
-    <td style="white-space: nowrap; text-align: right">52.98x</td>
+    <td style="white-space: nowrap; text-align: right">43.77 K</td>
+    <td style="white-space: nowrap; text-align: right">50.56x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">41.20 K</td>
-    <td style="white-space: nowrap; text-align: right">56.16x</td>
+    <td style="white-space: nowrap; text-align: right">41.16 K</td>
+    <td style="white-space: nowrap; text-align: right">53.77x</td>
   </tr>
 
 </table>
