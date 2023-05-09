@@ -314,7 +314,9 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "America/Dawson" = tz) do
     assert_time_zone(time_zones, tz, [
       [
-        {~N[2023-11-05 09:00:00], {-28800, "Canada", {:template, "P%sT"}}},
+        {~N[2024-11-03 09:00:00], {-28800, "Canada", {:template, "P%sT"}}},
+        {~N[2024-03-10 10:00:00], {-28800, 3600, "PDT"}},
+        {~N[2023-11-05 09:00:00], {-28800, 0, "PST"}},
         {~N[2023-03-12 10:00:00], {-28800, 3600, "PDT"}},
         {~N[2022-11-06 09:00:00], {-28800, 0, "PST"}},
         {~N[2022-03-13 10:00:00], {-28800, 3600, "PDT"}},
@@ -869,7 +871,9 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "Europe/Berlin" = tz) do
     assert_time_zone(time_zones, tz, [
       [
-        {~N[2023-10-29 01:00:00], {3600, "EU", {:template, "CE%sT"}}},
+        {~N[2024-10-27 01:00:00], {3600, "EU", {:template, "CE%sT"}}},
+        {~N[2024-03-31 01:00:00], {3600, 3600, "CEST"}},
+        {~N[2023-10-29 01:00:00], {3600, 0, "CET"}},
         {~N[2023-03-26 01:00:00], {3600, 3600, "CEST"}},
         {~N[2022-10-30 01:00:00], {3600, 0, "CET"}},
         {~N[2022-03-27 01:00:00], {3600, 3600, "CEST"}},
@@ -901,7 +905,9 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "Europe/Dublin" = tz) do
     assert_time_zone(time_zones, tz, [
       [
-        {~N[2023-10-29 01:00:00], {3600, "Eire", {:choice, ["IST", "GMT"]}}},
+        {~N[2024-10-27 01:00:00], {3600, "Eire", {:choice, ["IST", "GMT"]}}},
+        {~N[2024-03-31 01:00:00], {3600, 0, "IST"}},
+        {~N[2023-10-29 01:00:00], {3600, -3600, "GMT"}},
         {~N[2023-03-26 01:00:00], {3600, 0, "IST"}},
         {~N[2022-10-30 01:00:00], {3600, -3600, "GMT"}},
         {~N[2022-03-27 01:00:00], {3600, 0, "IST"}},
@@ -1041,7 +1047,9 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "Europe/Luxembourg" = tz) do
     assert_time_zone(time_zones, tz, [
       [
-        {~N[2023-10-29 01:00:00], {3600, "EU", {:template, "CE%sT"}}},
+        {~N[2024-10-27 01:00:00], {3600, "EU", {:template, "CE%sT"}}},
+        {~N[2024-03-31 01:00:00], {3600, 3600, "CEST"}},
+        {~N[2023-10-29 01:00:00], {3600, 0, "CET"}},
         {~N[2023-03-26 01:00:00], {3600, 3600, "CEST"}},
         {~N[2022-10-30 01:00:00], {3600, 0, "CET"}},
         {~N[2022-03-27 01:00:00], {3600, 3600, "CEST"}},
@@ -1104,7 +1112,9 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "Europe/Vienna" = tz) do
     assert_time_zone(time_zones, tz, [
       [
-        {~N[2023-10-29 01:00:00], {3600, "EU", {:template, "CE%sT"}}},
+        {~N[2024-10-27 01:00:00], {3600, "EU", {:template, "CE%sT"}}},
+        {~N[2024-03-31 01:00:00], {3600, 3600, "CEST"}},
+        {~N[2023-10-29 01:00:00], {3600, 0, "CET"}},
         {~N[2023-03-26 01:00:00], {3600, 3600, "CEST"}},
         {~N[2022-10-30 01:00:00], {3600, 0, "CET"}},
         {~N[2022-03-27 01:00:00], {3600, 3600, "CEST"}},
@@ -1146,7 +1156,9 @@ defmodule TimeZoneInfo.TransformerTest do
   defp assert_time_zone(time_zones, "Pacific/Auckland" = tz) do
     assert_time_zone(time_zones, tz, [
       [
-        {~N[2023-09-23 14:00:00], {43200, "NZ", {:template, "NZ%sT"}}},
+        {~N[2024-09-28 14:00:00], {43200, "NZ", {:template, "NZ%sT"}}},
+        {~N[2024-04-06 14:00:00], {43200, 0, "NZST"}},
+        {~N[2023-09-23 14:00:00], {43200, 3600, "NZDT"}},
         {~N[2023-04-01 14:00:00], {43200, 0, "NZST"}},
         {~N[2022-09-24 14:00:00], {43200, 3600, "NZDT"}},
         {~N[2022-04-02 14:00:00], {43200, 0, "NZST"}},
