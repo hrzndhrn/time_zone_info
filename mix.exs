@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.6.4",
+      version: "0.6.5",
       elixir: "~> 1.10",
       name: "TimeZoneInfo",
       description: description(),
@@ -140,22 +140,22 @@ defmodule TimeZoneInfo.MixProject do
 
   defp deps do
     [
-      {:nimble_parsec, "~> 0.5 or ~> 1.0", runtime: false},
+      {:nimble_parsec, "~> 1.3", runtime: false},
 
       # optional
-      {:castore, "~> 0.1", optional: true},
+      {:castore, "~> 1.0", optional: true},
       {:mint, "~> 1.0", optional: true},
 
       # dev and test
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
-      {:ex_cldr_calendars_coptic, "~> 0.4", only: [:dev, :test]},
+      {:ex_cldr_calendars_coptic, "~> 1.0", only: [:dev, :test]},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
       {:mox, "~> 1.0", only: :test},
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
-      {:recode, "~> 0.1", only: :dev},
+      {:recode, "~> 0.5", only: :dev},
       {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
 
       # benchee
