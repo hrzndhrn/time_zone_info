@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.6.5 - 2023/05/09
+## 0.6.5 - 2023/05/10
 
 - Update `priv/data.etf` with IANA tzdata version 2023c.
 
