@@ -11,7 +11,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   alias TimeZoneInfo.IsoDays
   alias TimeZoneInfo.Transformer.RuleSet
 
-  @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2, convert: 1}
+  @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2, convert: 1, transitions: 3}
 
   @impl true
   def time_zone_periods_from_wall_datetime(%NaiveDateTime{}, "Etc/UTC"),
@@ -246,13 +246,10 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   defp to_wall({at, {utc_offset, std_offset, _zone_abbr, _wall_period}}),
     do: at + utc_offset + std_offset
 
-  defp to_wall(
-         {at, {_, _, _, _}},
-         {_, {utc_offset, std_offset, _zone_abbr, _wall_period}}
-       ),
-       do: at + utc_offset + std_offset
+  defp to_wall({at, _zone_info}, {_, {utc_offset, std_offset, _zone_abbr, _wall_period}}),
+    do: at + utc_offset + std_offset
 
-  defp convert({_, {utc_offset, std_offset, zone_abbr, wall_period}}),
+  defp convert({_at, {utc_offset, std_offset, zone_abbr, wall_period}}),
     do: %{
       utc_offset: utc_offset,
       std_offset: std_offset,
