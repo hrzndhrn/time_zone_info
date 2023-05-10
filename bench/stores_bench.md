@@ -77,29 +77,29 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap; text-align: right">2147.50 K</td>
-    <td style="white-space: nowrap; text-align: right">0.47 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;6734.51%</td>
+    <td style="white-space: nowrap; text-align: right">2202.14 K</td>
+    <td style="white-space: nowrap; text-align: right">0.45 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;8285.78%</td>
     <td style="white-space: nowrap; text-align: right">0.38 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">1.25 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">0.50 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.45 K</td>
-    <td style="white-space: nowrap; text-align: right">23.02 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;31.79%</td>
-    <td style="white-space: nowrap; text-align: right">20.58 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">43.79 K</td>
+    <td style="white-space: nowrap; text-align: right">22.84 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;26.39%</td>
+    <td style="white-space: nowrap; text-align: right">20.54 &micro;s</td>
     <td style="white-space: nowrap; text-align: right">47.33 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">40.85 K</td>
-    <td style="white-space: nowrap; text-align: right">24.48 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;31.92%</td>
-    <td style="white-space: nowrap; text-align: right">22.13 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">48.25 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">40.90 K</td>
+    <td style="white-space: nowrap; text-align: right">24.45 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;23.85%</td>
+    <td style="white-space: nowrap; text-align: right">22.17 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">48.13 &micro;s</td>
   </tr>
 
 </table>
@@ -114,20 +114,20 @@ Run Time Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap;text-align: right">2147.50 K</td>
+    <td style="white-space: nowrap;text-align: right">2202.14 K</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.45 K</td>
-    <td style="white-space: nowrap; text-align: right">49.43x</td>
+    <td style="white-space: nowrap; text-align: right">43.79 K</td>
+    <td style="white-space: nowrap; text-align: right">50.29x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">40.85 K</td>
-    <td style="white-space: nowrap; text-align: right">52.57x</td>
+    <td style="white-space: nowrap; text-align: right">40.90 K</td>
+    <td style="white-space: nowrap; text-align: right">53.85x</td>
   </tr>
 
 </table>

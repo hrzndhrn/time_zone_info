@@ -46,7 +46,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     case DataStore.get_transitions(time_zone) do
       {:ok, transitions} ->
         transitions
-        |> find_transitions(at_wall_seconds)
+        |> find_transitions(at_wall_seconds, nil)
         |> to_periods(at_wall_seconds, at_wall_date_time)
 
       {:error, :transitions_not_found} ->
@@ -72,20 +72,18 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     if at <= timestamp, do: period, else: find_transition(transitions, timestamp)
   end
 
-  defp find_transitions(transitions, at_wall, last \\ :none)
-
-  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, _last)
-       when at_utc > at_wall do
-    find_transitions(transitions, at_wall, transition)
+  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, last) do
+    if at_utc > at_wall do
+      find_transitions(transitions, at_wall, transition)
+    else
+      transitions(transitions, transition, last)
+    end
   end
 
-  defp find_transitions([transition | transitions], _at_wall, last) do
-    {head(transitions, :none), transition, last}
-  end
-
-  defp head([], default), do: default
-
-  defp head(list, _default), do: hd(list)
+  defp transitions([head | _tail], transition, nil), do: {head, transition}
+  defp transitions([head | _tail], transition, last), do: {head, transition, last}
+  defp transitions(_transitions, transition, nil), do: transition
+  defp transitions(_transitions, transition, last), do: {transition, last}
 
   defp to_period(
          {utc_offset, rule_name, {_, _} = format},
@@ -114,7 +112,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp to_periods(
-         {:none, {_at, {utc_offset, std_offset, zone_abbr, _wall_period}}, :none},
+         {_at, {utc_offset, std_offset, zone_abbr, _wall_period}},
          _at_wall,
          _at_wall_datetime
        ) do
@@ -125,14 +123,6 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
        zone_abbr: zone_abbr,
        wall_period: {:min, :max}
      }}
-  end
-
-  defp to_periods({:none, a, b}, at_wall, at_wall_datetime) do
-    to_periods({a, b}, at_wall, at_wall_datetime)
-  end
-
-  defp to_periods({a, b, :none}, at_wall, at_wall_datetime) do
-    to_periods({a, b}, at_wall, at_wall_datetime)
   end
 
   defp to_periods(
@@ -173,26 +163,21 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp to_periods({transition_a, transition_b, transition_c}, at_wall, _at_wall_datetime) do
-    at_wall_ba = to_wall(transition_b, transition_a)
-    at_wall_b = to_wall(transition_b)
-    at_wall_cb = to_wall(transition_c, transition_b)
-    at_wall_c = to_wall(transition_c)
-
     cond do
-      at_wall >= at_wall_c ->
-        if at_wall < at_wall_cb,
+      at_wall >= to_wall(transition_c) ->
+        if at_wall < to_wall(transition_c, transition_b),
           do: {:ambiguous, convert(transition_b), convert(transition_c)},
           else: {:ok, convert(transition_c)}
 
-      at_wall >= at_wall_cb ->
+      at_wall >= to_wall(transition_c, transition_b) ->
         gap(transition_b, transition_c)
 
-      at_wall >= at_wall_b ->
-        if at_wall < at_wall_ba,
+      at_wall >= to_wall(transition_b) ->
+        if at_wall < to_wall(transition_b, transition_a),
           do: {:ambiguous, convert(transition_a), convert(transition_b)},
           else: {:ok, convert(transition_b)}
 
-      at_wall >= at_wall_ba ->
+      at_wall >= to_wall(transition_b, transition_a) ->
         gap(transition_a, transition_b)
 
       true ->
@@ -205,7 +190,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
       {:ok, rules} ->
         rules
         |> transitions(utc_offset, format, at_wall_datetime.year)
-        |> find_transitions(at_wall_seconds)
+        |> find_transitions(at_wall_seconds, nil)
         |> to_periods(at_wall_seconds, at_wall_datetime)
 
       {:error, :rules_not_found} ->
