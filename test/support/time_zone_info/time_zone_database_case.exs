@@ -174,7 +174,7 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
   end
 
   def assert_time_zone_period(time_zone_period) do
-    assert Map.keys(time_zone_period) == [:std_offset, :utc_offset, :wall_period, :zone_abbr]
+    assert_map_keys(time_zone_period, [:std_offset, :utc_offset, :wall_period, :zone_abbr])
 
     assert %{
              std_offset: std_offset,
@@ -188,6 +188,10 @@ defmodule TimeZoneInfo.TimeZoneDatabaseCase do
     assert String.length(zone_abbr) <= 6
     assert since == :min || match?(%NaiveDateTime{}, since)
     assert until == :max || match?(%NaiveDateTime{}, until)
+  end
+
+  def assert_map_keys(map, keys) do
+    assert Map.keys(map) |> Enum.sort() == Enum.sort(keys)
   end
 
   # property generators

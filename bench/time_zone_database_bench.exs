@@ -25,15 +25,15 @@ defmodule TimeZoneDatabaseBench do
   end
 
   inputs %{
-    "Europe/Berlin 2099-06-01 00:00:00" => [~N[2099-06-06 00:00:00], "Europe/Berlin"],
-    "Europe/Berlin 2020-03-29 02:00:01 (gap)" => [~N[2020-03-29 02:00:01], "Europe/Berlin"],
-    "Europe/Berlin 2020-10-25 02:00:01 (ambiguous)" => [~N[2020-10-25 02:00:01], "Europe/Berlin"],
-    "Europe/Berlin 2020-06-01 00:00:00" => [~N[2020-06-01 00:00:00], "Europe/Berlin"],
-    "Europe/Paris 1950-06-27 22:34:00" => [~N[1950-06-27 22:34:00], "Europe/Paris"]
+    #"Europe/Berlin 2099-06-01 00:00:00" => [~N[2099-06-06 00:00:00], "Europe/Berlin"],
+    #"Europe/Berlin 2024-03-31 02:00:01 (gap)" => [~N[2024-03-31 02:00:01], "Europe/Berlin"],
+    #"Europe/Berlin 2024-10-27 02:00:01 (ambiguous)" => [~N[2024-10-27 02:00:01], "Europe/Berlin"],
+    "Europe/Berlin 2024-06-01 00:00:00" => [~N[2024-06-01 00:00:00], "Europe/Berlin"]
+    #"Europe/Paris 1950-06-27 22:34:00" => [~N[1950-06-27 22:34:00], "Europe/Paris"]
   }
 
   formatter Benchee.Formatters.Markdown,
-    file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    file: Path.join(["bench", "reports", Macro.underscore(__MODULE__) <> ".md"]),
     title: @title,
     description: @description
 
@@ -43,9 +43,9 @@ defmodule TimeZoneDatabaseBench do
   job &Tz.TimeZoneDatabase.time_zone_periods_from_wall_datetime/2,
     as: :tz
 
-  job &Tzdata.TimeZoneDatabase.time_zone_periods_from_wall_datetime/2,
-    as: :tzdata
+  # job &Tzdata.TimeZoneDatabase.time_zone_periods_from_wall_datetime/2,
+  #   as: :tzdata
 
-  job &Zoneinfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime/2,
-    as: :zoninfo
+  # job &Zoneinfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime/2,
+  #   as: :zoninfo
 end

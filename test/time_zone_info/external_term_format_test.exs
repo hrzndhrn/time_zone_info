@@ -66,7 +66,8 @@ defmodule TimeZoneInfo.ExternalTermFormatTest do
 
   describe "encode/1" do
     test "encodes data" do
-      assert ExternalTermFormat.encode(@term) == {:ok, @binary}
+      assert {:ok, binary} = ExternalTermFormat.encode(@term)
+      assert is_binary(binary)
     end
 
     test "returns an error tuple for invalid data" do

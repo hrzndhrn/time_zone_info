@@ -26,7 +26,7 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">1.14.4</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">25.3.2</td>
+    <td style="white-space: nowrap">26.0</td>
   </tr>
 </table>
 
@@ -65,11 +65,11 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap; text-align: right">1.15</td>
-    <td style="white-space: nowrap; text-align: right">872.97 ms</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;0.47%</td>
-    <td style="white-space: nowrap; text-align: right">872.65 ms</td>
-    <td style="white-space: nowrap; text-align: right">881.49 ms</td>
+    <td style="white-space: nowrap; text-align: right">1.23</td>
+    <td style="white-space: nowrap; text-align: right">810.35 ms</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;0.50%</td>
+    <td style="white-space: nowrap; text-align: right">810.53 ms</td>
+    <td style="white-space: nowrap; text-align: right">821.01 ms</td>
   </tr>
 
 </table>
@@ -86,7 +86,7 @@ Memory Usage
   </tr>
   <tr>
     <td style="white-space: nowrap">transform</td>
-    <td style="white-space: nowrap">1.22 GB</td>
+    <td style="white-space: nowrap">1.16 GB</td>
 
   </tr>
 </table>

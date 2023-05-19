@@ -22,7 +22,7 @@ defmodule StoresBench do
   """
 
   formatter Benchee.Formatters.Markdown,
-    file: Path.join("bench", Macro.underscore(__MODULE__) <> ".md"),
+    file: Path.join(["bench", "reports", Macro.underscore(__MODULE__) <> ".md"]),
     title: @title,
     description: @description
 
