@@ -55,7 +55,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
              } = DataStore.info()
 
       # The memory size depends on the OTP version
-      assert memory in [8_320_424, 8_891_831]
+      assert memory > 8_000_000
       assert count > 600
     end
 
