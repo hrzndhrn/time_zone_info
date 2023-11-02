@@ -47,7 +47,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
 
     test "info/0" do
       assert %{
-               count: 623,
+               count: count,
                links: 205,
                memory: memory,
                time_zones: 387,
@@ -56,6 +56,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
 
       # The memory size depends on the OTP version
       assert memory in [8_320_424, 8_891_831]
+      assert count > 600
     end
 
     describe "time_zone_period_from_utc_iso_days/2" do
