@@ -82,13 +82,13 @@ defmodule TimeZoneInfo.IanaDateTime do
 
   defp to_last_day_of_week(year, month, day_of_week) do
     days_in_month = ISO.days_in_month(year, month)
-    last = ISO.day_of_week(year, month + 1, 1) - 1
+    {last, _first_day_of_week, _last_day_of_week} = ISO.day_of_week(year, month + 1, 1, :default)
 
-    days_in_month - rem(7 - (day_of_week - last), 7)
+    days_in_month - rem(7 - (day_of_week - (last - 1)), 7)
   end
 
   defp to_day_of_week(year, month, day, day_of_week, op) do
-    current = ISO.day_of_week(year, month, day)
+    {current, _first_day_of_week, _last_day_of_week} = ISO.day_of_week(year, month, day, :default)
 
     case op do
       :ge -> day + rem(7 + (day_of_week - current), 7)
