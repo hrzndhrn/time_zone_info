@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.6 - dev
+
+- Use `Calenadar.ISO.day_of_week/4`.
+
 ## 0.6.5 - 2023/05/10
 
 - Update `priv/data.etf` with IANA tzdata version 2023c.
