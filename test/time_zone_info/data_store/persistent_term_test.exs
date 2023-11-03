@@ -32,9 +32,9 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
       end
     end
 
-    describe "get_rules/1" do
+    describe "fetch_rules/1" do
       test "returns ok tuple" do
-        assert {:ok, rules} = DataStore.get_rules("NZ")
+        assert {:ok, rules} = DataStore.fetch_rules("NZ")
 
         assert rules == [
                  {{4, [day: 1, op: :ge, day_of_week: 7], {2, 0, 0}}, :standard, 0, "S"},
@@ -43,7 +43,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
       end
 
       test "returns error tuple" do
-        assert {:error, :rules_not_found} = DataStore.get_rules("XY")
+        assert {:error, :rules_not_found} = DataStore.fetch_rules("XY")
       end
     end
 

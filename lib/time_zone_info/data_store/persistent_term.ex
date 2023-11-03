@@ -22,7 +22,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
   end
 
   @impl true
-  def get_rules(rules) do
+  def fetch_rules(rules) do
     with :error <- fetch(:rules, rules) do
       {:error, :rules_not_found}
     end

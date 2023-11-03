@@ -23,8 +23,8 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorageTest do
            ]
   end
 
-  test "get_rules/1" do
-    assert {:ok, rules} = DataStore.get_rules("NZ")
+  test "fetch_rules/1" do
+    assert {:ok, rules} = DataStore.fetch_rules("NZ")
 
     assert rules == [
              {{4, [day: 1, op: :ge, day_of_week: 7], {2, 0, 0}}, :standard, 0, "S"},
