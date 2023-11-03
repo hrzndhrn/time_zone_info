@@ -1,141 +1,108 @@
 defmodule TimeZoneInfo.DataStore.PersistentTerm do
-  if function_exported?(:persistent_term, :get, 0) do
-    @moduledoc false
+  @moduledoc false
 
-    # This module implements the `TimeZoneInfo.DataStore` and stores the data with
-    # [:persistent_term](https://erlang.org/doc/man/persistent_term.html).
+  # This module implements the `TimeZoneInfo.DataStore` and stores the data with
+  # [:persistent_term](https://erlang.org/doc/man/persistent_term.html).
 
-    @behaviour TimeZoneInfo.DataStore
+  @behaviour TimeZoneInfo.DataStore
 
-    @app :time_zone_info
+  @key {:time_zone_info, :data}
 
-    @impl true
-    def put(data) do
-      put_time_zone_info(data)
-      put_transitions(data)
-      put_rules(data)
-      put_links(data)
-      put_time_zones(data)
+  @impl true
+  def put(data) do
+    data = Map.merge(%{time_zones: %{}, rules: %{}, links: %{}}, data)
+    :persistent_term.put(@key, data)
+  end
+
+  @impl true
+  def get_transitions(time_zone, is_link \\ false) do
+    with :error <- fetch(:time_zones, time_zone) do
+      get_transitions_by_link(time_zone, is_link)
     end
+  end
 
-    @impl true
-    def get_transitions(time_zone, link \\ false) do
-      case :persistent_term.get({@app, :transitions, time_zone}, :not_found) do
-        :not_found ->
-          case link do
-            true -> {:error, :transitions_not_found}
-            false -> time_zone |> get_link() |> get_transitions(true)
-          end
+  @impl true
+  def get_rules(rules) do
+    with :error <- fetch(:rules, rules) do
+      {:error, :rules_not_found}
+    end
+  end
 
-        transitions ->
-          {:ok, transitions}
+  @impl true
+  def get_time_zones(links: :ignore) do
+    case fetch(:time_zones) do
+      {:ok, time_zones} -> time_zones |> Map.keys() |> Enum.sort()
+      :error -> []
+    end
+  end
+
+  def get_time_zones(links: :only) do
+    case fetch(:links) do
+      {:ok, links} -> links |> Map.keys() |> Enum.sort()
+      :error -> []
+    end
+  end
+
+  def get_time_zones(links: :include) do
+    with {:ok, time_zones} <- fetch(:time_zones),
+         {:ok, links} <- fetch(:links) do
+      Enum.sort(Map.keys(time_zones) ++ Map.keys(links))
+    else
+      _error -> []
+    end
+  end
+
+  @impl true
+  def empty?, do: :persistent_term.get(@key, nil) == nil
+
+  @impl true
+  def version, do: get(:version)
+
+  @impl true
+  def delete!, do: :persistent_term.erase(@key)
+
+  @impl true
+  def info do
+    memory =
+      case :persistent_term.get(@key, nil) do
+        nil -> 0
+        data -> data |> :erlang.term_to_binary() |> byte_size()
       end
+
+    %{
+      version: version(),
+      memory: memory,
+      time_zones: length(get_time_zones(links: :ignore)),
+      links: length(get_time_zones(links: :only))
+    }
+  end
+
+  defp get(key) do
+    case :persistent_term.get(@key, :error) do
+      :error -> nil
+      data -> Map.get(data, key)
     end
+  end
 
-    @impl true
-    def get_rules(rules) do
-      case :persistent_term.get({@app, :rules, rules}, :not_found) do
-        :not_foudn -> {:error, :rules_not_found}
-        rules -> {:ok, rules}
-      end
+  defp fetch(key) do
+    case :persistent_term.get(@key, :error) do
+      :error -> :error
+      data -> Map.fetch(data, key)
     end
+  end
 
-    @impl true
-    def get_time_zones(links: select) when select in [:ignore, :only, :include] do
-      with %{time_zones: time_zones, links: links, all: all} <-
-             :persistent_term.get({@app, :time_zones}, []) do
-        case select do
-          :ignore -> time_zones
-          :only -> links
-          :include -> all
-        end
-      end
+  defp fetch(key, sub_key) do
+    with {:ok, map} <- fetch(key) do
+      Map.fetch(map, sub_key)
     end
+  end
 
-    @impl true
-    def empty? do
-      case version() do
-        nil -> true
-        _version -> false
-      end
+  defp get_transitions_by_link(_link, true), do: {:error, :transitions_not_found}
+
+  defp get_transitions_by_link(link, false) do
+    case fetch(:links, link) do
+      {:ok, time_zone} -> get_transitions(time_zone, true)
+      :error -> {:error, :transitions_not_found}
     end
-
-    @impl true
-    def version do
-      :persistent_term.get({@app, :version}, nil)
-    end
-
-    @impl true
-    def delete! do
-      :persistent_term.get()
-      |> Enum.map(fn {key, _value} -> key end)
-      |> Enum.filter(fn
-        key when is_tuple(key) -> elem(key, 0) == @app
-        _key -> false
-      end)
-      |> Enum.each(fn key ->
-        :persistent_term.erase(key)
-      end)
-    end
-
-    @impl true
-    def info do
-      {count, memory} =
-        Enum.reduce(:persistent_term.get(), {0, 0}, fn {key, value}, {count, memory} = acc ->
-          case is_tuple(key) && elem(key, 0) == @app do
-            true -> {count + 1, memory + memory(key) + memory(value)}
-            false -> acc
-          end
-        end)
-
-      %{
-        version: version(),
-        count: count,
-        memory: memory,
-        time_zones: length(get_time_zones(links: :ignore)),
-        links: length(get_time_zones(links: :only))
-      }
-    end
-
-    defp memory(value), do: value |> :erlang.term_to_binary() |> byte_size()
-
-    defp put_time_zone_info(data) do
-      version = Map.get(data, :version)
-      :persistent_term.put({@app, :version}, version)
-    end
-
-    defp put_transitions(data) do
-      data
-      |> Map.get(:time_zones, %{})
-      |> Enum.each(fn {time_zone, transitions} ->
-        :persistent_term.put({@app, :transitions, time_zone}, transitions)
-      end)
-    end
-
-    defp put_rules(data) do
-      data
-      |> Map.get(:rules, %{})
-      |> Enum.each(fn {name, rules} ->
-        :persistent_term.put({@app, :rules, name}, rules)
-      end)
-    end
-
-    defp put_links(data) do
-      data
-      |> Map.get(:links, %{})
-      |> Enum.each(fn {from, to} ->
-        :persistent_term.put({@app, :link, from}, to)
-      end)
-    end
-
-    defp put_time_zones(data) do
-      time_zones = data |> Map.get(:time_zones) |> Map.keys() |> Enum.sort()
-      links = data |> Map.get(:links) |> Map.keys() |> Enum.sort()
-      all = time_zones |> Enum.concat(links) |> Enum.sort()
-      data = %{time_zones: time_zones, links: links, all: all}
-      :persistent_term.put({@app, :time_zones}, data)
-    end
-
-    defp get_link(time_zone), do: :persistent_term.get({@app, :link, time_zone}, :not_found)
   end
 end

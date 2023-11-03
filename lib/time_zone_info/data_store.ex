@@ -8,6 +8,8 @@ defmodule TimeZoneInfo.DataStore do
   @doc "Puts the given `data` into the store."
   @callback put(data :: TimeZoneInfo.data()) :: :ok | :error
 
+  # TODO: rename get_* to fetch_*
+
   @doc """
   Returns the `transitions` for a given `time_zone`.
   """
