@@ -89,7 +89,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
          {utc_offset, rule_name, {_, _} = format},
          {_, {_, _}} = iso_days
        ) do
-    case DataStore.get_rules(rule_name) do
+    case DataStore.fetch_rules(rule_name) do
       {:ok, rules} ->
         rules
         |> transitions(utc_offset, format, IsoDays.to_year(iso_days))
@@ -186,7 +186,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp calculate_periods(utc_offset, rule_name, format, at_wall_seconds, at_wall_datetime) do
-    case DataStore.get_rules(rule_name) do
+    case DataStore.fetch_rules(rule_name) do
       {:ok, rules} ->
         rules
         |> transitions(utc_offset, format, at_wall_datetime.year)

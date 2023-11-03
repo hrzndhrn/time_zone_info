@@ -25,9 +25,9 @@ defmodule TimeZoneInfo.DataStoreTest do
     assert DataStore.fetch_transitions("data")
   end
 
-  test "get_rules/1" do
-    expect(DataStoreMock, :get_rules, fn data -> data == "data" end)
-    assert DataStore.get_rules("data")
+  test "fetch_rules/1" do
+    expect(DataStoreMock, :fetch_rules, fn data -> data == "data" end)
+    assert DataStore.fetch_rules("data")
   end
 
   test "get_time_zones/1" do

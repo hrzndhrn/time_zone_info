@@ -8,8 +8,6 @@ defmodule TimeZoneInfo.DataStore do
   @doc "Puts the given `data` into the store."
   @callback put(data :: TimeZoneInfo.data()) :: :ok | :error
 
-  # TODO: rename get_* to fetch_*
-
   @doc """
   Returns the `transitions` for a given `time_zone`.
   """
@@ -19,7 +17,7 @@ defmodule TimeZoneInfo.DataStore do
   @doc """
   Returns `rules` for a given `rule_name`.
   """
-  @callback get_rules(rule_name :: TimeZoneInfo.rule_name()) ::
+  @callback fetch_rules(rule_name :: TimeZoneInfo.rule_name()) ::
               {:ok, rules :: [TimeZoneInfo.rule()]} | {:error, :rule_not_found}
 
   @doc """
@@ -101,9 +99,9 @@ defmodule TimeZoneInfo.DataStore do
   end
 
   @doc false
-  @spec get_rules(TimeZoneInfo.rule_name()) ::
+  @spec fetch_rules(TimeZoneInfo.rule_name()) ::
           {:ok, [TimeZoneInfo.rule()]} | {:error, :rules_not_found}
-  def get_rules(rule_name), do: impl().get_rules(rule_name)
+  def fetch_rules(rule_name), do: impl().fetch_rules(rule_name)
 
   @doc false
   @spec put(TimeZoneInfo.data()) :: :ok | :error
