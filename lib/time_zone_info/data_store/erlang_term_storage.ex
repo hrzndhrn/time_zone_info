@@ -38,17 +38,17 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorage do
   end
 
   @impl true
-  def get_transitions(:error), do: {:error, :transitions_not_found}
+  def fetch_transitions(:error), do: {:error, :transitions_not_found}
 
-  def get_transitions({:ok, time_zone}) do
+  def fetch_transitions({:ok, time_zone}) do
     with :error <- fetch(@transitions, time_zone) do
       {:error, :transitions_not_found}
     end
   end
 
-  def get_transitions(time_zone) do
+  def fetch_transitions(time_zone) do
     with :error <- fetch(@transitions, time_zone) do
-      @links |> fetch(time_zone) |> get_transitions()
+      @links |> fetch(time_zone) |> fetch_transitions()
     end
   end
 

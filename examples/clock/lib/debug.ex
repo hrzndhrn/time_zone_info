@@ -7,7 +7,7 @@ defmodule Debug do
   alias TimeZoneInfo.GregorianSeconds
 
   def transitions(time_zone) do
-    with {:ok, transitions} <- DataStore.get_transitions(time_zone) do
+    with {:ok, transitions} <- DataStore.fetch_transitions(time_zone) do
       Enum.map(transitions, fn
         {seconds, value} -> {GregorianSeconds.to_naive(seconds), value}
       end)

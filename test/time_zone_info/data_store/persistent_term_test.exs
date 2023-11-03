@@ -5,9 +5,9 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
 
     alias TimeZoneInfo.DataStore
 
-    describe "get_transitions/1" do
+    describe "fetch_transitions/1" do
       test "returns ok tuple" do
-        assert {:ok, zone_states} = DataStore.get_transitions("Pacific/Auckland")
+        assert {:ok, zone_states} = DataStore.fetch_transitions("Pacific/Auckland")
 
         expected = [
           {
@@ -28,7 +28,7 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
       end
 
       test "returns error tuple" do
-        assert {:error, :transitions_not_found} = DataStore.get_transitions("Fantasia/Metropolis")
+        assert {:error, :transitions_not_found} = DataStore.fetch_transitions("Fantasia/Metropolis")
       end
     end
 

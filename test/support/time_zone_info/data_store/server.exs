@@ -3,7 +3,7 @@ defmodule TimeZoneInfo.DataStore.Server do
 
   use GenServer
 
-  @compile {:inline, get_transitions: 3, get_rules: 2}
+  @compile {:inline, fetch_transitions: 3, get_rules: 2}
 
   @impl true
   def init(_opts), do: {:ok, :empty}
@@ -15,8 +15,8 @@ defmodule TimeZoneInfo.DataStore.Server do
   end
 
   @impl true
-  def get_transitions(time_zone) do
-    GenServer.call(__MODULE__, {:get_transitions, time_zone})
+  def fetch_transitions(time_zone) do
+    GenServer.call(__MODULE__, {:fetch_transitions, time_zone})
   end
 
   @impl true
@@ -48,11 +48,11 @@ defmodule TimeZoneInfo.DataStore.Server do
   end
 
   def handle_call(
-        {:get_transitions, time_zone},
+        {:fetch_transitions, time_zone},
         _from,
         %{time_zones: time_zones, links: links} = state
       ) do
-    {:reply, get_transitions(time_zones, links, time_zone), state}
+    {:reply, fetch_transitions(time_zones, links, time_zone), state}
   end
 
   def handle_call({:get_rules, rule_name}, _from, %{rules: rules} = state) do
@@ -95,7 +95,7 @@ defmodule TimeZoneInfo.DataStore.Server do
     {:reply, state == :empty, state}
   end
 
-  defp get_transitions(time_zones, links, time_zone) do
+  defp fetch_transitions(time_zones, links, time_zone) do
     with :error <- Map.fetch(time_zones, time_zone),
          :error <- Map.fetch(time_zones, Map.get(links, time_zone)) do
       {:error, :transitions_not_found}

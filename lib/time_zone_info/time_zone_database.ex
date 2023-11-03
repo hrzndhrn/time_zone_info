@@ -43,7 +43,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp periods_from_wall_gregorian_seconds(at_wall_seconds, time_zone, at_wall_date_time) do
-    case DataStore.get_transitions(time_zone) do
+    case DataStore.fetch_transitions(time_zone) do
       {:ok, transitions} ->
         transitions
         |> find_transitions(at_wall_seconds, nil)
@@ -55,7 +55,7 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   end
 
   defp period_from_utc_gregorian_seconds(gregorian_seconds, time_zone, date_time) do
-    case DataStore.get_transitions(time_zone) do
+    case DataStore.fetch_transitions(time_zone) do
       {:ok, transitions} ->
         transitions
         |> find_transition(gregorian_seconds)

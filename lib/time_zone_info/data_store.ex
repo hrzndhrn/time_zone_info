@@ -13,7 +13,7 @@ defmodule TimeZoneInfo.DataStore do
   @doc """
   Returns the `transitions` for a given `time_zone`.
   """
-  @callback get_transitions(time_zone :: Calendar.time_zone()) ::
+  @callback fetch_transitions(time_zone :: Calendar.time_zone()) ::
               {:ok, transitions :: [TimeZoneInfo.transition()]} | {:error, :transitions_not_found}
 
   @doc """
@@ -79,9 +79,9 @@ defmodule TimeZoneInfo.DataStore do
   end
 
   @doc false
-  @spec get_transitions(Calendar.time_zone()) ::
+  @spec fetch_transitions(Calendar.time_zone()) ::
           {:ok, [TimeZoneInfo.transition()]} | {:error, :transitions_not_found}
-  def get_transitions(time_zone), do: impl().get_transitions(time_zone)
+  def fetch_transitions(time_zone), do: impl().fetch_transitions(time_zone)
 
   @doc false
   @spec get_time_zones(links: :ignore | :only | :include) :: [Calendar.time_zone()]

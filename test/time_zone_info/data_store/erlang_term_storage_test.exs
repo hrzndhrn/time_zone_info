@@ -4,8 +4,8 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorageTest do
 
   alias TimeZoneInfo.DataStore
 
-  test "get_transitions/1" do
-    assert {:ok, zone_states} = DataStore.get_transitions("Pacific/Auckland")
+  test "fetch_transitions/1" do
+    assert {:ok, zone_states} = DataStore.fetch_transitions("Pacific/Auckland")
 
     assert Enum.take(zone_states, 3) == [
              {
