@@ -33,10 +33,10 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.14.4</td>
+    <td style="white-space: nowrap">1.15.7</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">26.0</td>
+    <td style="white-space: nowrap">26.1.2</td>
   </tr>
 </table>
 
@@ -77,29 +77,29 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap; text-align: right">2780.48 K</td>
-    <td style="white-space: nowrap; text-align: right">0.36 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;8284.22%</td>
-    <td style="white-space: nowrap; text-align: right">0.29 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">0.42 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">2497.74 K</td>
+    <td style="white-space: nowrap; text-align: right">0.40 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;8941.50%</td>
+    <td style="white-space: nowrap; text-align: right">0.33 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">0.46 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.47 K</td>
-    <td style="white-space: nowrap; text-align: right">23.00 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;35.92%</td>
-    <td style="white-space: nowrap; text-align: right">20.54 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">47.21 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">43.61 K</td>
+    <td style="white-space: nowrap; text-align: right">22.93 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;69.26%</td>
+    <td style="white-space: nowrap; text-align: right">20.29 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">46.25 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">41.00 K</td>
-    <td style="white-space: nowrap; text-align: right">24.39 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;28.22%</td>
-    <td style="white-space: nowrap; text-align: right">22.13 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">48.08 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">40.76 K</td>
+    <td style="white-space: nowrap; text-align: right">24.53 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;38.08%</td>
+    <td style="white-space: nowrap; text-align: right">21.92 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">46.46 &micro;s</td>
   </tr>
 
 </table>
@@ -114,20 +114,20 @@ Run Time Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap;text-align: right">2780.48 K</td>
+    <td style="white-space: nowrap;text-align: right">2497.74 K</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.47 K</td>
-    <td style="white-space: nowrap; text-align: right">63.96x</td>
+    <td style="white-space: nowrap; text-align: right">43.61 K</td>
+    <td style="white-space: nowrap; text-align: right">57.28x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">41.00 K</td>
-    <td style="white-space: nowrap; text-align: right">67.81x</td>
+    <td style="white-space: nowrap; text-align: right">40.76 K</td>
+    <td style="white-space: nowrap; text-align: right">61.27x</td>
   </tr>
 
 </table>
@@ -144,17 +144,17 @@ Memory Usage
   </tr>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap">456 B</td>
+    <td style="white-space: nowrap">448 B</td>
     <td>&nbsp;</td>
   </tr>
     <tr>
     <td style="white-space: nowrap">ets</td>
     <td style="white-space: nowrap">480 B</td>
-    <td>1.05x</td>
+    <td>1.07x</td>
   </tr>
     <tr>
     <td style="white-space: nowrap">map</td>
     <td style="white-space: nowrap">552 B</td>
-    <td>1.21x</td>
+    <td>1.23x</td>
   </tr>
 </table>
