@@ -59,7 +59,10 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
   def version, do: get(:version)
 
   @impl true
-  def delete!, do: :persistent_term.erase(@key)
+  def delete! do
+    :persistent_term.erase(@key)
+    :ok
+  end
 
   @impl true
   def info do
