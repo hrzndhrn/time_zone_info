@@ -28,7 +28,8 @@ defmodule TimeZoneInfo.DataStore.PersistentTermTest do
       end
 
       test "returns error tuple" do
-        assert {:error, :transitions_not_found} = DataStore.fetch_transitions("Fantasia/Metropolis")
+        assert {:error, :transitions_not_found} =
+                 DataStore.fetch_transitions("Fantasia/Metropolis")
       end
     end
 
