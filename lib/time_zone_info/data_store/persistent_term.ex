@@ -15,9 +15,9 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
   end
 
   @impl true
-  def get_transitions(time_zone, is_link \\ false) do
+  def fetch_transitions(time_zone, is_link \\ false) do
     with :error <- fetch(:time_zones, time_zone) do
-      get_transitions_by_link(time_zone, is_link)
+      fetch_transitions_by_link(time_zone, is_link)
     end
   end
 
@@ -97,11 +97,11 @@ defmodule TimeZoneInfo.DataStore.PersistentTerm do
     end
   end
 
-  defp get_transitions_by_link(_link, true), do: {:error, :transitions_not_found}
+  defp fetch_transitions_by_link(_link, true), do: {:error, :transitions_not_found}
 
-  defp get_transitions_by_link(link, false) do
+  defp fetch_transitions_by_link(link, false) do
     case fetch(:links, link) do
-      {:ok, time_zone} -> get_transitions(time_zone, true)
+      {:ok, time_zone} -> fetch_transitions(time_zone, true)
       :error -> {:error, :transitions_not_found}
     end
   end
