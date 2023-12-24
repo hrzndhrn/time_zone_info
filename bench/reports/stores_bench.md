@@ -33,10 +33,10 @@ Benchmark suite executing on the following system:
     <td style="white-space: nowrap">16 GB</td>
   </tr><tr>
     <th style="white-space: nowrap">Elixir Version</th>
-    <td style="white-space: nowrap">1.15.7</td>
+    <td style="white-space: nowrap">1.16.0</td>
   </tr><tr>
     <th style="white-space: nowrap">Erlang Version</th>
-    <td style="white-space: nowrap">26.1.2</td>
+    <td style="white-space: nowrap">26.2.1</td>
   </tr>
 </table>
 
@@ -77,29 +77,29 @@ Run Time
 
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap; text-align: right">2497.74 K</td>
-    <td style="white-space: nowrap; text-align: right">0.40 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;8941.50%</td>
+    <td style="white-space: nowrap; text-align: right">2431.70 K</td>
+    <td style="white-space: nowrap; text-align: right">0.41 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;7363.29%</td>
     <td style="white-space: nowrap; text-align: right">0.33 &micro;s</td>
     <td style="white-space: nowrap; text-align: right">0.46 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.61 K</td>
-    <td style="white-space: nowrap; text-align: right">22.93 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;69.26%</td>
+    <td style="white-space: nowrap; text-align: right">44.12 K</td>
+    <td style="white-space: nowrap; text-align: right">22.66 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;26.11%</td>
     <td style="white-space: nowrap; text-align: right">20.29 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">46.25 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">45.38 &micro;s</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">40.76 K</td>
-    <td style="white-space: nowrap; text-align: right">24.53 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">&plusmn;38.08%</td>
+    <td style="white-space: nowrap; text-align: right">40.91 K</td>
+    <td style="white-space: nowrap; text-align: right">24.44 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">&plusmn;59.67%</td>
     <td style="white-space: nowrap; text-align: right">21.92 &micro;s</td>
-    <td style="white-space: nowrap; text-align: right">46.46 &micro;s</td>
+    <td style="white-space: nowrap; text-align: right">46 &micro;s</td>
   </tr>
 
 </table>
@@ -114,20 +114,20 @@ Run Time Comparison
     <th style="text-align: right">Slower</th>
   <tr>
     <td style="white-space: nowrap">pst</td>
-    <td style="white-space: nowrap;text-align: right">2497.74 K</td>
+    <td style="white-space: nowrap;text-align: right">2431.70 K</td>
     <td>&nbsp;</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">ets</td>
-    <td style="white-space: nowrap; text-align: right">43.61 K</td>
-    <td style="white-space: nowrap; text-align: right">57.28x</td>
+    <td style="white-space: nowrap; text-align: right">44.12 K</td>
+    <td style="white-space: nowrap; text-align: right">55.11x</td>
   </tr>
 
   <tr>
     <td style="white-space: nowrap">map</td>
-    <td style="white-space: nowrap; text-align: right">40.76 K</td>
-    <td style="white-space: nowrap; text-align: right">61.27x</td>
+    <td style="white-space: nowrap; text-align: right">40.91 K</td>
+    <td style="white-space: nowrap; text-align: right">59.44x</td>
   </tr>
 
 </table>
