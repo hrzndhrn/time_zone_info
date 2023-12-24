@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.7.1 - 2023/12/24
+
+- Bump required Elixir version to 1.11.
+
 ## 0.7.0 - 2023/11/03
 
-- Bump Elixir version to 1.11.
+- Bump required Elixir version to 1.11.
 - Use `Calenadar.ISO.day_of_week/4`.
 - Refactor `TimeZoneInfo.DataStore.PersistentTerm`
 
