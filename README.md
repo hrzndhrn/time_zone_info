@@ -15,7 +15,7 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:time_zone_info, "~> 0.6"}
+    {:time_zone_info, "~> 0.7"}
   ]
 end
 ```
@@ -25,7 +25,7 @@ end
 After installation, `TimeZoneInfo` can be used as follows.
 ```elixir
 iex> TimeZoneInfo.iana_version
-"2023c"
+"2023d"
 iex> TimeZoneInfo.time_zones() |> Enum.take(3)
 ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa"]
 iex> TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(~N[2021-09-23 09:56:00], "Europe/Berlin")

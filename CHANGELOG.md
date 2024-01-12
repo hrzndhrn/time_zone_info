@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.7.2 - 2024/01/12
+
+- Update `priv/data.etf` with IANA tzdata version 2023d.
+
 ## 0.7.1 - 2023/12/24
 
-- Bump required Elixir version to 1.11.
+- Bump required Elixir version to 1.12.
 
 ## 0.7.0 - 2023/11/03
 
