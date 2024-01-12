@@ -88,5 +88,5 @@ defmodule TimeZoneInfo.Scripts.Update do
 end
 
 Mix.Shell.IO.info("Update TimeZoneInfo Data")
-Logger.configure(level: :warn)
+Logger.configure(level: :warning)
 TimeZoneInfo.Scripts.Update.run(System.argv())
