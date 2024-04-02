@@ -161,9 +161,11 @@ defmodule TimeZoneInfo.MixProject do
       # benchee
       {:benchee_dsl, "~> 0.5", only: :dev},
       {:benchee_markdown, "~> 0.3", only: :dev},
+
+      # other time zone DBs
       {:nerves_time_zones, "~> 0.2", only: [:dev], runtime: false},
       {:tz, "~> 0.8", only: [:test, :dev], runtime: false},
-      {:tzdata, "~> 1.0", only: [:test, :dev], runtime: true},
+      {:tzdata, "~> 1.0", only: [:test, :dev], runtime: false},
       {:zoneinfo, "~> 0.1.3", only: [:dev], runtime: false}
     ]
   end
