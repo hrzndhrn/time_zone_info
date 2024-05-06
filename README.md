@@ -70,7 +70,7 @@ For more information how to configure `TimeZoneInfo` see
 
 ## Default Time Zone Data
 
-The default configuration of `TimeZoneInfo` is `updater: :disabled`. In this
+The default configuration of `TimeZoneInfo` is `update: :disabled`. In this
 case, the IANA database in version `2024a` with a `lookahead` of 15 years is in
 use.
 
