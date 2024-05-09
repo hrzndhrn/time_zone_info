@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.3 - 2024/04/02
+## 0.7.3 - 2024/05/09
 
 - Update `priv/data.etf` with IANA tzdata version 2024a.
 
