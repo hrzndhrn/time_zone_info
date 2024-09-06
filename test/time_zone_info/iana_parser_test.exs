@@ -226,6 +226,111 @@ defmodule TimeZoneInfo.IanaParserTest do
     end
   end
 
+  describe "parse rules with full month names and full day names" do
+    test "Germany" do
+      data = """
+      # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
+      Rule	Germany	1946	only	-	April	14	2:00s	1:00	S
+      Rule	Germany	1946	only	-	October	 7	2:00s	0	-
+      Rule	Germany	1947	1949	-	October	Sunday>=1	2:00s	0	-
+      # http://www.ptb.de/de/org/4/44/441/salt.htm says the following transition
+      # occurred at 3:00 MEZ, not the 2:00 MEZ given in Shanks & Pottenger.
+      # Go with the PTB.
+      Rule	Germany	1947	only	-	April	 6	3:00s	1:00	S
+      Rule	Germany	1947	only	-	May	11	2:00s	2:00	M
+      Rule	Germany	1947	only	-	June	29	3:00	1:00	S
+      Rule	Germany	1948	only	-	April	18	2:00s	1:00	S
+      Rule	Germany	1949	only	-	April	10	2:00s	1:00	S
+      """
+
+      expected = [
+        [
+          {:from, 1946},
+          {:to, :only},
+          {:in, 4},
+          {:on, 14},
+          {:at, {2, 0, 0}},
+          {:time_standard, :standard},
+          {:std_offset, 3600},
+          {:letters, "S"}
+        ],
+        [
+          {:from, 1946},
+          {:to, :only},
+          {:in, 10},
+          {:on, 7},
+          {:at, {2, 0, 0}},
+          {:time_standard, :standard},
+          {:std_offset, 0},
+          {:letters, nil}
+        ],
+        [
+          {:from, 1947},
+          {:to, 1949},
+          {:in, 10},
+          {:on, [day: 1, op: :ge, day_of_week: 7]},
+          {:at, {2, 0, 0}},
+          {:time_standard, :standard},
+          {:std_offset, 0},
+          {:letters, nil}
+        ],
+        [
+          {:from, 1947},
+          {:to, :only},
+          {:in, 4},
+          {:on, 6},
+          {:at, {3, 0, 0}},
+          {:time_standard, :standard},
+          {:std_offset, 3600},
+          {:letters, "S"}
+        ],
+        [
+          {:from, 1947},
+          {:to, :only},
+          {:in, 5},
+          {:on, 11},
+          {:at, {2, 0, 0}},
+          {:time_standard, :standard},
+          {:std_offset, 7200},
+          {:letters, "M"}
+        ],
+        [
+          {:from, 1947},
+          {:to, :only},
+          {:in, 6},
+          {:on, 29},
+          {:at, {3, 0, 0}},
+          {:time_standard, :wall},
+          {:std_offset, 3600},
+          {:letters, "S"}
+        ],
+        [
+          {:from, 1948},
+          {:to, :only},
+          {:in, 4},
+          {:on, 18},
+          {:at, {2, 0, 0}},
+          {:time_standard, :standard},
+          {:std_offset, 3600},
+          {:letters, "S"}
+        ],
+        [
+          {:from, 1949},
+          {:to, :only},
+          {:in, 4},
+          {:on, 10},
+          {:at, {2, 0, 0}},
+          {:time_standard, :standard},
+          {:std_offset, 3600},
+          {:letters, "S"}
+        ]
+      ]
+
+      assert {:ok, %{rules: rules}} = IanaParser.parse(data)
+      assert Map.get(rules, "Germany") == expected
+    end
+  end
+
   describe "parse link" do
     test "multiple lines" do
       data = """

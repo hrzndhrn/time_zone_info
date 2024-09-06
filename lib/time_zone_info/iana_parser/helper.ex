@@ -22,27 +22,45 @@ defmodule TimeZoneInfo.IanaParser.Helper do
 
   @month %{
     "Jan" => 1,
+    "January" => 1,
     "Feb" => 2,
+    "February" => 2,
     "Mar" => 3,
+    "March" => 3,
+    "April" => 4,
     "Apr" => 4,
     "May" => 5,
     "Jun" => 6,
+    "June" => 6,
     "Jul" => 7,
+    "July" => 7,
     "Aug" => 8,
+    "August" => 8,
     "Sep" => 9,
+    "September" => 9,
     "Oct" => 10,
+    "October" => 10,
     "Nov" => 11,
-    "Dec" => 12
+    "November" => 11,
+    "Dec" => 12,
+    "December" => 12
   }
 
   @day %{
     "Mon" => 1,
+    "Monday" => 1,
     "Tue" => 2,
+    "Tuesday" => 2,
     "Wed" => 3,
+    "Wednesday" => 3,
     "Thu" => 4,
+    "Thursday" => 4,
     "Fri" => 5,
+    "Friday" => 5,
     "Sat" => 6,
-    "Sun" => 7
+    "Saturday" => 6,
+    "Sun" => 7,
+    "Sunday" => 7
   }
 
   def word(combinator \\ empty()) do
@@ -72,6 +90,7 @@ defmodule TimeZoneInfo.IanaParser.Helper do
     choice_map =
       map
       |> Map.keys()
+      |> Enum.sort(:desc)
       |> Enum.map(&string/1)
       |> choice()
       |> reduce({:reduce_choice_map, [map]})
@@ -85,6 +104,7 @@ defmodule TimeZoneInfo.IanaParser.Helper do
     choice_map_with_default =
       map
       |> Map.keys()
+      |> Enum.sort(:desc)
       |> Enum.map(&string/1)
       |> choice()
       |> optional()
