@@ -156,7 +156,7 @@ defmodule TimeZoneInfo.MixProject do
       {:mox, "~> 1.0", only: :test},
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
       {:recode, "~> 0.5", only: :dev},
-      {:stream_data, "~> 0.4", only: [:dev, :test], runtime: false},
+      {:stream_data, "~> 1.1", only: [:dev, :test], runtime: false},
 
       # benchee
       {:benchee_dsl, "~> 0.5", only: :dev},
