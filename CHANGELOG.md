@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.7.4 - dev
+## 0.7.4 - 2024/09/07
 
 - Update `priv/data.etf` with IANA tzdata version 2024b.
-- Update pareser to excpet months and days as full name.
+- Update the parser to accept months and days also  as a full name.
 
 ## 0.7.3 - 2024/05/09
 
