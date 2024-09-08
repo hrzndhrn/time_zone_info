@@ -40,15 +40,27 @@ defmodule TimeZoneInfo.Downloader do
     with {:ok, mode} <- mode(),
          {:ok, uri} <- uri(mode, config),
          {:ok, opts} <- opts(config),
-         {:ok, data} <- impl().download(uri, opts),
+         {:ok, impl} <- impl(),
+         {:ok, data} <- impl.download(uri, opts),
          do: {:ok, mode, data}
   end
 
   @spec impl :: module()
   defp impl do
-    :time_zone_info
-    |> Application.get_env(:downloader)
-    |> Keyword.fetch!(:module)
+    module =
+      :time_zone_info
+      |> Application.get_env(:downloader)
+      |> Keyword.fetch!(:module)
+
+    if Code.ensure_loaded?(module) do
+      {:ok, module}
+    else
+      if module do
+        {:error, downloader_unavailable: module}
+      else
+        {:error, :no_downloader_implementation}
+      end
+    end
   end
 
   @spec mode :: {:ok, mode()} | {:error, term()}

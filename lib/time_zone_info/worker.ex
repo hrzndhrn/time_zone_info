@@ -25,8 +25,9 @@ defmodule TimeZoneInfo.Worker do
   Runs the update process. This will also run at start up for the initialisation
   of `TimeZoneInfo`. This function returns the same as `state/0`.
   """
-  def update(server \\ __MODULE__, opt) when opt in [:run, :force],
-    do: GenServer.call(server, {:update, opt}, @timeout)
+  def update(server \\ __MODULE__, opt) when opt in [:run, :force] do
+    GenServer.call(server, {:update, opt}, @timeout)
+  end
 
   @doc """
   Returns the state of the worker.
