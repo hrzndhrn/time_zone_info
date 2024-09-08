@@ -78,9 +78,9 @@ defmodule TimeZoneInfo.UpdaterTest do
 
       assert_log(
         fn ->
-          assert :ok = Updater.update(:force)
+          assert Updater.update(:force) == :ok
         end,
-        [:force]
+        [:force, :disabled]
       )
     end
 
@@ -374,7 +374,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         fn ->
           assert :ok = Updater.update()
         end,
-        [:initial, :config_changed, :force]
+        [:initial, :config_changed, :force, :disabled]
       )
 
       assert TimeZoneInfo.time_zones(links: :ignore) == [
@@ -717,6 +717,7 @@ defmodule TimeZoneInfo.UpdaterTest do
         no_update: "TimeZoneInfo: No update required.",
         up_to_date: "TimeZoneInfo: No update available.",
         force: "TimeZoneInfo: Force update.",
+        disabled: "TimeZoneInfo: Updating is disabled.",
         error: "TimeZoneInfo: Update failed!"
       },
       fn {step, info} ->

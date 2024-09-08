@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.5 - 2024/09/08
+
+- Fix warning by conditionally compiling `TimeZoneInfo.Downloader.Mint`.
+
 ## 0.7.4 - 2024/09/08
 
 - Update `priv/data.etf` with IANA tzdata version 2024b.

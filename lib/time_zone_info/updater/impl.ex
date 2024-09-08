@@ -165,6 +165,7 @@ defmodule TimeZoneInfo.Updater.Impl do
         up_to_date(now)
 
       {:ok, :disabled} ->
+        Listener.on_update(:disabled)
         on_disabled
 
       error ->

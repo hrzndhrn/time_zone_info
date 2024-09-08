@@ -41,6 +41,10 @@ defmodule TimeZoneInfo.Listener.Logger do
     Logger.info("TimeZoneInfo: Force update.")
   end
 
+  def on_update(:disabled) do
+    Logger.info("TimeZoneInfo: Updating is disabled.")
+  end
+
   def on_update({:error, _} = error) do
     Logger.error("TimeZoneInfo: Update failed! #{inspect(error)}")
   end
