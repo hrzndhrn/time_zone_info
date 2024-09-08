@@ -14,7 +14,7 @@ defmodule TimeZoneInfo.DataPersistence.PrivTest do
 
   @fixture "data/2019c/extract/africa/data.etf"
 
-  @london "test/fixtures/iana/2019c/extract/Europe/London"
+  @london "test/fixtures/data/2019c/extract/Europe/London"
   @config [
     files: ["london"],
     time_zones: :all,

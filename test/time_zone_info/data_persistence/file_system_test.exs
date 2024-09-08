@@ -10,7 +10,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystemTest do
 
   @path "test/temp/data.etf"
   @data "test/fixtures/data/2019c/extract/africa/data.etf"
-  @london File.read!("test/fixtures/iana/2019c/extract/Europe/London")
+  @london File.read!("test/fixtures/data/2019c/extract/Europe/London")
   @config [
     files: ["london"],
     time_zones: :all,

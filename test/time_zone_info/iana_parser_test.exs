@@ -224,10 +224,8 @@ defmodule TimeZoneInfo.IanaParserTest do
       assert {:ok, %{rules: rules}} = IanaParser.parse(data)
       assert Map.get(rules, "EU") == expected
     end
-  end
 
-  describe "parse rules with full month names and full day names" do
-    test "Germany" do
+    test "with full month and day name" do
       data = """
       # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
       Rule	Germany	1946	only	-	April	14	2:00s	1:00	S
@@ -583,7 +581,7 @@ defmodule TimeZoneInfo.IanaParserTest do
 
   describe("parse iana file") do
     setup do
-      %{path: "test/fixtures/iana/2019c"}
+      %{path: "test/fixtures/data/2019c"}
     end
 
     test "africa", %{path: path} do

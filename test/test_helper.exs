@@ -61,6 +61,27 @@ Supervisor.start_link(
   name: MyApp.Supervisor
 )
 
+# extract IANA tzdb for tests
+
+tzdata = "tzdata2019c.tar.gz"
+iana_temp = ~c"test/temp/iana"
+File.mkdir_p!(iana_temp)
+fixture = ~c"test/fixtures/iana/#{tzdata}"
+
+files = [
+  ~c"africa",
+  ~c"antarctica",
+  ~c"asia",
+  ~c"australasia",
+  ~c"backward",
+  ~c"etcetera",
+  ~c"europe",
+  ~c"northamerica",
+  ~c"southamerica"
+]
+
+:erl_tar.extract(fixture, [:compressed, {:cwd, iana_temp}, {:files, files}])
+
 Logger.configure(level: :info)
 
 ExUnit.start(timeout: config[:timeout])

@@ -16,7 +16,7 @@ defmodule TimeZoneInfoTest do
       priv: [path: "data.etf"]
     )
 
-    path = "test/fixtures/iana/2019c"
+    path = "test/temp/iana"
 
     config = [
       files: [
@@ -76,6 +76,13 @@ defmodule TimeZoneInfoTest do
     assert TimeZoneInfo.iana_version() == "2019c"
   end
 
+  test "zone_abbr parameter" do
+    ndt = ~N"2015-01-13 19:00:07"
+    dt = DateTime.from_naive!(ndt, "Etc/UTC")
+    dt = DateTime.shift_zone!(dt, "Etc/GMT+12", TimeZoneInfo.TimeZoneDatabase)
+    assert dt.zone_abbr == "-12"
+  end
+
   describe "data/2" do
     test "tzdata2019c" do
       iana = "test/fixtures/iana/tzdata2019c.tar.gz"
@@ -94,8 +101,8 @@ defmodule TimeZoneInfoTest do
       refute time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
     end
 
-    test "tzdata2020a" do
-      iana = "test/fixtures/iana/tzdata2020a.tar.gz"
+    test "tzdata2024b" do
+      iana = "test/fixtures/iana/tzdata2024b.tar.gz"
 
       assert {
                :ok,
@@ -107,64 +114,45 @@ defmodule TimeZoneInfoTest do
                  config: config
                },
                checksum
-             } = iana |> File.read!() |> TimeZoneInfo.data()
+             } =
+               iana
+               |> File.read!()
+               |> TimeZoneInfo.data(
+                 lookahead: 15,
+                 files: [
+                   "africa",
+                   "antarctica",
+                   "asia",
+                   "australasia",
+                   "backward",
+                   "etcetera",
+                   "europe",
+                   "northamerica",
+                   "southamerica"
+                 ]
+               )
 
-      assert version == "2020a"
-      assert checksum == "63117878"
-      assert map_size(links) == 86
-      assert map_size(rules) == 29
-      assert map_size(time_zones) == 387
-      assert time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
+      assert version == "2024b"
+      assert checksum == "94227132"
+
       assert config[:time_zones] == :all
-      assert config[:lookahead] == 10
+      assert config[:lookahead] == 15
 
       assert config[:files] == [
                "africa",
                "antarctica",
                "asia",
                "australasia",
+               "backward",
                "etcetera",
                "europe",
                "northamerica",
                "southamerica"
              ]
-    end
 
-    test "tzdata2021b" do
-      iana = "test/fixtures/iana/tzdata2021b.tar.gz"
-
-      assert {
-               :ok,
-               %{
-                 links: links,
-                 rules: rules,
-                 time_zones: time_zones,
-                 version: version,
-                 config: config
-               },
-               checksum
-             } = iana |> File.read!() |> TimeZoneInfo.data()
-
-      assert version == "2021b"
-      assert checksum == "58231435"
-
-      assert map_size(links) == 7
-      assert map_size(rules) == 28
-      assert map_size(time_zones) == 377
-
-      assert config[:time_zones] == :all
-      assert config[:lookahead] == 10
-
-      assert config[:files] == [
-               "africa",
-               "antarctica",
-               "asia",
-               "australasia",
-               "etcetera",
-               "europe",
-               "northamerica",
-               "southamerica"
-             ]
+      assert map_size(time_zones) == 339
+      assert map_size(rules) == 23
+      assert map_size(links) == 257
     end
   end
 end
