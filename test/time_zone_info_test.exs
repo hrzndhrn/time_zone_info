@@ -55,11 +55,10 @@ defmodule TimeZoneInfoTest do
 
   test "time_zones/0 returns all time zones" do
     time_zones = TimeZoneInfo.time_zones()
-    assert length(time_zones) == 473
+    assert length(time_zones) == 340
     assert Enum.member?(time_zones, "Africa/Abidjan")
     assert Enum.member?(time_zones, "Antarctica/Casey")
     assert Enum.member?(time_zones, "Pacific/Apia")
-    assert Enum.member?(time_zones, "WET")
   end
 
   test "time_zones/1 returns time zones" do

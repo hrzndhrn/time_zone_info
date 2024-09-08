@@ -63,10 +63,13 @@ Supervisor.start_link(
 
 # extract IANA tzdb for tests
 
-tzdata = "tzdata2019c.tar.gz"
+tzdata = "tzdata2024b.tar.gz"
+# tzdata = "tzdata2019c.tar.gz"
+fixture = ~c"test/fixtures/iana/#{tzdata}"
+File.exists?(fixture) || raise("missing #{fixture}")
+
 iana_temp = ~c"test/temp/iana"
 File.mkdir_p!(iana_temp)
-fixture = ~c"test/fixtures/iana/#{tzdata}"
 
 files = [
   ~c"africa",
