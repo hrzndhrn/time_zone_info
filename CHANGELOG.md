@@ -1,9 +1,10 @@
 # Changelog
 
-## 0.7.4 - 2024/09/07
+## 0.7.4 - 2024/09/08
 
 - Update `priv/data.etf` with IANA tzdata version 2024b.
 - Update the parser to accept months and days also  as a full name.
+- Add support for zome abbr format `%z`.
 
 ## 0.7.3 - 2024/05/09
 
