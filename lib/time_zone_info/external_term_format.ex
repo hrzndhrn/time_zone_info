@@ -154,12 +154,11 @@ defmodule TimeZoneInfo.ExternalTermFormat do
       {:choice, [one, two]} when is_binary(one) and is_binary(two) -> true
       {:template, template} when is_binary(template) -> true
       {:string, string} when is_binary(string) -> true
+      {:format, :z} -> true
       _else -> false
     end
   end
 
-  # {{10, [last_day_of_week: 7], 1, 0, 0}, :utc, 0, nil},
-  # {{3, [last_day_of_week: 7], 1, 0, 0}, :utc, 3600, "S"}
   defp validate(:rules, term) do
     term
     |> Map.get(:rules)

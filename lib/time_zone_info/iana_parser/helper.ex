@@ -371,6 +371,9 @@ defmodule TimeZoneInfo.IanaParser.Helper do
 
   def reduce_format([format]) do
     cond do
+      format == "%z" ->
+        {:format, :z}
+
       String.contains?(format, "%s") ->
         {:template, format}
 

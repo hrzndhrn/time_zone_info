@@ -195,14 +195,14 @@ defmodule TimeZoneInfo do
   end
 
   defp validate(config) do
-    with {:ok, config} <- validate(:lookahead, config),
-         {:ok, config} <- validate(:time_zones, config),
-         {:ok, config} <- validate(:files, config) do
+    with {:ok, config} <- validate_lookahead(config),
+         {:ok, config} <- validate_time_zones(config),
+         {:ok, config} <- validate_files(config) do
       validate(:version_file, config)
     end
   end
 
-  defp validate(:time_zones, config) do
+  defp validate_time_zones(config) do
     case config[:time_zones] do
       nil -> {:ok, Keyword.put(config, :time_zones, :all)}
       time_zones when is_list(time_zones) -> {:ok, config}
@@ -219,7 +219,7 @@ defmodule TimeZoneInfo do
     end
   end
 
-  defp validate(:files, config) do
+  defp validate_files(config) do
     case config[:files] do
       nil -> {:ok, Keyword.put(config, :files, files())}
       files when is_list(files) -> {:ok, config}
@@ -227,7 +227,7 @@ defmodule TimeZoneInfo do
     end
   end
 
-  defp validate(:lookahead, config) do
+  defp validate_lookahead(config) do
     case config[:lookahead] do
       nil -> {:ok, Keyword.put(config, :lookahead, lookahead())}
       years when is_integer(years) -> {:ok, config}

@@ -205,7 +205,8 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
 
   defp transitions_seq([rule | rule_set], utc_offset, format, last_std_offset, acc) do
     {at, {std_offset, letters}} = to_utc(rule, utc_offset, last_std_offset)
-    zone_abbr = Abbr.create(format, std_offset, letters)
+    # TODO: dbg(format)
+    zone_abbr = Abbr.create(format, utc_offset, std_offset, letters)
     transition = {at, {utc_offset, std_offset, zone_abbr}}
     transitions_seq(rule_set, utc_offset, format, std_offset, [transition | acc])
   end
@@ -224,7 +225,8 @@ defmodule TimeZoneInfo.Transformer.RuleSet do
   defp add(transitions, at, zone_state, std_offset, letters) do
     utc_offset = zone_state[:utc_offset]
     format = zone_state[:format]
-    zone_abbr = Abbr.create(format, std_offset, letters)
+    # TODO: dbg(zone_state)
+    zone_abbr = Abbr.create(format, utc_offset, std_offset, letters)
     transition = {at, {utc_offset, std_offset, zone_abbr}}
     [transition | transitions]
   end

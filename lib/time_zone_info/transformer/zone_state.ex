@@ -97,7 +97,8 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
   defp transitions(:none, since, zone_state, _std_offset, _last_zone_state) do
     utc_offset = zone_state[:utc_offset]
     std_offset = 0
-    zone_abbr = Abbr.create(zone_state[:format])
+    # TODO: dbg(zone_state)
+    zone_abbr = Abbr.create(zone_state[:format], utc_offset)
     until = until(zone_state, std_offset)
 
     {
@@ -109,7 +110,8 @@ defmodule TimeZoneInfo.Transformer.ZoneState do
 
   defp transitions({:std_offset, std_offset}, since, zone_state, _std_offset, _last_zone_state) do
     utc_offset = zone_state[:utc_offset]
-    zone_abbr = Abbr.create(zone_state[:format], std_offset)
+    # TODO: dbg(zone_state)
+    zone_abbr = Abbr.create(zone_state[:format], utc_offset, std_offset)
     until = until(zone_state, std_offset)
 
     {

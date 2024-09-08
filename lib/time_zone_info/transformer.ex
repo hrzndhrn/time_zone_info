@@ -16,6 +16,7 @@ defmodule TimeZoneInfo.Transformer do
   @spec transform(IanaParser.output(), version(), TimeZoneInfo.data_config()) ::
           TimeZoneInfo.data()
   def transform(iana_data, version, config) do
+    iana_data = Map.merge(%{rules: [], links: [], zones: []}, iana_data)
     time_zones = zones(iana_data, config)
     rules = rules(iana_data, time_zones)
     links = links(iana_data, time_zones)
