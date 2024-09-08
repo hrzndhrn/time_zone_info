@@ -198,7 +198,7 @@ defmodule TimeZoneInfo do
     with {:ok, config} <- validate_lookahead(config),
          {:ok, config} <- validate_time_zones(config),
          {:ok, config} <- validate_files(config) do
-      validate_version_file, config)
+      validate_version_file(config)
     end
   end
 
@@ -210,7 +210,7 @@ defmodule TimeZoneInfo do
     end
   end
 
-  defp validate_version_file, config) do
+  defp validate_version_file(config) do
     files = config[:files]
 
     case Enum.member?(files, "version") do
