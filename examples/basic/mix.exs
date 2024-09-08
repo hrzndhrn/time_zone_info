@@ -21,7 +21,7 @@ defmodule Basic.MixProject do
 
   defp deps do
     [
-      {:time_zone_info, "~> 0.6"}
+      {:time_zone_info, "~> 0.7"}
       # {:time_zone_info, path: "../.."}
     ]
   end
