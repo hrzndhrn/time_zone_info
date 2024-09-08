@@ -15,7 +15,7 @@ defmodule TimeZoneInfo.Transformer.Abbr do
   @doc """
   Creates the zone abbr.
   """
-  @spec create(format(), Calendar.std_offset(), letters()) :: String.t()
+  @spec create(format(), Calendar.utc_offset(), Calendar.std_offset(), letters()) :: String.t()
   def create(format, utc_offset, std_offset \\ 0, letters \\ nil)
 
   def create({:string, abbr}, _utc_offset, _std_offset, _letters), do: abbr
