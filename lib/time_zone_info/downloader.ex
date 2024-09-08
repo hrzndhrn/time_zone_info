@@ -45,7 +45,6 @@ defmodule TimeZoneInfo.Downloader do
          do: {:ok, mode, data}
   end
 
-  @spec impl :: module()
   defp impl do
     module =
       :time_zone_info
@@ -63,7 +62,6 @@ defmodule TimeZoneInfo.Downloader do
     end
   end
 
-  @spec mode :: {:ok, mode()} | {:error, term()}
   defp mode do
     with {:ok, value} <- fetch_env(:mode) do
       case value in @mode do
@@ -73,14 +71,12 @@ defmodule TimeZoneInfo.Downloader do
     end
   end
 
-  @spec uri :: {:ok, URI.t()} | {:error, term()}
   defp uri do
     with {:ok, uri} <- fetch_env(:uri) do
       {:ok, URI.parse(uri)}
     end
   end
 
-  @spec uri(mode(), keyword()) :: {:ok, URI.t()} | {:error, term()}
   defp uri(:ws, config) do
     with {:ok, uri} <- uri() do
       query = config |> prepare_query() |> URI.encode_query()
@@ -106,7 +102,6 @@ defmodule TimeZoneInfo.Downloader do
     end
   end
 
-  @spec opts(keyword()) :: {:ok, keyword()} | {:error, term()}
   defp opts(config) do
     with {:ok, opts} <- fetch_env() do
       opts =
@@ -131,14 +126,12 @@ defmodule TimeZoneInfo.Downloader do
     end
   end
 
-  @spec fetch_env :: {:ok, keyword()} | {:error, term()}
   defp fetch_env do
     with :error <- Application.fetch_env(:time_zone_info, :downloader) do
       {:error, {:invalid_config, :downloader}}
     end
   end
 
-  @spec fetch_env(Keyword.key()) :: {:ok, term()} | {:error, term()}
   defp fetch_env(key) do
     with {:ok, env} <- fetch_env(),
          :error <- Keyword.fetch(env, key) do
