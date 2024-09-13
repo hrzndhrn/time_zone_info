@@ -104,8 +104,8 @@ defmodule TimeZoneInfo.IanaParser.Helper do
 
     case values do
       [value] -> {rest, [value], context}
-      [] -> {:error, :invalid}
-      [_ | _] -> {:error, :ambiguous}
+      [] -> {:error, "invalid word #{inspect(string)}, expected one of #{inspect(map)}"}
+      [_ | _] -> {:error, "ambiguous word #{inspect(string)}, expected one of #{inspect(map)}"}
     end
   end
 
