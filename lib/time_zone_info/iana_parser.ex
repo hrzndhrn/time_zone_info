@@ -140,6 +140,9 @@ defmodule TimeZoneInfo.IanaParser do
 
       {:ok, [_data], rest, _context, {line, _position}, byte_offset} ->
         {:error, rest, line, byte_offset}
+
+      {:error, _reason, rest, _context, {line, _position}, byte_offset} ->
+        {:error, rest, line, byte_offset}
     end
   end
 

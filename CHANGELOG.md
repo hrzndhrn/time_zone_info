@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.6 - dev
+
+- Refactor `TimeZoneInfo.IanaParser` to handle names correctly.
+  The correct handling is documented in the man for `zic`:
+  Names must be in English and are case insensitive. They appear in several 
+  contexts, and include month and weekday names and keywords such as maximum, 
+  only, Rolling, and Zone. A name can be abbreviated by omitting all but an 
+  initial prefix; any abbreviation must be unambiguous in context.
+
 ## 0.7.5 - 2024/09/08
 
 - Fix warning by conditionally compiling `TimeZoneInfo.Downloader.Mint`.
