@@ -4,6 +4,102 @@ defmodule TimeZoneInfo.IanaParserTest do
   alias TimeZoneInfo.IanaParser
 
   @empty %{}
+  @rules_germany """
+  # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
+  Rule	Germany	1946	only	-	Apr	14	2:00s	1:00	S
+  Rule	Germany	1946	only	-	Oct	 7	2:00s	0	-
+  Rule	Germany	1947	1949	-	Oct	Sun>=1	2:00s	0	-
+  # http://www.ptb.de/de/org/4/44/441/salt.htm says the following transition
+  # occurred at 3:00 MEZ, not the 2:00 MEZ given in Shanks & Pottenger.
+  # Go with the PTB.
+  Rule	Germany	1947	only	-	Apr	 6	3:00s	1:00	S
+  Rule	Germany	1947	only	-	May	11	2:00s	2:00	M
+  Rule	Germany	1947	only	-	Jun	29	3:00	1:00	S
+  Rule	Germany	1948	only	-	Apr	18	2:00s	1:00	S
+  Rule	Germany	1949	only	-	Apr	10	2:00s	1:00	S
+  """
+  @rules_germany_parsed [
+    [
+      {:from, 1946},
+      {:to, :only},
+      {:in, 4},
+      {:on, 14},
+      {:at, {2, 0, 0}},
+      {:time_standard, :standard},
+      {:std_offset, 3600},
+      {:letters, "S"}
+    ],
+    [
+      {:from, 1946},
+      {:to, :only},
+      {:in, 10},
+      {:on, 7},
+      {:at, {2, 0, 0}},
+      {:time_standard, :standard},
+      {:std_offset, 0},
+      {:letters, nil}
+    ],
+    [
+      {:from, 1947},
+      {:to, 1949},
+      {:in, 10},
+      {:on, [day: 1, op: :ge, day_of_week: 7]},
+      {:at, {2, 0, 0}},
+      {:time_standard, :standard},
+      {:std_offset, 0},
+      {:letters, nil}
+    ],
+    [
+      {:from, 1947},
+      {:to, :only},
+      {:in, 4},
+      {:on, 6},
+      {:at, {3, 0, 0}},
+      {:time_standard, :standard},
+      {:std_offset, 3600},
+      {:letters, "S"}
+    ],
+    [
+      {:from, 1947},
+      {:to, :only},
+      {:in, 5},
+      {:on, 11},
+      {:at, {2, 0, 0}},
+      {:time_standard, :standard},
+      {:std_offset, 7200},
+      {:letters, "M"}
+    ],
+    [
+      {:from, 1947},
+      {:to, :only},
+      {:in, 6},
+      {:on, 29},
+      {:at, {3, 0, 0}},
+      {:time_standard, :wall},
+      {:std_offset, 3600},
+      {:letters, "S"}
+    ],
+    [
+      {:from, 1948},
+      {:to, :only},
+      {:in, 4},
+      {:on, 18},
+      {:at, {2, 0, 0}},
+      {:time_standard, :standard},
+      {:std_offset, 3600},
+      {:letters, "S"}
+    ],
+    [
+      {:from, 1949},
+      {:to, :only},
+      {:in, 4},
+      {:on, 10},
+      {:at, {2, 0, 0}},
+      {:time_standard, :standard},
+      {:std_offset, 3600},
+      {:letters, "S"}
+    ]
+  ]
 
   describe "parse comment" do
     test "sign" do
@@ -44,118 +140,15 @@ defmodule TimeZoneInfo.IanaParserTest do
   end
 
   describe "parse rules" do
-    test "Germany" do
-      data = """
-      # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
-      Rule	Germany	1946	only	-	Apr	14	2:00s	1:00	S
-      Rule	Germany	1946	only	-	Oct	 7	2:00s	0	-
-      Rule	Germany	1947	1949	-	Oct	Sun>=1	2:00s	0	-
-      # http://www.ptb.de/de/org/4/44/441/salt.htm says the following transition
-      # occurred at 3:00 MEZ, not the 2:00 MEZ given in Shanks & Pottenger.
-      # Go with the PTB.
-      Rule	Germany	1947	only	-	Apr	 6	3:00s	1:00	S
-      Rule	Germany	1947	only	-	May	11	2:00s	2:00	M
-      Rule	Germany	1947	only	-	Jun	29	3:00	1:00	S
-      Rule	Germany	1948	only	-	Apr	18	2:00s	1:00	S
-      Rule	Germany	1949	only	-	Apr	10	2:00s	1:00	S
-      """
-
-      expected = [
-        [
-          {:from, 1946},
-          {:to, :only},
-          {:in, 4},
-          {:on, 14},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1946},
-          {:to, :only},
-          {:in, 10},
-          {:on, 7},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 0},
-          {:letters, nil}
-        ],
-        [
-          {:from, 1947},
-          {:to, 1949},
-          {:in, 10},
-          {:on, [day: 1, op: :ge, day_of_week: 7]},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 0},
-          {:letters, nil}
-        ],
-        [
-          {:from, 1947},
-          {:to, :only},
-          {:in, 4},
-          {:on, 6},
-          {:at, {3, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1947},
-          {:to, :only},
-          {:in, 5},
-          {:on, 11},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 7200},
-          {:letters, "M"}
-        ],
-        [
-          {:from, 1947},
-          {:to, :only},
-          {:in, 6},
-          {:on, 29},
-          {:at, {3, 0, 0}},
-          {:time_standard, :wall},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1948},
-          {:to, :only},
-          {:in, 4},
-          {:on, 18},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1949},
-          {:to, :only},
-          {:in, 4},
-          {:on, 10},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ]
-      ]
-
-      assert {:ok, %{rules: rules}} = IanaParser.parse(data)
-      assert Map.get(rules, "Germany") == expected
-    end
-
     test "EU" do
       data = """
       # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
       Rule	EU	1977	1980	-	Apr	Sun>=1	 1:00u	1:00	S
       Rule	EU	1977	only	-	Sep	lastSun	 1:00u	0	-
-      Rule	EU	1978	only	-	Oct	 1	 1:00u	0	-
+      Rule	EU	1978	ONLY	-	Oct	 1	 1:00u	0	-
       Rule	EU	1979	1995	-	Sep	lastSun	 1:00u	0	-
       Rule	EU	1981	max	-	Mar	lastSun	 1:00u	1:00	S
-      Rule	EU	1996	max	-	Oct	lastSun	 1:00u	0	-
+      Rule	EU	1996	Maximum	-	Oct	lastSun	 1:00u	0	-
       """
 
       expected = [
@@ -225,107 +218,48 @@ defmodule TimeZoneInfo.IanaParserTest do
       assert Map.get(rules, "EU") == expected
     end
 
-    test "with full month and day name" do
-      data = """
-      # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
-      Rule	Germany	1946	only	-	April	14	2:00s	1:00	S
-      Rule	Germany	1946	only	-	October	 7	2:00s	0	-
-      Rule	Germany	1947	1949	-	October	Sunday>=1	2:00s	0	-
-      # http://www.ptb.de/de/org/4/44/441/salt.htm says the following transition
-      # occurred at 3:00 MEZ, not the 2:00 MEZ given in Shanks & Pottenger.
-      # Go with the PTB.
-      Rule	Germany	1947	only	-	April	 6	3:00s	1:00	S
-      Rule	Germany	1947	only	-	May	11	2:00s	2:00	M
-      Rule	Germany	1947	only	-	June	29	3:00	1:00	S
-      Rule	Germany	1948	only	-	April	18	2:00s	1:00	S
-      Rule	Germany	1949	only	-	April	10	2:00s	1:00	S
-      """
+    test "Germany" do
+      assert {:ok, %{rules: rules}} = IanaParser.parse(@rules_germany)
+      assert Map.get(rules, "Germany") == @rules_germany_parsed
+    end
 
-      expected = [
-        [
-          {:from, 1946},
-          {:to, :only},
-          {:in, 4},
-          {:on, 14},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1946},
-          {:to, :only},
-          {:in, 10},
-          {:on, 7},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 0},
-          {:letters, nil}
-        ],
-        [
-          {:from, 1947},
-          {:to, 1949},
-          {:in, 10},
-          {:on, [day: 1, op: :ge, day_of_week: 7]},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 0},
-          {:letters, nil}
-        ],
-        [
-          {:from, 1947},
-          {:to, :only},
-          {:in, 4},
-          {:on, 6},
-          {:at, {3, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1947},
-          {:to, :only},
-          {:in, 5},
-          {:on, 11},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 7200},
-          {:letters, "M"}
-        ],
-        [
-          {:from, 1947},
-          {:to, :only},
-          {:in, 6},
-          {:on, 29},
-          {:at, {3, 0, 0}},
-          {:time_standard, :wall},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1948},
-          {:to, :only},
-          {:in, 4},
-          {:on, 18},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ],
-        [
-          {:from, 1949},
-          {:to, :only},
-          {:in, 4},
-          {:on, 10},
-          {:at, {2, 0, 0}},
-          {:time_standard, :standard},
-          {:std_offset, 3600},
-          {:letters, "S"}
-        ]
-      ]
+    test "with full month and day name" do
+      data = replace_all(@rules_germany, [{"Apr", "April"}, {"Sun", "Sunday"}])
 
       assert {:ok, %{rules: rules}} = IanaParser.parse(data)
-      assert Map.get(rules, "Germany") == expected
+      assert Map.get(rules, "Germany") == @rules_germany_parsed
+    end
+
+    test "with month and day names mixed by upper and lower case" do
+      data = replace_all(@rules_germany, [{"Apr", "aPr"}, {"Sun", "sUN"}])
+
+      assert {:ok, %{rules: rules}} = IanaParser.parse(data)
+      assert Map.get(rules, "Germany") == @rules_germany_parsed
+    end
+
+    test "with month and day names reduced to min" do
+      data = replace_all(@rules_germany, [{"Oct", "o"}, {"Sun", "sU"}])
+
+      assert {:ok, %{rules: rules}} = IanaParser.parse(data)
+      assert Map.get(rules, "Germany") == @rules_germany_parsed
+    end
+
+    test "returns an error for an ambiguous name" do
+      data = String.replace(@rules_germany, "Jun", "j")
+
+      assert {:error, _rest, 10, 461} = IanaParser.parse(data)
+    end
+
+    test "returns an error for an invalid name" do
+      data = String.replace(@rules_germany, "Jun", "xxx")
+
+      assert {:error, _rest, 10, 463} = IanaParser.parse(data)
+    end
+
+    test "returns an error for an invalid characters" do
+      data = String.replace(@rules_germany, "Jun", ":-)")
+
+      assert {:error, _rest, 10, 435} = IanaParser.parse(data)
     end
   end
 
@@ -671,5 +605,12 @@ defmodule TimeZoneInfo.IanaParserTest do
 
   defp all_rules(data) do
     Enum.reduce(data.rules, 0, fn {_, rules}, acc -> acc + length(rules) end)
+  end
+
+  defp replace_all(string, replacements) do
+    Enum.reduce(replacements, string, fn
+      {pattern, replacement}, subject ->
+        String.replace(subject, pattern, replacement, global: true)
+    end)
   end
 end

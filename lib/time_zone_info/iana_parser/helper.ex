@@ -20,47 +20,34 @@ defmodule TimeZoneInfo.IanaParser.Helper do
     "z" => :zulu
   }
 
+  @to_year %{
+    "only" => :only,
+    "maximum" => :max
+  }
+
   @month %{
-    "Jan" => 1,
-    "January" => 1,
-    "Feb" => 2,
-    "February" => 2,
-    "Mar" => 3,
-    "March" => 3,
-    "April" => 4,
-    "Apr" => 4,
-    "May" => 5,
-    "Jun" => 6,
-    "June" => 6,
-    "Jul" => 7,
-    "July" => 7,
-    "Aug" => 8,
-    "August" => 8,
-    "Sep" => 9,
-    "September" => 9,
-    "Oct" => 10,
-    "October" => 10,
-    "Nov" => 11,
-    "November" => 11,
-    "Dec" => 12,
-    "December" => 12
+    "january" => 1,
+    "february" => 2,
+    "march" => 3,
+    "april" => 4,
+    "may" => 5,
+    "june" => 6,
+    "july" => 7,
+    "august" => 8,
+    "september" => 9,
+    "october" => 10,
+    "november" => 11,
+    "december" => 12
   }
 
   @day %{
-    "Mon" => 1,
-    "Monday" => 1,
-    "Tue" => 2,
-    "Tuesday" => 2,
-    "Wed" => 3,
-    "Wednesday" => 3,
-    "Thu" => 4,
-    "Thursday" => 4,
-    "Fri" => 5,
-    "Friday" => 5,
-    "Sat" => 6,
-    "Saturday" => 6,
-    "Sun" => 7,
-    "Sunday" => 7
+    "monday" => 1,
+    "tuesday" => 2,
+    "wednesday" => 3,
+    "thursday" => 4,
+    "friday" => 5,
+    "saturday" => 6,
+    "sunday" => 7
   }
 
   def word(combinator \\ empty()) do
@@ -98,6 +85,30 @@ defmodule TimeZoneInfo.IanaParser.Helper do
     concat(combinator, choice_map)
   end
 
+  def choice_word_map(combinator \\ empty(), map) when is_map(map) do
+    choice_map =
+      [?A..?Z, ?a..?z]
+      |> ascii_string(min: 1)
+      |> post_traverse({:choice_map, [map]})
+
+    concat(combinator, choice_map)
+  end
+
+  def choice_map(rest, [args], context, _line, _offset, map) do
+    string = String.downcase(args)
+
+    values =
+      Enum.reduce(map, [], fn {key, value}, acc ->
+        if String.starts_with?(key, string), do: [value | acc], else: acc
+      end)
+
+    case values do
+      [value] -> {rest, [value], context}
+      [] -> {:error, :invalid}
+      [_ | _] -> {:error, :ambiguous}
+    end
+  end
+
   def reduce_choice_map([key], map), do: Map.fetch!(map, key)
 
   def choice_map_with_default(combinator \\ empty(), map, default) when is_map(map) do
@@ -118,7 +129,7 @@ defmodule TimeZoneInfo.IanaParser.Helper do
   def reduce_choice_map_with_default([key], map, _default), do: Map.fetch!(map, key)
 
   def month(combinator \\ empty(), tag \\ nil) do
-    month = choice_map(@month)
+    month = choice_word_map(@month)
 
     if tag == nil do
       concat(combinator, month)
@@ -129,8 +140,8 @@ defmodule TimeZoneInfo.IanaParser.Helper do
 
   def on(combinator \\ empty(), tag \\ nil) do
     day = integer(min: 1) |> unwrap_and_tag(:day)
-    last_day = string("last") |> ignore() |> choice_map(@day) |> unwrap_and_tag(:last)
-    day_from = choice_map(@day) |> choice_map(@op) |> integer(min: 1) |> tag(:day_from)
+    last_day = string("last") |> ignore() |> choice_word_map(@day) |> unwrap_and_tag(:last)
+    day_from = choice_word_map(@day) |> choice_map(@op) |> integer(min: 1) |> tag(:day_from)
 
     on = choice([last_day, day, day_from]) |> reduce({:reduce_on, []})
 
@@ -307,10 +318,9 @@ defmodule TimeZoneInfo.IanaParser.Helper do
   end
 
   def to_year(combinator) do
-    only = string("only") |> replace(:only)
-    max = string("max") |> replace(:max)
+    to_year = choice_word_map(@to_year)
 
-    unwrap_and_tag(combinator, choice([only, max, integer(min: 1)]), :to)
+    unwrap_and_tag(combinator, choice([to_year, integer(min: 1)]), :to)
   end
 
   def unset(combinator \\ empty(), tag) do
