@@ -4,8 +4,8 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.7.6",
-      elixir: "~> 1.12",
+      version: "0.7.7",
+      elixir: "~> 1.13",
       name: "TimeZoneInfo",
       description: description(),
       start_permanent: Mix.env() == :prod,
