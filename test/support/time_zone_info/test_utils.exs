@@ -23,7 +23,7 @@ defmodule TimeZoneInfo.TestUtils do
     |> Keyword.keys()
     |> Enum.each(fn key ->
       # don't delete envs used by tests
-      unless key in [:checker, :updater] do
+      if key not in [:checker, :updater] do
         Application.delete_env(:time_zone_info, key)
       end
     end)
