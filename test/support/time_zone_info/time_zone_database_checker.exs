@@ -58,11 +58,13 @@ defmodule TimeZoneInfo.TimeZoneDatabaseChecker do
 
       defp strip(data), do: data
 
-      defp check?(Tz, datetime, _time_zone) do
-        datetime.year <= NaiveDateTime.utc_now().year
+      defp check?(module, datetime, _time_zone) do
+        if module == Tz do
+          datetime.year <= NaiveDateTime.utc_now().year
+        else
+          true
+        end
       end
-
-      defp check?(_, _datetime, _time_zone), do: true
     end
   end
 end
