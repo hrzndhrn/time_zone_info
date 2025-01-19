@@ -31,15 +31,13 @@ defmodule TimeZoneInfo.TimeZoneDatabaseChecker do
       end
 
       defp do_check(fun, args, expected) do
-        try do
-          TimeZoneDatabase
-          |> apply(fun, args)
-          |> strip()
-          |> check(strip(expected))
-        rescue
-          error ->
-            {:invalid, {:error, error}}
-        end
+        TimeZoneDatabase
+        |> apply(fun, args)
+        |> strip()
+        |> check(strip(expected))
+      rescue
+        error ->
+          {:invalid, {:error, error}}
       end
 
       defp check(result, result), do: {:valid, result}
