@@ -78,9 +78,9 @@ defmodule TimeZoneInfo.Downloader do
   end
 
   defp uri(:ws, config) do
-    with {:ok, uri} <- uri() do
+    with {:ok, %URI{} = uri} <- uri() do
       query = config |> prepare_query() |> URI.encode_query()
-      {:ok, %URI{uri | query: query}}
+      {:ok, %{uri | query: query}}
     end
   end
 

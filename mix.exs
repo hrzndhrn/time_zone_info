@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.7.8",
+      version: "0.7.9",
       elixir: "~> 1.13",
       name: "TimeZoneInfo",
       description: description(),
@@ -13,16 +13,11 @@ defmodule TimeZoneInfo.MixProject do
       deps: deps(),
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: preferred_cli_env(),
       dialyzer: dialyzer(),
       source_url: "https://github.com/hrzndhrn/time_zone_info",
       docs: docs(),
       package: package()
     ]
-  end
-
-  def description do
-    "Time zone support for Elixir by using the IANA tz database."
   end
 
   def application do
@@ -31,6 +26,23 @@ defmodule TimeZoneInfo.MixProject do
       mod: {TimeZoneInfo.Application, []},
       env: env()
     ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [
+        carp: :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.github": :test
+      ]
+    ]
+  end
+
+  def description do
+    "Time zone support for Elixir by using the IANA tz database."
   end
 
   defp env do
@@ -62,17 +74,6 @@ defmodule TimeZoneInfo.MixProject do
       ],
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
       priv: [data: "data.etf", timestamp: "timestamp.txt"]
-    ]
-  end
-
-  defp preferred_cli_env do
-    [
-      carp: :test,
-      coveralls: :test,
-      "coveralls.detail": :test,
-      "coveralls.post": :test,
-      "coveralls.html": :test,
-      "coveralls.github": :test
     ]
   end
 

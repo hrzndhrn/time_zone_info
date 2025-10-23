@@ -1,12 +1,16 @@
 # Changelog
 
+## 0.7.9 - 2025/10/23
+
+- Fix struct update
+
 ## 0.7.8 - 2025/03/23
 
-- Update `priv/data.etf` with IANA tzdata version 2025b.
+- Update `priv/data.etf` with IANA tzdata version 2025b
 
 ## 0.7.7 - 2025/01/19
 
-- Update `priv/data.etf` with IANA tzdata version 2025a.
+- Update `priv/data.etf` with IANA tzdata version 2025a
 - Requrie Elixir 1.13
 
 ## 0.7.6 - 2024/09/14
