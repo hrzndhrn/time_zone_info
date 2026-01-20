@@ -83,7 +83,7 @@ defmodule TimeZoneInfoTest do
   end
 
   describe "data/2" do
-    test "tzdata2019c" do
+    test "tzdata2019c in 2026" do
       iana = "test/fixtures/iana/tzdata2019c.tar.gz"
 
       assert {
@@ -93,14 +93,14 @@ defmodule TimeZoneInfoTest do
              } = iana |> File.read!() |> TimeZoneInfo.data()
 
       assert version == "2019c"
-      assert checksum == "34804444"
+      assert checksum == "47444047"
       assert map_size(links) == 86
       assert map_size(rules) == 29
       assert map_size(time_zones) == 387
       refute time_zones |> Map.keys() |> Enum.member?("America/Nuuk")
     end
 
-    test "tzdata2024b" do
+    test "tzdata2024b in 2026" do
       iana = "test/fixtures/iana/tzdata2024b.tar.gz"
 
       assert {
@@ -132,7 +132,7 @@ defmodule TimeZoneInfoTest do
                )
 
       assert version == "2024b"
-      assert checksum == "49209792"
+      assert checksum == "96820978"
 
       assert config[:time_zones] == :all
       assert config[:lookahead] == 15

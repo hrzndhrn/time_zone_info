@@ -4,8 +4,6 @@ defmodule TimeZoneInfo.TransformerTest do
   alias TimeZoneInfo.IanaParser
   alias TimeZoneInfo.Transformer
 
-  require Logger
-
   setup_all do
     path = "test/temp/iana"
 
@@ -431,7 +429,7 @@ defmodule TimeZoneInfo.TransformerTest do
     test "returns transformed data for time zone Europe/Berlin", %{data: data} do
       assert_time_zone(data, "Europe/Berlin", [
         [
-          {~N[2035-10-28 01:00:00], {3600, "EU", {:template, "CE%sT"}}}
+          {~N[2036-10-26 01:00:00], {3600, "EU", {:template, "CE%sT"}}}
         ],
         [
           {~N[2025-03-30 01:00:00], {3600, 3600, "CEST"}},
@@ -469,7 +467,7 @@ defmodule TimeZoneInfo.TransformerTest do
     test "returns transformed data for time zone Europe/Dublin", %{data: data} do
       assert_time_zone(data, "Europe/Dublin", [
         [
-          {~N[2035-10-28 01:00:00], {3600, "Eire", {:choice, ["IST", "GMT"]}}}
+          {~N[2036-10-26 01:00:00], {3600, "Eire", {:choice, ["IST", "GMT"]}}}
         ],
         [
           {~N[2025-03-30 01:00:00], {3600, 0, "IST"}},
@@ -567,7 +565,7 @@ defmodule TimeZoneInfo.TransformerTest do
     test "returns transformed data for time zone Europe/Vienna", %{data: data} do
       assert_time_zone(data, "Europe/Vienna", [
         [
-          {~N[2035-10-28 01:00:00], {3600, "EU", {:template, "CE%sT"}}}
+          {~N[2036-10-26 01:00:00], {3600, "EU", {:template, "CE%sT"}}}
         ],
         [
           {~N[2025-03-30 01:00:00], {3600, 3600, "CEST"}},

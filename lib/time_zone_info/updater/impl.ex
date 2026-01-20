@@ -16,8 +16,6 @@ defmodule TimeZoneInfo.Updater.Impl do
   alias TimeZoneInfo.Transformer
   alias TimeZoneInfo.UtcDateTime
 
-  require Logger
-
   @type step ::
           :run
           | :initial

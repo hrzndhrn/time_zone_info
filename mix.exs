@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.7.9",
+      version: "0.7.10",
       elixir: "~> 1.13",
       name: "TimeZoneInfo",
       description: description(),
@@ -16,7 +16,8 @@ defmodule TimeZoneInfo.MixProject do
       dialyzer: dialyzer(),
       source_url: "https://github.com/hrzndhrn/time_zone_info",
       docs: docs(),
-      package: package()
+      package: package(),
+      test_ignore_filters: [~r'test/support/.*']
     ]
   end
 
