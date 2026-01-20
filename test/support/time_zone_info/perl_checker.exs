@@ -1,6 +1,4 @@
 defmodule TimeZoneInfo.PerlChecker do
-  require Logger
-
   def period_from_utc(at, time_zone, expected),
     do: do_check(&period_from_utc/2, [at, time_zone], expected)
 

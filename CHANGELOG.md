@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.10 - 2026/dev
+
+- Update `priv/data.etf` with IANA tzdata version 2025c
+
 ## 0.7.9 - 2025/10/23
 
 - Fix struct update
