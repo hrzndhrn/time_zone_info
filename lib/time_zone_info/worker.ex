@@ -51,23 +51,23 @@ defmodule TimeZoneInfo.Worker do
   @impl true
   def init(_opts) do
     state = do_update(:run)
-    {:ok, state}
+    {:ok, state, :hibernate}
   end
 
   @impl true
   def handle_info(:update, state) do
     state = do_update(:run, state)
-    {:noreply, state}
+    {:noreply, state, :hibernate}
   end
 
   @impl true
   def handle_call({:update, opt}, _from, state) do
     state = do_update(opt, state)
-    {:reply, reply(state), state}
+    {:reply, reply(state), state, :hibernate}
   end
 
   def handle_call(:state, _from, state) do
-    {:reply, reply(state), state}
+    {:reply, reply(state), state, :hibernate}
   end
 
   def handle_call(:next, _from, state) do
@@ -84,7 +84,7 @@ defmodule TimeZoneInfo.Worker do
           error
       end
 
-    {:reply, reply, state}
+    {:reply, reply, state, :hibernate}
   end
 
   defp do_update(step, state \\ :init) do
