@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.7.10 - 2026/dev
+## 0.7.11 - 2026/02/21
+
+- The `TimeZoneInfo.Worker` will hibernate.
+
+## 0.7.10 - 2026/01/20
 
 - Update `priv/data.etf` with IANA tzdata version 2025c
 
