@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.12 - 2026/03/03
+
+- Update `priv/data.etf` with IANA tzdata version 2026a
+
 ## 0.7.11 - 2026/02/21
 
 - The `TimeZoneInfo.Worker` will hibernate.
