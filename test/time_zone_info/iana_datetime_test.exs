@@ -21,6 +21,11 @@ defmodule TimeZoneInfo.IanaDateTimeTest do
                {2, 0, 0}
              ) == to_gregorian_seconds(~N[1973-11-04 02:00:00])
     end
+
+    test "returns seconds for datetimes at 24:00" do
+      assert IanaDateTime.to_gregorian_seconds(2009, 12, 31, {24, 0, 0}) ==
+               to_gregorian_seconds(~N[2010-01-01 00:00:00])
+    end
   end
 
   describe "to_gregorian_seconds/1" do
@@ -32,6 +37,11 @@ defmodule TimeZoneInfo.IanaDateTimeTest do
     test "with year, month, day, hour, minute and second" do
       assert IanaDateTime.to_gregorian_seconds({1999, 2, 3, 10, 11, 12}) ==
                to_gregorian_seconds(~N[1999-02-03 10:11:12])
+    end
+
+    test "with 24:00 at a month boundary" do
+      assert IanaDateTime.to_gregorian_seconds({2019, 1, 31, 24, 0, 0}) ==
+               to_gregorian_seconds(~N[2019-02-01 00:00:00])
     end
 
     test "with day as last day of week" do

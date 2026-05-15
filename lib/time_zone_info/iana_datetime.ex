@@ -56,7 +56,12 @@ defmodule TimeZoneInfo.IanaDateTime do
 
   defp do_to_gregorian_seconds({date, time}) do
     date = update(date)
-    :calendar.datetime_to_gregorian_seconds({date, time})
+
+    :calendar.datetime_to_gregorian_seconds({date, {0, 0, 0}}) + time_to_seconds(time)
+  end
+
+  defp time_to_seconds({hour, minute, second}) do
+    hour * @seconds_per_hour + minute * @seconds_per_minute + second
   end
 
   defp update({year, month, day}) do
