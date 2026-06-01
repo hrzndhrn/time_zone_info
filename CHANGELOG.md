@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.14 - 2026/06/01
+
+- Fix OTP 29 IANA time conversion
+
 ## 0.7.13 - 2026/04/28
 
 - Update `priv/data.etf` with IANA tzdata version 2026b
