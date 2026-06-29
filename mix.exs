@@ -151,10 +151,8 @@ defmodule TimeZoneInfo.MixProject do
       # dev and test
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
-      {:ex_cldr_calendars_coptic, "~> 1.0", only: [:dev, :test]},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
-      {:hackney, "~> 1.15", only: [:test, :dev], runtime: false},
       {:mox, "~> 1.0", only: :test},
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
       {:recode, "~> 0.5", only: :dev},
