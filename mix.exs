@@ -101,7 +101,6 @@ defmodule TimeZoneInfo.MixProject do
           TimeZoneInfo.DataPersistence.FileSystem
         ],
         DataStore: [
-          TimeZoneInfo.DataStore.ErlangTermStorage,
           TimeZoneInfo.DataStore.PersistentTerm
         ],
         Downlaoder: [
