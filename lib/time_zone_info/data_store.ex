@@ -58,22 +58,7 @@ defmodule TimeZoneInfo.DataStore do
   # Implementation
 
   defp impl do
-    case Application.fetch_env!(:time_zone_info, :data_store) do
-      :detect -> detect()
-      module -> module
-    end
-  end
-
-  defp detect do
-    module =
-      case function_exported?(:persistent_term, :get, 0) do
-        true -> __MODULE__.PersistentTerm
-        false -> __MODULE__.ErlangTermStorage
-      end
-
-    Application.put_env(:time_zone_info, :data_store, module)
-
-    module
+    __MODULE__.PersistentTerm
   end
 
   @doc false

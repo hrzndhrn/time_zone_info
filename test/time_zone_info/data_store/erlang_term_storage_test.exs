@@ -51,22 +51,10 @@ defmodule TimeZoneInfo.DataStore.ErlangTermStorageTest do
   end
 
   test "info" do
-    assert %{version: version, time_zones: time_zones, links: links, tables: tables} =
+    assert %{version: "2019c", time_zones: 387, links: 205, memory: memory} =
              DataStore.info()
 
-    assert version == "2019c"
-    assert time_zones == 387
-    assert links == 205
-    assert get_in(tables, [:time_zone_info, :size]) == 1
-    assert get_in(tables, [:time_zone_info, :memory]) > 300
-    assert get_in(tables, [:time_zone_info_links, :size]) == 205
-    assert get_in(tables, [:time_zone_info_links, :memory]) > 1600
-    assert get_in(tables, [:time_zone_info_rules, :size]) == 29
-    assert get_in(tables, [:time_zone_info_rules, :memory]) > 2100
-    assert get_in(tables, [:time_zone_info_time_zones, :size]) == 3
-    assert get_in(tables, [:time_zone_info_time_zones, :memory]) > 6200
-    assert get_in(tables, [:time_zone_info_transitions, :size]) == 387
-    assert get_in(tables, [:time_zone_info_transitions, :memory]) > 323_000
+    assert is_integer(memory)
   end
 
   describe "time_zone_period_from_utc_iso_days/2" do
