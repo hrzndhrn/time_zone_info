@@ -37,7 +37,8 @@ defmodule TimeZoneInfo.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.github": :test
+        "coveralls.github": :test,
+        "test.watch": :test
       ]
     ]
   end
@@ -101,7 +102,6 @@ defmodule TimeZoneInfo.MixProject do
           TimeZoneInfo.DataPersistence.FileSystem
         ],
         DataStore: [
-          TimeZoneInfo.DataStore.ErlangTermStorage,
           TimeZoneInfo.DataStore.PersistentTerm
         ],
         Downlaoder: [
@@ -157,6 +157,7 @@ defmodule TimeZoneInfo.MixProject do
       {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
       {:recode, "~> 0.5", only: :dev},
       {:stream_data, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:mix_test_watch, "~>1.0", only: [:dev, :test], runtime: false},
 
       # benchee
       {:benchee_dsl, "~> 0.5", only: :dev},

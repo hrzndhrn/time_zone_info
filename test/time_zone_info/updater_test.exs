@@ -6,7 +6,6 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   alias TimeZoneInfo.DataPersistence.Priv
   alias TimeZoneInfo.DataStore
-  alias TimeZoneInfo.DataStore.ErlangTermStorage
   alias TimeZoneInfo.DataStore.PersistentTerm
   alias TimeZoneInfo.TimeZoneDatabase
   alias TimeZoneInfo.Updater
@@ -627,7 +626,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       delete_app_env()
 
       put_app_env(
-        data_store: ErlangTermStorage,
+        data_store: PersistentTerm,
         data_persistence: Priv
       )
 
@@ -756,13 +755,7 @@ defmodule TimeZoneInfo.UpdaterTest do
   end
 
   defp data_store do
-    store =
-      if function_exported?(:persistent_term, :get, 0) do
-        PersistentTerm
-      else
-        ErlangTermStorage
-      end
-
+    store = PersistentTerm
     store.delete!()
     store
   end
