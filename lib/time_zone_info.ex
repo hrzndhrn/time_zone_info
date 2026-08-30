@@ -112,7 +112,21 @@ defmodule TimeZoneInfo do
   The list will be sorted.
   """
   @spec time_zones(links: :ignore | :only | :include) :: [Calendar.time_zone()]
-  def time_zones(opts \\ [links: :include]), do: DataStore.get_time_zones(opts)
+  def time_zones(opts \\ [links: :include]) do
+    time_zones = DataStore.get_time_zones(opts)
+    default_time_zone = "Etc/UTC"
+
+    case opts[:links] do
+      :only ->
+        time_zones
+
+      _else ->
+        case Enum.member?(time_zones, default_time_zone) do
+          true -> time_zones
+          false -> Enum.sort([default_time_zone | time_zones])
+        end
+    end
+  end
 
   @doc """
   Returns the version of the IANA database.

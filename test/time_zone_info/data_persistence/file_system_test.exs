@@ -93,7 +93,7 @@ defmodule TimeZoneInfo.DataPersistence.FileSystemTest do
     test "returns the checksum for the data", %{data: data} do
       assert FileSystem.put(data) == :ok
       assert {:ok, timestamp} = FileSystem.fetch_last_update()
-      assert_in_delta(timestamp, now(), 3)
+      assert_in_delta timestamp, now(), 3
     end
 
     test "returns error if the data is unavalable" do

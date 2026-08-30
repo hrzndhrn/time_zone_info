@@ -9,7 +9,7 @@ defmodule TimeZoneInfo.PerlChecker do
     with :ok <- blacklist(args) do
       result = apply(fun, args)
 
-      case check(result, expected) do
+      case check result, expected do
         true -> {:valid, result}
         false -> {:invalid, result}
       end
@@ -19,16 +19,16 @@ defmodule TimeZoneInfo.PerlChecker do
   defp check(result, result), do: true
 
   defp check({:ok, period_a}, {:ok, period_x}) do
-    check(period_a, period_x)
+    check period_a, period_x
   end
 
   defp check({:ambiguous, period_a, period_b}, {:ambiguous, period_x, period_y}) do
-    check(period_a, period_x) && check(period_b, period_y)
+    check(period_a, period_x) && check period_b, period_y
   end
 
   defp check({:gap, period_a, period_b}, {:gap, {period_x, limit_x}, {period_y, limit_y}}) do
     check_limit = NaiveDateTime.diff(limit_y, limit_x) == period_b.offset - period_a.offset
-    check_limit && check(period_a, period_x) && check(period_b, period_y)
+    check_limit && check(period_a, period_x) && check period_b, period_y
   end
 
   defp check(result, expected) when is_map(result) and is_map(expected) do

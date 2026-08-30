@@ -3,7 +3,6 @@
 |> Enum.each(&Code.require_file/1)
 
 Mox.defmock(TimeZoneInfo.DataPersistenceMock, for: TimeZoneInfo.DataPersistence)
-Mox.defmock(TimeZoneInfo.DataStoreMock, for: TimeZoneInfo.DataStore)
 Mox.defmock(TimeZoneInfo.DownloaderMock, for: TimeZoneInfo.Downloader)
 Mox.defmock(TimeZoneInfo.UpdaterMock, for: TimeZoneInfo.Updater)
 
@@ -66,7 +65,7 @@ Supervisor.start_link(
 tzdata = "tzdata2024b.tar.gz"
 # tzdata = "tzdata2019c.tar.gz"
 fixture = ~c"test/fixtures/iana/#{tzdata}"
-File.exists?(fixture) || raise("missing #{fixture}")
+File.exists?(fixture) || raise "missing #{fixture}"
 
 iana_temp = ~c"test/temp/iana"
 File.mkdir_p!(iana_temp)

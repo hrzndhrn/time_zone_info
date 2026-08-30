@@ -11,7 +11,14 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
   alias TimeZoneInfo.IsoDays
   alias TimeZoneInfo.Transformer.RuleSet
 
-  @compile {:inline, gap: 2, convert: 1, to_wall: 1, to_wall: 2, convert: 1, transitions: 3}
+  @compile {:inline,
+            gap: 2,
+            convert: 1,
+            to_wall: 1,
+            to_wall: 2,
+            convert: 1,
+            find_transition: 2,
+            to_periods: 3}
 
   @impl true
   def time_zone_periods_from_wall_datetime(%NaiveDateTime{}, "Etc/UTC"),
@@ -66,24 +73,28 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     end
   end
 
+  defp find_transition([{at, period} | _transitions], timestamp) when at <= timestamp, do: period
+
   defp find_transition([{_at, period}], _timestamp), do: period
 
-  defp find_transition([{at, period} | transitions], timestamp) do
-    if at <= timestamp, do: period, else: find_transition(transitions, timestamp)
+  defp find_transition(transitions, timestamp) do
+    find_transition(tl(transitions), timestamp)
   end
 
-  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, last) do
-    if at_utc > at_wall do
-      find_transitions(transitions, at_wall, transition)
+  defp find_transitions([{at_utc, _} = transition | transitions], at_wall, last)
+       when at_utc <= at_wall do
+    if last do
+      if Enum.empty?(transitions),
+        do: {transition, last},
+        else: {hd(transitions), transition, last}
     else
-      transitions(transitions, transition, last)
+      if Enum.empty?(transitions), do: transition, else: {hd(transitions), transition}
     end
   end
 
-  defp transitions([head | _tail], transition, nil), do: {head, transition}
-  defp transitions([head | _tail], transition, last), do: {head, transition, last}
-  defp transitions(_transitions, transition, nil), do: transition
-  defp transitions(_transitions, transition, last), do: {transition, last}
+  defp find_transitions([transition | transitions], at_wall, _last) do
+    find_transitions(transitions, at_wall, transition)
+  end
 
   defp to_period(
          {utc_offset, rule_name, {_, _} = format},
@@ -243,17 +254,20 @@ defmodule TimeZoneInfo.TimeZoneDatabase do
     }
   end
 
-  defp to_wall({at, {utc_offset, std_offset, _zone_abbr, _wall_period}}),
-    do: at + utc_offset + std_offset
+  defp to_wall({at, {utc_offset, std_offset, _zone_abbr, _wall_period}}) do
+    at + utc_offset + std_offset
+  end
 
-  defp to_wall({at, _zone_info}, {_, {utc_offset, std_offset, _zone_abbr, _wall_period}}),
-    do: at + utc_offset + std_offset
+  defp to_wall({at, _zone_info}, {_, {utc_offset, std_offset, _zone_abbr, _wall_period}}) do
+    at + utc_offset + std_offset
+  end
 
-  defp convert({_at, {utc_offset, std_offset, zone_abbr, wall_period}}),
-    do: %{
+  defp convert({_at, {utc_offset, std_offset, zone_abbr, wall_period}}) do
+    %{
       utc_offset: utc_offset,
       std_offset: std_offset,
       zone_abbr: zone_abbr,
       wall_period: wall_period
     }
+  end
 end

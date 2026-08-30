@@ -6,8 +6,6 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   alias TimeZoneInfo.DataPersistence.Priv
   alias TimeZoneInfo.DataStore
-  alias TimeZoneInfo.DataStore.ErlangTermStorage
-  alias TimeZoneInfo.DataStore.PersistentTerm
   alias TimeZoneInfo.TimeZoneDatabase
   alias TimeZoneInfo.Updater
 
@@ -23,10 +21,10 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1" do
     setup do
+      DataStore.delete!()
       cp_priv_data(@fixture, @data)
-      data_store = data_store()
-      put_test_env(data_store)
-      on_exit(fn -> do_exit(data_store) end)
+      put_test_env()
+      on_exit(fn -> do_exit() end)
     end
 
     test "tries to update old file" do
@@ -38,7 +36,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :check, :download, :up_to_date]
       )
@@ -64,7 +62,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :check, :download, :update]
       )
@@ -94,7 +92,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :config_changed, :force, :download, :update]
       )
@@ -112,7 +110,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: 23 * @seconds_per_hour), @delta_seconds)
+          assert_in_delta timestamp, now(add: 23 * @seconds_per_hour), @delta_seconds
         end,
         [:initial, :check, :no_update]
       )
@@ -171,7 +169,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update(:force)
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:force, :download, :up_to_date]
       )
@@ -429,10 +427,10 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1 initial" do
     setup do
+      DataStore.delete!()
       mkdir_priv_data(@data)
-      data_store = data_store()
-      put_test_env(data_store)
-      on_exit(fn -> do_exit(data_store) end)
+      put_test_env()
+      on_exit(fn -> do_exit() end)
     end
 
     test "writes data file if it is not exist (tzdata2019c)" do
@@ -442,7 +440,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :force, :download, :update]
       )
@@ -470,7 +468,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :force, :download, :update]
       )
@@ -500,7 +498,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :force, :download, :update]
       )
@@ -539,7 +537,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :force, :download, :update]
       )
@@ -609,10 +607,10 @@ defmodule TimeZoneInfo.UpdaterTest do
 
   describe "update/1 returns error" do
     setup do
+      DataStore.delete!()
       cp_priv_data(@fixture, @data)
-      data_store = data_store()
-      put_test_env(data_store)
-      on_exit(fn -> do_exit(data_store) end)
+      put_test_env()
+      on_exit(fn -> do_exit() end)
     end
 
     test "without any config" do
@@ -678,7 +676,7 @@ defmodule TimeZoneInfo.UpdaterTest do
       assert_log(
         fn ->
           assert {:next, timestamp} = Updater.update()
-          assert_in_delta(timestamp, now(add: @seconds_per_day), @delta_seconds)
+          assert_in_delta timestamp, now(add: @seconds_per_day), @delta_seconds
         end,
         [:initial, :config_changed, :force, :download, :update]
       )
@@ -732,7 +730,7 @@ defmodule TimeZoneInfo.UpdaterTest do
     )
   end
 
-  defp put_test_env(data_store) do
+  defp put_test_env do
     put_app_env(
       lookahead: 1,
       files: ["africa"],
@@ -742,28 +740,14 @@ defmodule TimeZoneInfo.UpdaterTest do
         mode: :iana
       ],
       update: :daily,
-      data_store: data_store,
       data_persistence: TimeZoneInfo.DataPersistence.Priv,
       priv: [data: @data, timestamp: @timestamp],
       listener: TimeZoneInfo.Listener.Logger
     )
   end
 
-  defp do_exit(data_store) do
+  defp do_exit do
     rm_priv_data(@data)
-    delete_app_env()
-    data_store.delete!()
-  end
-
-  defp data_store do
-    store =
-      if function_exported?(:persistent_term, :get, 0) do
-        PersistentTerm
-      else
-        ErlangTermStorage
-      end
-
-    store.delete!()
-    store
+    DataStore.delete!()
   end
 end

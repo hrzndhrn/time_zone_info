@@ -1,5 +1,5 @@
 defmodule TimeZoneInfo.WorkerTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   import Mox
   import TimeZoneInfo.TestUtils

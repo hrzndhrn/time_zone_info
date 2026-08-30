@@ -7,7 +7,7 @@ defmodule TestPlug do
     @iana_data_archive "test/fixtures/iana/tzdata2019c.tar.gz"
 
     def get(conn) do
-      config = config(conn)
+      config = config conn
 
       with {:ok, file} <- File.read(@iana_data_archive),
            {:ok, data, checksum} <- TimeZoneInfo.data(file, config) do
