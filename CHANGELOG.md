@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0 - 2026/09/26
+
+- Remove the `TimeZoneInfo.DataStore` behaviour. The implementation from 
+  `TimeZoneInfo.DataStore.PersistentTerm` is now the standard implementation.
+- Update `priv/data.etf` with IANA tzdata version 2026d
+ 
 ## 0.7.15 - 2026/07/22
 
 - Update `priv/data.etf` with IANA tzdata version 2026c

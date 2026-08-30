@@ -4,7 +4,7 @@ defmodule TimeZoneInfo.MixProject do
   def project do
     [
       app: :time_zone_info,
-      version: "0.7.15",
+      version: "0.8.0",
       elixir: "~> 1.15",
       name: "TimeZoneInfo",
       description: description(),
@@ -61,7 +61,6 @@ defmodule TimeZoneInfo.MixProject do
       ],
       time_zones: :all,
       lookahead: 15,
-      data_store: :detect,
       update: :disabled,
       listener: TimeZoneInfo.Listener.ErrorLogger,
       downloader: [
@@ -92,17 +91,12 @@ defmodule TimeZoneInfo.MixProject do
       groups_for_modules: [
         Behaviours: [
           TimeZoneInfo.DataPersistence,
-          TimeZoneInfo.DataStore,
           TimeZoneInfo.Downloader,
           TimeZoneInfo.Listener
         ],
         DataPersistence: [
           TimeZoneInfo.DataPersistence.Priv,
           TimeZoneInfo.DataPersistence.FileSystem
-        ],
-        DataStore: [
-          TimeZoneInfo.DataStore.ErlangTermStorage,
-          TimeZoneInfo.DataStore.PersistentTerm
         ],
         Downlaoder: [
           TimeZoneInfo.Downloader.Mint
@@ -154,9 +148,14 @@ defmodule TimeZoneInfo.MixProject do
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test, runtime: false},
       {:mox, "~> 1.0", only: :test},
-      {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
+      # {:plug_cowboy, "~> 2.9", only: [:dev, :test]},
       {:recode, "~> 0.5", only: :dev},
       {:stream_data, "~> 1.1", only: [:dev, :test], runtime: false},
+
+      # cowboy
+      {:plug_cowboy, "~> 2.8", only: [:dev, :test]},
+      {:cowboy, "~> 2.12.0", only: [:dev, :test]},
+      {:cowlib, "~> 2.13.0", only: [:dev, :test]},
 
       # benchee
       {:benchee_dsl, "~> 0.5", only: :dev},

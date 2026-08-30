@@ -5,13 +5,11 @@ defmodule TimeZoneInfoTest do
 
   alias TimeZoneInfo.DataPersistence.Priv
   alias TimeZoneInfo.DataStore
-  alias TimeZoneInfo.DataStore.Server
   alias TimeZoneInfo.IanaParser
   alias TimeZoneInfo.Transformer
 
   setup_all do
     put_app_env(
-      data_store: Server,
       data_persistence: Priv,
       priv: [path: "data.etf"]
     )
@@ -40,7 +38,6 @@ defmodule TimeZoneInfoTest do
     end
 
     put_app_env(
-      data_store: Server,
       data_persistence: Priv,
       priv: [path: "data.etf"],
       files: config[:files],

@@ -18,7 +18,7 @@ defmodule TransformBench do
   config time: 60
 
   job transform do
-    path = "test/fixtures/iana/2019c"
+    path = "test/fixtures/data/2019c"
 
     files = [
       "africa",

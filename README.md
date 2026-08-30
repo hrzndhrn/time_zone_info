@@ -25,7 +25,7 @@ end
 After installation, `TimeZoneInfo` can be used as follows.
 ```elixir
 iex> TimeZoneInfo.iana_version
-"2026c"
+"2026d"
 iex> TimeZoneInfo.time_zones() |> Enum.take(3)
 ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa"]
 iex> TimeZoneInfo.TimeZoneDatabase.time_zone_periods_from_wall_datetime(~N[2021-09-23 09:56:00], "Europe/Berlin")
@@ -71,7 +71,7 @@ For more information how to configure `TimeZoneInfo` see
 ## Default Time Zone Data
 
 The default configuration of `TimeZoneInfo` is `update: :disabled`. In this
-case, the IANA database in version `2026c` with a `lookahead` of 15 years is in
+case, the IANA database in version `2026d` with a `lookahead` of 15 years is in
 use.
 
 If a time zone has continuation rules, the periods after the lookahead are
@@ -83,13 +83,10 @@ the determination of periods inside the prepared time span.
 The benchmarks can be executed with `mix bench`.
 
 Benchmarks:
-+ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/time_zone_database_bench.md)
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/reports/time_zone_database_bench.md)
   compares `TimeZoneInfo` with `Tzdata`, `Tz` and `Zoneinfo`.
 
-+ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/stores_bench.md)
-  compares the different `TimeZoneInfo.DataStore`s.
-
-+ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/transform_bench.md)
++ This [benchmark](https://github.com/hrzndhrn/time_zone_info/blob/main/bench/reports/transform_bench.md)
   measures the speed of transforming the raw IANA data to the required format at
   runtime.
 
@@ -98,7 +95,7 @@ Benchmarks:
 There are some differences to `Tzdata` and `Tz`. The list shows differences to
 `Tzdata` and/or `Tz`.
 
-- Use of `:persitent_term` with an optional use of `:ets`.
+- Use of `:persitent_term`.
 - Persisting data in
   [External Term Format](http://erlang.org/doc/apps/erts/erl_ext_dist.html)
 - The data persisting is customizable by the behaviour
