@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1 - 2026/10/29
+
+- Update `priv/data.etf` with IANA tzdata version 2026f
+
 ## 0.8.0 - 2026/09/26
 
 - Remove the `TimeZoneInfo.DataStore` behaviour. The implementation from 
